@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fitness Park</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
+<style>
+html,body{height:100%;margin:0;}
+:root{
+  --bg:#F1F2F8; --surface:#FFFFFF; --surface-2:#F7F8FC; --border:#E3E5F0;
+  --text:#171A24; --text-muted:#666C82; --text-faint:#9599AC;
+  --sidebar-bg:#FFFFFF; --sidebar-bg-2:#ECEDFC; --sidebar-text:#666C82; --sidebar-active:#171A24;
+  --accent:#4C56E8; --accent-strong:#3A43D1; --accent-soft:#ECEDFC; --accent-contrast:#FFFFFF;
+  --gold:#C9A24B; --gold-ink:#2A2410; --gold-card:#181A26; --gold-card-2:#22243A;
+  --success:#178A54; --success-bg:#E4F6EC; --warning:#B4680A; --warning-bg:#FDF0DD;
+  --danger:#C22A2A; --danger-bg:#FCE9E9; --info:#2457C9; --info-bg:#E8EFFD;
+  --shadow:0 1px 2px rgba(20,22,40,.04), 0 8px 24px -12px rgba(20,22,40,.12);
+  --shadow-lg:0 20px 60px -20px rgba(10,12,30,.35);
+  --radius-s:8px; --radius-m:14px; --radius-l:20px;
+  --font-display:'Sora',system-ui,sans-serif; --font-body:'Public Sans',system-ui,sans-serif; --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B0C13; --surface:#15161F; --surface-2:#1B1D29; --border:#2A2D3D;
+    --text:#EEEFF5; --text-muted:#A2A6BA; --text-faint:#6D7086;
+    --sidebar-bg:#08090F; --sidebar-bg-2:#14151F; --sidebar-text:#8A8EA3; --sidebar-active:#FFFFFF;
+    --accent:#6B74F5; --accent-strong:#8189F7; --accent-soft:#20223D; --accent-contrast:#FFFFFF;
+    --gold:#D9B65E; --gold-ink:#171307; --gold-card:#14151F; --gold-card-2:#1C1E30;
+    --success:#3FCB8B; --success-bg:#123322; --warning:#E2A23C; --warning-bg:#3A2A0F;
+    --danger:#F0605F; --danger-bg:#3A1414; --info:#6C9BF5; --info-bg:#152540;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B0C13; --surface:#15161F; --surface-2:#1B1D29; --border:#2A2D3D;
+  --text:#EEEFF5; --text-muted:#A2A6BA; --text-faint:#6D7086;
+  --sidebar-bg:#08090F; --sidebar-bg-2:#14151F; --sidebar-text:#8A8EA3; --sidebar-active:#FFFFFF;
+  --accent:#6B74F5; --accent-strong:#8189F7; --accent-soft:#20223D; --accent-contrast:#FFFFFF;
+  --gold:#D9B65E; --gold-ink:#171307; --gold-card:#14151F; --gold-card-2:#1C1E30;
+  --success:#3FCB8B; --success-bg:#123322; --warning:#E2A23C; --warning-bg:#3A2A0F;
+  --danger:#F0605F; --danger-bg:#3A1414; --info:#6C9BF5; --info-bg:#152540;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);}
+h1,h2,h3,h4,.disp{font-family:var(--font-display);letter-spacing:-.01em;text-wrap:balance;}
+.mono{font-family:var(--font-mono);font-variant-numeric:tabular-nums;}
+button{font-family:inherit;}
+a{color:inherit;}
+::selection{background:var(--accent);color:#fff;}
+#app{min-height:100%;}
+.icon{width:18px;height:18px;flex:none;display:block;}
+.icon-sm{width:15px;height:15px;}
+.icon-lg{width:26px;height:26px;}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;border:1px solid transparent;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:600;cursor:pointer;transition:.12s ease;white-space:nowrap;font-family:var(--font-body);}
+.btn:active{transform:translateY(1px);}
+.btn-primary{background:var(--accent);color:var(--accent-contrast);}
+.btn-primary:hover{background:var(--accent-strong);}
+.btn-ghost{background:transparent;color:var(--text);border-color:var(--border);}
+.btn-ghost:hover{background:var(--surface-2);}
+.btn-soft{background:var(--accent-soft);color:var(--accent);}
+.btn-soft:hover{filter:brightness(0.97);}
+.btn-gold{background:var(--gold);color:var(--gold-ink);}
+.btn-danger{background:var(--danger-bg);color:var(--danger);}
+.btn-danger-solid{background:var(--danger);color:#fff;}
+.btn-sm{padding:7px 12px;font-size:13px;border-radius:8px;}
+.btn-block{width:100%;}
+.btn:disabled{opacity:.5;cursor:default;}
+input,select,textarea{font-family:var(--font-body);font-size:14px;color:var(--text);background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px;width:100%;outline:none;transition:.12s;}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);font-weight:600;}
+.checkline{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);}
+.checkline input{width:16px;height:16px;padding:0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);box-shadow:var(--shadow);}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.01em;}
+.pill-success{background:var(--success-bg);color:var(--success);}
+.pill-warning{background:var(--warning-bg);color:var(--warning);}
+.pill-danger{background:var(--danger-bg);color:var(--danger);}
+.pill-info{background:var(--info-bg);color:var(--info);}
+.pill-muted{background:var(--surface-2);color:var(--text-muted);}
+.avatar{width:38px;height:38px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-family:var(--font-display);flex:none;font-size:14px;}
+::-webkit-scrollbar{width:10px;height:10px;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:11px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-lg);z-index:900;max-width:90vw;text-align:center;}
+.overlay{position:fixed;inset:0;background:rgba(10,11,20,.55);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:800;padding:0;}
+@media(min-width:720px){.overlay{align-items:center;padding:24px;}}
+.modal{background:var(--surface);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;box-shadow:var(--shadow-lg);padding:22px;display:flex;flex-direction:column;gap:16px;}
+@media(min-width:720px){.modal{border-radius:20px;}}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+.modal-close{background:var(--surface-2);border:none;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);flex:none;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+@media(max-width:420px){.grid2{grid-template-columns:1fr;}}
+.hairline{height:1px;background:var(--border);border:none;margin:2px 0;}
+/* ---- gate screens ---- */
+.gate-wrap{min-height:100%;display:flex;align-items:center;justify-content:center;padding:32px 20px;background:
+  radial-gradient(1000px 500px at 15% -10%, var(--accent-soft), transparent 60%),
+  radial-gradient(900px 500px at 110% 10%, var(--gold), transparent 35%),
+  var(--bg);}
+:root[data-theme="dark"] .gate-wrap, @media (prefers-color-scheme:dark){.gate-wrap{opacity:1;}}
+.gate-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 28px;}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
+.brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px;flex:none;}
+.brand-name{font-family:var(--font-display);font-weight:800;font-size:17px;}
+.brand-sub{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
+.gate-title{font-size:23px;font-weight:800;margin:2px 0 6px;}
+.gate-desc{color:var(--text-muted);font-size:14px;line-height:1.5;margin-bottom:22px;}
+.choice-btn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--border);border-radius:16px;padding:15px 16px;cursor:pointer;transition:.12s;margin-bottom:10px;}
+.choice-btn:hover{border-color:var(--accent);background:var(--accent-soft);}
+.choice-ic{width:42px;height:42px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);flex:none;}
+.choice-txt-t{font-weight:700;font-size:14.5px;}
+.choice-txt-d{font-size:12.5px;color:var(--text-muted);margin-top:2px;}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;font-weight:600;background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px;}
+.back-link:hover{color:var(--text);}
+/* ---- admin layout ---- */
+.admin-shell{display:flex;min-height:100%;}
+.sidebar{width:240px;flex:none;background:var(--sidebar-bg);color:var(--sidebar-text);display:flex;flex-direction:column;padding:20px 14px;gap:4px;border-right:1px solid var(--border);}
+.sidebar .brand{padding:2px 8px 20px;margin:0;}
+.sidebar .brand-name{color:var(--sidebar-active);}
+.nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--sidebar-text);transition:.12s;}
+.nav-item:hover{background:var(--sidebar-bg-2);color:var(--sidebar-active);}
+.nav-item.active{background:var(--sidebar-bg-2);color:var(--accent);box-shadow:inset 3px 0 0 var(--accent);}
+.nav-group-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-faint);font-weight:700;padding:16px 12px 6px;}
+.sidebar-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--border);}
+.sidebar-user{display:flex;align-items:center;gap:10px;padding:8px;font-size:12.5px;}
+.sidebar-user b{color:var(--sidebar-active);display:block;font-size:12.5px;}
+.sidebar-user span{color:var(--text-faint);font-size:11.5px;}
+.main{flex:1;min-width:0;display:flex;flex-direction:column;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:20;}
+.topbar-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-faint);font-weight:700;}
+.topbar-title{font-size:21px;font-weight:800;font-family:var(--font-display);}
+.content{padding:24px 28px 60px;max-width:1180px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px;}
+.mobile-nav{display:none;}
+@media(max-width:880px){
+  .sidebar{display:none;}
+  .mobile-nav{display:flex;gap:6px;overflow-x:auto;padding:10px 14px;background:var(--sidebar-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30;}
+  .mobile-nav::-webkit-scrollbar{display:none;}
+  .mobile-nav .nav-item{flex:none;color:var(--sidebar-text);}
+  .mobile-nav .nav-item.active{background:var(--sidebar-bg-2);color:var(--accent);}
+  .topbar{padding:14px 16px;}
+  .content{padding:16px 14px 50px;}
+}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+@media(max-width:720px){.stat-grid{grid-template-columns:1fr;}}
+.stat-card{padding:18px 20px;display:flex;flex-direction:column;gap:8px;}
+.stat-top{display:flex;align-items:center;justify-content:space-between;}
+.stat-label{font-size:12px;color:var(--text-muted);font-weight:600;}
+.stat-num{font-size:30px;font-weight:800;font-family:var(--font-display);}
+.stat-ic{width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.section-title{font-size:16px;font-weight:800;font-family:var(--font-display);}
+.section-title small{display:block;font-size:12px;color:var(--text-muted);font-weight:500;margin-top:2px;font-family:var(--font-body);}
+.expiring-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;}
+.exp-card{background:var(--warning-bg);border:1px solid transparent;border-radius:12px;padding:11px 13px;}
+.exp-card.urgent{background:var(--danger-bg);}
+.exp-name{font-weight:700;font-size:13.5px;}
+.exp-meta{font-size:11.5px;color:var(--text-muted);margin-top:3px;}
+.two-col{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;align-items:start;}
+@media(max-width:980px){.two-col{grid-template-columns:1fr;}}
+.scan-box{padding:22px;text-align:center;}
+.scan-zone{border:2px dashed var(--border);border-radius:16px;padding:28px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--surface-2);position:relative;overflow:hidden;}
+.scan-zone.ok{border-color:var(--success);background:var(--success-bg);}
+.scan-zone.bad{border-color:var(--danger);background:var(--danger-bg);}
+.scan-ic-wrap{width:58px;height:58px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-faint);}
+.scan-title{font-weight:700;font-size:15px;}
+.scan-sub{font-size:12.5px;color:var(--text-muted);}
+video.scan-video{width:100%;max-width:280px;border-radius:12px;margin-top:6px;}
+.result-row{display:flex;align-items:center;gap:12px;justify-content:space-between;padding:12px 14px;border-radius:12px;background:var(--surface-2);}
+.list-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.list-row:last-child{border-bottom:none;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);font-weight:700;padding:0 12px 10px;}
+td{padding:12px;border-top:1px solid var(--border);vertical-align:middle;}
+.table-wrap{overflow-x:auto;}
+tr td:first-child,tr th:first-child{padding-left:0;}
+tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
+.search-row{display:flex;gap:10px;}
+.client-row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:.1s;}
+.client-row:hover{background:var(--surface-2);}
+.client-row:last-child{border-bottom:none;}
+.plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.plan-card{border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--surface);}
+.plan-card.gold{background:linear-gradient(155deg,var(--gold-card),var(--gold-card-2));border-color:transparent;color:#EDE2C4;}
+.plan-eyebrow{font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:var(--text-faint);}
+.plan-card.gold .plan-eyebrow{color:var(--gold);}
+.plan-name{font-family:var(--font-display);font-weight:700;font-size:15.5px;}
+.plan-price{font-family:var(--font-display);font-weight:800;font-size:28px;}
+.plan-price span{font-size:13px;font-weight:600;color:var(--text-muted);}
+.plan-card.gold .plan-price span{color:#B9AE8E;}
+.plan-meta{font-size:12px;color:var(--text-muted);}
+.plan-card.gold .plan-meta{color:#B9AE8E;}
+.qr-wrap{background:#fff;border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:center;}
+.qr-wrap img,.qr-wrap canvas{border-radius:8px;}
+.code-chip{font-family:var(--font-mono);font-weight:700;letter-spacing:.04em;background:var(--surface-2);border:1px dashed var(--border);border-radius:10px;padding:10px;text-align:center;font-size:17px;}
+.modal-wide{max-width:640px;}
+.detail-grid{display:grid;grid-template-columns:1fr 240px;gap:20px;align-items:start;min-width:0;}
+.detail-grid>div{min-width:0;}
+@media(max-width:640px){.detail-grid{grid-template-columns:1fr;}}
+.info-list{display:flex;flex-direction:column;gap:12px;}
+.info-row .info-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-faint);margin-bottom:2px;}
+.info-row .info-value{font-size:14px;}
+.member-card{border:1.5px solid var(--gold);border-radius:var(--radius-l);padding:16px;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
+@media print{
+  body *{visibility:hidden;}
+  .member-card,.member-card *{visibility:visible;}
+  .member-card{position:fixed;top:40px;left:50%;transform:translateX(-50%);width:280px;}
+}
+.member-card .qr-wrap{padding:10px;}
+.member-card .mc-brand{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);}
+.member-card .mc-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;}
+.member-card .mc-name{font-family:var(--font-display);font-weight:700;font-size:15px;}
+.member-card .mc-plan{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.member-card .mc-code{color:var(--gold);border-color:var(--gold);}
+.member-card .mc-footer{font-size:10.5px;color:var(--text-faint);margin-top:4px;}
+.bars{display:flex;align-items:flex-end;gap:3px;height:90px;}
+.bar{flex:1;background:var(--accent-soft);border-radius:3px 3px 0 0;min-height:2px;position:relative;}
+.bar.hi{background:var(--accent);}
+.empty-state{padding:36px 16px;text-align:center;color:var(--text-muted);}
+.empty-state .icon-lg{margin:0 auto 10px;color:var(--text-faint);}
+.settings-block{display:flex;flex-direction:column;gap:14px;}
+.team-row{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:10px 12px;background:var(--surface-2);border-radius:12px;}
+.news-preview{background:var(--surface-2);border:1px solid var(--border);border-radius:14px;padding:16px;font-size:13.5px;line-height:1.6;white-space:pre-wrap;}
+/* ---- client portal ---- */
+.client-shell{min-height:100%;background:var(--bg);}
+.client-top{background:var(--sidebar-bg);color:var(--sidebar-active);padding:18px 20px 46px;border-bottom:1px solid var(--border);}
+.client-header-row{display:flex;align-items:center;justify-content:space-between;}
+.client-body{max-width:520px;margin:-30px auto 0;padding:0 16px 50px;display:flex;flex-direction:column;gap:16px;}
+.sub-card{border-radius:20px;padding:22px;color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);}
+.sub-card.tone-success{background:linear-gradient(150deg,#1B8F5D,#106040);}
+.sub-card.tone-warning{background:linear-gradient(150deg,#C97F14,#8C5203);}
+.sub-card.tone-danger{background:linear-gradient(150deg,#C0362F,#7E1F1B);}
+.sub-card.tone-muted{background:linear-gradient(150deg,#3A3E52,#22243380);}
+.sub-card.tone-gold{background:linear-gradient(150deg,var(--gold-card),var(--gold-card-2));}
+.sub-top{display:flex;justify-content:space-between;align-items:flex-start;}
+.sub-days{font-family:var(--font-display);font-weight:800;font-size:40px;line-height:1;margin-top:10px;}
+.sub-days span{font-size:13px;font-weight:600;opacity:.8;display:block;margin-top:4px;}
+.sub-range{display:flex;justify-content:space-between;font-size:12px;opacity:.85;margin-top:16px;border-top:1px solid rgba(255,255,255,.18);padding-top:12px;}
+.client-tabs{display:flex;gap:8px;background:var(--surface-2);padding:4px;border-radius:12px;}
+.client-tab{flex:1;text-align:center;padding:9px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text-muted);}
+.client-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
+.rule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5;}
+.rule-item:last-child{border-bottom:none;}
+[hidden]{display:none!important;}
+.w-full{width:100%;}
+.flex{display:flex;}
+.gap8{gap:8px;}
+.items-center{align-items:center;}
+.justify-between{justify-content:space-between;}
+.muted{color:var(--text-muted);}
+.faint{color:var(--text-faint);}
+.small{font-size:12px;}
+.center{text-align:center;}
+.mt4{margin-top:4px;}
+.mb0{margin-bottom:0;}
+.err-text{color:var(--danger);font-size:12.5px;font-weight:600;min-height:16px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script src="firebase-config.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+/* ============ ICONS & UTILS ============ */
+const ICONS = {
+  home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/>',
+  users:'<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.6-3.6 3.2-6 6.5-6s5.9 2.4 6.5 6"/><circle cx="17" cy="8.5" r="2.6"/><path d="M15.5 14.3c2.6.3 4.6 2.4 5 5.7"/>',
+  history:'<path d="M3 11a9 9 0 1 1 2.6 6.3"/><path d="M3 5v6h6"/><path d="M12 7v5l3.5 2"/>',
+  tag:'<path d="M20 11.6 12.4 4H5a1 1 0 0 0-1 1v7.4L11.6 20a1.4 1.4 0 0 0 2 0l6.4-6.4a1.4 1.4 0 0 0 0-2Z"/><circle cx="9" cy="8" r="1.3"/>',
+  chart:'<path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/><path d="M2.5 20h19"/>',
+  settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V19a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H20a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.6 1Z"/>',
+  lock:'<rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.2a4 4 0 0 1 8 0v3.3"/>',
+  qrcode:'<rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><path d="M14 14h3.5v3.5"/><path d="M20.5 14v.01"/><path d="M14 20.5h.01"/><path d="M17.5 20.5h3"/><path d="M20.5 17.5v.01"/>',
+  camera:'<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.2-2h5.6L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="13" r="3.4"/>',
+  search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.4-4.4"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>',
+  check:'<path d="m5 12.5 4.5 4.5L19 7"/>',
+  x:'<path d="m5 5 14 14M19 5 5 19"/>',
+  edit:'<path d="M4 20h4l10.5-10.5a2.1 2.1 0 0 0-3-3L5 17v3Z"/><path d="m14 6 4 4"/>',
+  trash:'<path d="M5 7h14"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M7 7l1 13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1l1-13"/>',
+  printer:'<path d="M7 8V4a1 1 0 0 1 1-1h8a1 1 0 0 1 1 1v4"/><rect x="4" y="8" width="16" height="8" rx="1.5"/><rect x="7" y="14" width="10" height="6" rx="1"/>',
+  arrowLeft:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
+  logOut:'<path d="M9 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3"/><path d="M15 16l4-4-4-4"/><path d="M19 12H9"/>',
+  chevronRight:'<path d="m9 5 7 7-7 7"/>',
+  export:'<path d="M12 15V4"/><path d="m8 8 4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/>',
+  bell:'<path d="M6 10a6 6 0 0 1 12 0c0 4 1.5 5.5 1.5 5.5H4.5S6 14 6 10Z"/><path d="M10 19a2 2 0 0 0 4 0"/>',
+  pause:'<rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/>',
+  play:'<path d="M7 4.5v15l13-7.5Z"/>',
+  refresh:'<path d="M3.5 12a8.5 8.5 0 0 1 14.5-6"/><path d="M20.5 12a8.5 8.5 0 0 1-14.5 6"/><path d="M18 3v4h-4"/><path d="M6 21v-4h4"/>',
+  shield:'<path d="M12 3.5 19 6v6c0 5-3 8-7 9-4-1-7-4-7-9V6Z"/><path d="m9 12 2 2 4-4"/>',
+  news:'<rect x="4" y="4.5" width="16" height="15" rx="2"/><path d="M8 9h8M8 12.5h8M8 16h5"/>',
+  download:'<path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M4.5 19h15"/>',
+  send:'<path d="M20 4 3 11l6.5 2.5L12 20l3-6.5L20 4Z"/><path d="M9.5 13.5 20 4"/>',
+};
+function icon(name, cls){ return '<svg class="icon '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||'')+'</svg>'; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function fmtDateTime(iso){ if(!iso) return '—'; const d=new Date(iso); if(isNaN(d)) return iso; return d.toLocaleDateString('ro-RO',{day:'2-digit',month:'2-digit'})+', '+d.toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}); }
+function money(n,cur){ n=Number(n||0); return n.toLocaleString('ro-RO',{maximumFractionDigits:0})+' '+(cur||'MDL'); }
+function initials(name){ return (name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'; }
+function addDays(dateStr, days){ const d=new Date(dateStr+'T00:00:00'); d.setDate(d.getDate()+Number(days||0)); return d.toISOString().slice(0,10); }
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+async function sha256(text){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text||'')); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
+function setPath(obj, path, value){ const parts=path.split('.'); let o=obj; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]; if(o==null) return; } o[parts[parts.length-1]]=value; }
+function daysLeft(validTo){ if(!validTo) return null; const today=new Date(); today.setHours(0,0,0,0); const vt=new Date(validTo+'T00:00:00'); return Math.round((vt-today)/86400000); }
+function payMethodLabel(m){ return {cash:'Numerar',card:'Card',transfer:'Transfer bancar'}[m]||m; }
+
+/* ============ STATE & DB REFS ============ */
+const DAY_LABELS=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
+const DEFAULT_SETTINGS={
+  gymName:'Fitness Park', adminPasswordHash:null, warnDays:5, minMinutesBetweenEntries:5,
+  openHour:'06:00', closeHour:'23:00', applyWeeklySchedule:false,
+  openDays:[true,true,true,true,true,true,true], closedDates:[],
+  newsText:'Bine ați venit la Fitness Park!\n\n- Vă rugăm să aveți un prosop propriu la antrenament.\n- Accesul se face doar cu codul personal, netransmisibil.\n- Vestiarele se eliberează cu 15 minute înainte de închidere.\n- Pentru pauza abonamentului, contactați recepția.',
+  currency:'MDL', team:[]
+};
+const state={
+  screen:'landing', adminUnlocked:false, adminSection:'reception',
+  clientSession:null, clientTab:'sub',
+  settings:null, types:[], clients:[], log:[], payments:[], modLog:[],
+  ready:false, dbOk:null,
+  modal:null, form:{}, formErr:'', toast:null,
+  scanInput:'', lastResult:null, cameraOn:false, cameraTarget:null,
+  clientQuery:'', settingsDraft:null, teamForm:{}, pwForm:{}, pwErr:'', printId:null,
+};
+/* ============ FIREBASE CONFIG ============
+   Completat automat la publicare — vezi firebase-config.js. */
+let db=null, cameraStream=null, cameraRAF=null;
+function browserSave(filename, data){
+  try{
+    const blob = data instanceof Blob ? data : new Blob([data], {type:'application/octet-stream'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; a.style.display='none';
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 1000);
+    return true;
+  }catch(e){ return false; }
+}
+const refSettings=()=>db.doc('settings/config');
+const colTypes=()=>db.collection('subscriptionTypes');
+const colClients=()=>db.collection('clients');
+const colLog=()=>db.collection('accessLog');
+const colPay=()=>db.collection('payments');
+const colMod=()=>db.collection('modLog');
+
+/* ============ RENDER SCHEDULING ============ */
+let rafPending=false;
+function scheduleRender(){ if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; render(); }); }
+function showToast(msg){ state.toast=msg; scheduleRender(); clearTimeout(showToast._t); showToast._t=setTimeout(()=>{ state.toast=null; scheduleRender(); },2600); }
+async function logMod(operation, details){ try{ await colMod().add({date:new Date().toISOString(), operation, actor:'Administrator', details:details||''}); }catch(e){} }
+
+/* ============ INIT & SUBSCRIPTIONS ============ */
+async function init(){
+  render();
+  try{
+    if(typeof FIREBASE_CONFIG==='undefined' || !FIREBASE_CONFIG || !FIREBASE_CONFIG.apiKey) throw new Error('missing-config');
+    firebase.initializeApp(FIREBASE_CONFIG);
+    await firebase.auth().signInAnonymously();
+    db = firebase.firestore();
+  }catch(e){ db = null; console.error('Firebase init failed:', e); }
+  state.dbOk = !!db;
+  if(!db){ state.ready=true; scheduleRender(); return; }
+  subscribeAll();
+}
+function subscribeAll(){
+  refSettings().onSnapshot(snap=>{
+    state.settings = Object.assign({}, DEFAULT_SETTINGS, snap.exists ? snap.data() : {});
+    state.ready=true; scheduleRender();
+  }, ()=>{ state.ready=true; scheduleRender(); });
+  colTypes().orderBy('order','asc').onSnapshot(snap=>{ state.types=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
+  colClients().onSnapshot(snap=>{ state.clients=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
+  colLog().orderBy('timestamp','desc').limit(120).onSnapshot(snap=>{ state.log=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
+  colPay().orderBy('date','desc').limit(60).onSnapshot(snap=>{ state.payments=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
+  colMod().orderBy('date','desc').limit(80).onSnapshot(snap=>{ state.modLog=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
+}
+
+/* ============ DOMAIN HELPERS ============ */
+function typeById(id){ return state.types.find(t=>t.id===id); }
+function subStatus(c){
+  const sub=c.subscription;
+  if(c.paused) return {label:'Suspendat', tone:'warning'};
+  if(!sub || !sub.validTo) return {label:'Fără abonament', tone:'muted'};
+  const dl=daysLeft(sub.validTo);
+  const due=(sub.totalDue||0)-(sub.totalPaid||0);
+  if(dl<0) return {label:'Expirat', tone:'danger'};
+  if(due>0.5) return {label:'Neachitat', tone:'danger'};
+  const warn = (state.settings && state.settings.warnDays!=null) ? state.settings.warnDays : 5;
+  if(dl<=warn) return {label: dl===0?'Expiră azi':('Expiră în '+dl+' '+(dl===1?'zi':'zile')), tone:'warning'};
+  return {label:'Valabil', tone:'success'};
+}
+function toneForResult(r){
+  if(r==='permis') return 'success';
+  if(r==='necunoscut'||r==='neachitat'||r==='expirat') return 'danger';
+  if(r==='suspendat'||r==='orar'||r==='prea_devreme') return 'warning';
+  if(r==='neinceput') return 'info';
+  return 'muted';
+}
+function inTimeWindow(date, fromStr, toStr){
+  const [fh,fm]=fromStr.split(':').map(Number); const [th,tm]=toStr.split(':').map(Number);
+  const mins=date.getHours()*60+date.getMinutes(); const f=fh*60+fm, t=th*60+tm;
+  if(f<=t) return mins>=f && mins<=t; return mins>=f || mins<=t;
+}
+function generateUniqueCode(){
+  for(let i=0;i<25;i++){ const n=Math.floor(1000+Math.random()*9000); const code='GYM-'+n; if(!state.clients.some(c=>c.code===code)) return code; }
+  return 'GYM-'+String(Date.now()).slice(-4);
+}
+async function verifyAccess(rawCode){
+  if(!db) return;
+  const code=(rawCode||'').trim().toUpperCase();
+  if(!code) return;
+  const client=state.clients.find(c=>c.code===code);
+  const now=new Date();
+  let result='permis', message='Acces permis';
+  if(!client){ result='necunoscut'; message='Cod QR necunoscut'; }
+  else if(client.paused){ result='suspendat'; message='Acces suspendat'; }
+  else{
+    const sub=client.subscription||{};
+    if(sub.validFrom && sub.validFrom>todayStr()){ result='neinceput'; message='Abonamentul începe pe '+fmtDate(sub.validFrom); }
+    else{
+      const dl = sub.validTo? daysLeft(sub.validTo) : null;
+      const due=(sub.totalDue||0)-(sub.totalPaid||0);
+      if(dl!==null && dl<0){ result='expirat'; message='Abonament expirat'; }
+      else if(due>0.5){ result='neachitat'; message='Abonament neachitat'; }
+      else{
+        const type=typeById(sub.typeId);
+        const af=(type&&type.accessFrom)||sub.accessFrom, at=(type&&type.accessTo)||sub.accessTo;
+        if(af && at && !inTimeWindow(now,af,at)){ result='orar'; message='Acces permis doar între '+af+' și '+at; }
+        else{
+          const mm=(state.settings&&state.settings.minMinutesBetweenEntries)||0;
+          if(mm && client.lastEntryAt){
+            const diffMin=(now-new Date(client.lastEntryAt))/60000;
+            if(diffMin<mm){ result='prea_devreme'; message='Prea devreme — mai așteaptă '+Math.ceil(mm-diffMin)+' min'; }
+          }
+        }
+      }
+    }
+  }
+  try{
+    await colLog().add({clientId: client?client.id:null, clientName: client?client.name:'Cod necunoscut', code, timestamp: now.toISOString(), result, message});
+    if(client && result==='permis'){ await colClients().doc(client.id).update({lastEntryAt: now.toISOString()}); }
+  }catch(e){}
+  state.lastResult={client, result, message, code}; state.scanInput='';
+  scheduleRender();
+}
+
+/* ============ SMALL UI BUILDERS ============ */
+function brandBlock(name){ return '<div class="brand"><div class="brand-mark disp">'+esc(initials(name))+'</div><div><div class="brand-name">'+esc(name)+'</div><div class="brand-sub">Club Management</div></div></div>'; }
+function backLink(){ return '<button class="back-link" data-action="back-landing">'+icon('arrowLeft','icon-sm')+' Înapoi</button>'; }
+function choiceBtn(action, ic, title, desc){ return '<button class="choice-btn" data-action="'+action+'"><div class="choice-ic">'+icon(ic)+'</div><div><div class="choice-txt-t">'+title+'</div><div class="choice-txt-d">'+desc+'</div></div><div class="faint">'+icon('chevronRight','icon-sm')+'</div></button>'; }
+function field(label,type,path,value,placeholder){ return '<label class="field">'+esc(label)+'<input type="'+type+'" data-bind="'+path+'" value="'+esc(value==null?'':value)+'" placeholder="'+esc(placeholder||'')+'"></label>'; }
+function selectField(label,path,value,options){ const opts=options.map(o=>{ const arr=Array.isArray(o)?o:[o,o]; const v=arr[0],l=arr[1]; return '<option value="'+esc(v)+'"'+(String(value)===String(v)?' selected':'')+'>'+esc(l)+'</option>'; }).join(''); return '<label class="field">'+esc(label)+'<select data-bind="'+path+'">'+opts+'</select></label>'; }
+function modalWrap(title, subtitle, body, opts){
+  opts = opts || {};
+  const eyebrowHtml = opts.eyebrow ? '<div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">'+esc(opts.eyebrow)+'</div>' : '';
+  return '<div class="overlay" data-action="close-modal"><div class="modal'+(opts.wide?' modal-wide':'')+'">'
+   + '<div class="modal-head"><div>'+eyebrowHtml+'<div class="gate-title" style="font-size:19px;margin:0;">'+esc(title)+'</div>'+(subtitle?'<div class="small faint mt4">'+esc(subtitle)+'</div>':'')+'</div><button class="modal-close" data-action="close-modal">'+icon('x','icon-sm')+'</button></div>'
+   + body + '</div></div>';
+}
+function logRowHtml(l){ const tone=toneForResult(l.result); return '<div class="list-row"><div class="avatar">'+esc(initials(l.clientName))+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;">'+esc(l.clientName)+'</div><div class="small faint mono">'+fmtDateTime(l.timestamp)+'</div></div><span class="pill pill-'+tone+'">'+esc(l.message)+'</span></div>'; }
+function logTableRow(l){ const tone=toneForResult(l.result); return '<tr><td><div class="flex items-center gap8"><div class="avatar" style="width:28px;height:28px;font-size:11px;">'+esc(initials(l.clientName))+'</div>'+esc(l.clientName)+'</div></td><td class="mono small">'+fmtDateTime(l.timestamp)+'</td><td><span class="pill pill-'+tone+'">'+esc(l.message)+'</span></td></tr>'; }
+
+/* ============ GATE SCREENS ============ */
+function renderLoading(){
+  if(state.dbOk===false){
+    return '<div class="gate-wrap"><div class="gate-card center">'+brandBlock('Fitness Park')
+     + '<div class="gate-title">Nu mă pot conecta la baza de date</div>'
+     + '<div class="gate-desc">Verifică-ți conexiunea la internet și reîncarcă pagina. Dacă problema persistă, contactează administratorul sălii.</div>'
+     + '</div></div>';
+  }
+  return '<div class="gate-wrap"><div class="flex" style="flex-direction:column;align-items:center;gap:12px;color:var(--text-muted);font-weight:600;font-size:13.5px;"><div class="brand-mark disp">FP</div>Se încarcă…</div></div>';
+}
+function renderLanding(){
+  const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
+  return '<div class="gate-wrap"><div class="gate-card">'
+   + brandBlock(gymName)
+   + '<div class="gate-title">Bun venit.</div>'
+   + '<div class="gate-desc">Alege cum vrei să continui.</div>'
+   + choiceBtn('go-admin','shield','Recepție &amp; Administrare','Acces cu parolă — gestionezi clienți, abonamente și acces.')
+   + choiceBtn('go-client','qrcode','Sunt client','Introdu codul tău de membru ca să-ți vezi abonamentul.')
+   + '<div class="small faint center" style="margin-top:14px;">'+esc(gymName)+' · Club Management</div>'
+   + '</div></div>';
+}
+function renderAdminGate(){
+  const needsSetup = state.settings && !state.settings.adminPasswordHash;
+  return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
+   + (needsSetup? adminSetupForm() : adminLoginForm())
+   + '</div></div>';
+}
+function adminLoginForm(){
+  return '<div class="gate-title">Parola de administrator</div>'
+   + '<div class="gate-desc">Introdu parola pentru a accesa panoul de recepție și administrare.</div>'
+   + '<label class="field">Parolă<input id="adminPass" type="password" placeholder="••••••••" data-enter="admin-login-submit"></label>'
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="admin-login-submit">'+icon('lock','icon-sm')+' Intră în panou</button>';
+}
+function adminSetupForm(){
+  return '<div class="gate-title">Prima configurare</div>'
+   + '<div class="gate-desc">Setează parola de administrator pentru acest panou. Ai nevoie de ea de fiecare dată când intri la recepție.</div>'
+   + '<label class="field">Parolă nouă (minim 4 caractere)<input id="setupPass1" type="password" placeholder="Parolă" data-enter="admin-setup-submit"></label>'
+   + '<label class="field">Confirmă parola<input id="setupPass2" type="password" placeholder="Repetă parola" data-enter="admin-setup-submit"></label>'
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="admin-setup-submit">'+icon('shield','icon-sm')+' Creează parola și continuă</button>';
+}
+function renderClientGate(){
+  return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
+   + '<div class="gate-title">Contul tău</div>'
+   + '<div class="gate-desc">Introdu codul tău de membru (de pe cardul QR) ca să-ți vezi abonamentul.</div>'
+   + '<label class="field">Cod membru<input id="clientCode" class="mono" style="text-transform:uppercase;letter-spacing:.04em;" placeholder="GYM-0000" data-enter="client-login-submit"></label>'
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="client-login-submit">'+icon('check','icon-sm')+' Vezi abonamentul meu</button>'
+   + '<button class="btn btn-ghost btn-block mt4" data-action="toggle-camera-client">'+icon('camera','icon-sm')+' '+(state.cameraOn?'Oprește camera':'Scanează cardul cu camera')+'</button>'
+   + (state.cameraOn? cameraBlock() : '')
+   + '</div></div>';
+}
+function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint mt4">Îndreaptă camera spre codul QR.</div></div>'; }
+
+/* ============ ADMIN SHELL ============ */
+const ADMIN_NAV=[
+  {key:'reception', label:'Recepție', ic:'home'},
+  {key:'clients', label:'Clienți & abonamente', ic:'users'},
+  {key:'history', label:'Istoric acces', ic:'history'},
+  {key:'plans', label:'Abonamente', ic:'tag'},
+  {key:'reports', label:'Rapoarte & export', ic:'chart'},
+  {key:'settings', label:'Sală & echipă', ic:'settings'},
+];
+function renderAdminShell(){
+  const sec=state.adminSection;
+  const navHtml=ADMIN_NAV.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+n.label+'</div>').join('');
+  const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
+  const body = sec==='reception'?renderReception() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'?renderReports() : renderSettings();
+  return '<div class="admin-shell">'
+   + '<div class="sidebar"><div class="brand"><div class="brand-mark disp">'+esc(initials((state.settings&&state.settings.gymName)||'FP'))+'</div><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">Club Management</div></div></div>'
+     + navHtml
+     + '<div class="sidebar-foot"><button class="btn btn-ghost btn-block btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' Blochează panoul</button></div>'
+   + '</div>'
+   + '<div class="main">'
+     + '<div class="mobile-nav">'+navHtml+'</div>'
+     + '<div class="topbar"><div><div class="topbar-eyebrow">Administrare sală</div><div class="topbar-title">'+meta.label+'</div></div><button class="btn btn-ghost btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' Blochează</button></div>'
+     + '<div class="content">'+body+'</div>'
+   + '</div>'
+   + (state.modal? renderModal() : '')
+   + '</div>';
+}
+
+/* ---- Reception ---- */
+function renderReception(){
+  const total=state.clients.length;
+  const validCount=state.clients.filter(c=>{ const s=subStatus(c); return s.tone==='success'||s.tone==='warning'; }).length;
+  const expSoon=state.clients.filter(c=>{ const s=subStatus(c); return s.tone==='warning' && !c.paused; });
+  expSoon.sort((a,b)=>((daysLeft(a.subscription&&a.subscription.validTo))||999)-((daysLeft(b.subscription&&b.subscription.validTo))||999));
+  const stat=(label,num,ic)=>'<div class="card stat-card"><div class="stat-top"><div class="stat-label">'+label+'</div><div class="stat-ic">'+icon(ic,'icon-sm')+'</div></div><div class="stat-num mono">'+num+'</div></div>';
+  const expCards=expSoon.slice(0,12).map(c=>{ const dl=daysLeft(c.subscription.validTo); return '<div class="exp-card'+(dl<=1?' urgent':'')+'"><div class="exp-name">'+esc(c.name)+'</div><div class="exp-meta">'+(dl===0?'Expiră azi':dl+' '+(dl===1?'zi rămasă':'zile rămase'))+' · '+fmtDate(c.subscription.validTo)+'</div></div>'; }).join('') || '<div class="empty-state small">Niciun abonament nu expiră curând.</div>';
+  const recent=state.log.slice(0,7);
+  const recentRows=recent.length? recent.map(logRowHtml).join('') : '<div class="empty-state small">Nicio scanare încă.</div>';
+  return ''
+   + '<div class="stat-grid">'+stat('Clienți înregistrați',total,'users')+stat('Abonamente valabile',validCount,'shield')+stat('Expiră în '+((state.settings&&state.settings.warnDays)||5)+' zile',expSoon.length,'bell')+'</div>'
+   + '<div class="card" style="padding:18px 20px;"><div class="section-title">Abonamente care expiră curând</div><div class="expiring-grid" style="margin-top:12px;">'+expCards+'</div></div>'
+   + '<div class="two-col">'+scanCardHtml()+'<div class="card" style="padding:18px 20px;"><div class="section-title">Ultimele scanări</div><div style="margin-top:8px;">'+recentRows+'</div></div></div>';
+}
+function scanCardHtml(){
+  const r=state.lastResult;
+  const zoneClass=!r?'':(r.result==='permis'?' ok':' bad');
+  let zoneBody;
+
+  if(state.cameraOn){ zoneBody='<video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint">Îndreaptă camera spre codul QR</div>'; }
+  else if(r){ zoneBody='<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div><div class="scan-title">'+esc(r.client?r.client.name:'Cod: '+r.code)+'</div><div class="scan-sub">'+esc(r.message)+'</div>'; }
+  else{ zoneBody='<div class="scan-ic-wrap">'+icon('qrcode','icon-lg')+'</div><div class="scan-title">Pregătit de verificare</div><div class="scan-sub">Scanează cu cititorul QR, camera, sau scrie codul.</div>'; }
+  return '<div class="card scan-box"><div class="section-title" style="margin-bottom:14px;">Verificare acces</div>'
+   + '<div class="scan-zone'+zoneClass+'">'+zoneBody+'</div>'
+   + '<div class="flex gap8" style="margin-top:14px;"><input id="scanInput" placeholder="Scanează sau scrie codul" class="mono" data-enter="verify-scan"><button class="btn btn-primary" data-action="verify-scan">'+icon('check','icon-sm')+'</button></div>'
+   + '<button class="btn btn-ghost btn-block" style="margin-top:8px;" data-action="toggle-camera-reception">'+icon('camera','icon-sm')+' '+(state.cameraOn?'Oprește camera':'Folosește camera')+'</button>'
+   + '<div class="small faint mt4">Un cititor QR USB funcționează ca o tastatură — scrie direct în câmp.</div></div>';
+}
+
+/* ---- Clients ---- */
+function renderClients(){
+  const q=(state.clientQuery||'').toLowerCase().trim();
+  let list=state.clients.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ro'));
+  if(q) list=list.filter(c=>(c.name||'').toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.code||'').toLowerCase().includes(q));
+  const rows=list.length? list.map(clientRowHtml).join('') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>Niciun client găsit.</div></div>';
+  return ''
+   + '<div class="section-head"><div class="section-title">Clienți &amp; abonamente<small>'+state.clients.length+' clienți înregistrați</small></div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' Client nou</button></div>'
+   + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="Caută după nume, telefon sau cod" value="'+esc(state.clientQuery||'')+'"></div><div style="margin-top:6px;">'+rows+'</div></div>';
+}
+function clientRowHtml(c){
+  const st=subStatus(c);
+  return '<div class="client-row" data-action="open-client-detail" data-id="'+c.id+'">'
+   + '<div class="avatar">'+esc(initials(c.name))+'</div>'
+   + '<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:13.5px;">'+esc(c.name)+'</div><div class="small faint">'+esc((c.subscription&&c.subscription.typeName)||'Fără abonament')+' · <span class="mono">'+esc(c.code)+'</span></div></div>'
+   + '<div class="small faint" style="text-align:right;">'+((c.subscription&&c.subscription.validTo)?fmtDate(c.subscription.validTo):'—')+'</div>'
+   + '<span class="pill pill-'+st.tone+'">'+esc(st.label)+'</span>'+icon('chevronRight','icon-sm')+'</div>';
+}
+function openNewClient(presetTypeId){
+  const t=presetTypeId? typeById(presetTypeId) : state.types.find(t=>t.active!==false);
+  const from=todayStr();
+  openModal('newClient', { name:'', phone:'', typeId:t?t.id:'', price:t?t.price:0, currency:t?t.currency:((state.settings&&state.settings.currency)||'MDL'),
+    validFrom:from, validTo:t?addDays(from,t.durationDays||30):addDays(from,30), paidFull:true, amountPaid:0, method:'cash', notes:'' });
+}
+function applyTypeDefaultsNew(){ const t=typeById(state.form.typeId); if(!t) return; state.form.price=t.price; state.form.currency=t.currency; state.form.validTo=addDays(state.form.validFrom||todayStr(), t.durationDays||30); }
+function modalNewClient(){
+  const f=state.form;
+  const typeOpts=state.types.filter(t=>t.active!==false).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+'</option>').join('');
+  return modalWrap('Client nou','Datele se salvează în baza de date a sălii.', ''
+   + field('Nume și prenume','text','form.name',f.name,'Ex: Popescu Ion')
+   + field('Telefon (opțional)','tel','form.phone',f.phone,'06X XXX XXX')
+   + '<label class="field">Alege abonamentul<select data-bind="form.typeId">'+(typeOpts||'<option value="">Niciun tip disponibil — adaugă unul în Abonamente</option>')+'</select></label>'
+   + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
+   + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>'
+   + '<label class="checkline"><input type="checkbox" data-bind="form.paidFull" '+(f.paidFull?'checked':'')+'> Abonament achitat integral</label>'
+   + (f.paidFull
+       ? selectField('Metodă de plată','form.method',f.method,[['cash','Numerar'],['card','Card'],['transfer','Transfer bancar']])
+       : '<div class="grid2">'+field('Sumă încasată acum','number','form.amountPaid',f.amountPaid)+selectField('Metodă de plată','form.method',f.method,[['cash','Numerar'],['card','Card'],['transfer','Transfer bancar']])+'</div>')
+   + '<label class="field">Observații (opțional)<textarea rows="2" data-bind="form.notes">'+esc(f.notes)+'</textarea></label>'
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="save-new-client">'+icon('check','icon-sm')+' Salvează și generează cod QR</button>');
+}
+async function saveNewClient(){
+  const f=state.form;
+  if(!f.name||!f.name.trim()){ state.formErr='Introdu numele clientului.'; scheduleRender(); return; }
+  if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
+  const t=typeById(f.typeId); const code=generateUniqueCode();
+  const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
+  const doc={ name:f.name.trim(), phone:(f.phone||'').trim(), code, createdAt:new Date().toISOString(), notes:f.notes||'', paused:false, lastEntryAt:null,
+    subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null,
+      validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method } };
+  try{
+    const ref=await colClients().add(doc);
+    if(paid>0){ await colPay().add({clientId:ref.id, clientName:doc.name, amount:paid, currency:f.currency, method:f.method, date:new Date().toISOString(), note:'Abonament nou'}); }
+    await logMod('Client nou înregistrat', doc.name+' · '+doc.subscription.typeName);
+    showToast('Client creat: '+code);
+    openModal('clientDetail', {id:ref.id});
+  }catch(e){ state.formErr='A apărut o eroare. Încearcă din nou.'; scheduleRender(); }
+}
+function modalClientDetail(){
+  const c=state.clients.find(x=>x.id===state.form.id);
+  if(!c) return modalWrap('Client','', '<div class="empty-state">Clientul nu a fost găsit.</div>');
+  const st=subStatus(c); const sub=c.subscription||{}; const due=(sub.totalDue||0)-(sub.totalPaid||0);
+  const myLog=state.log.filter(l=>l.clientId===c.id).slice(0,5);
+  const myPay=state.payments.filter(p=>p.clientId===c.id).slice(0,5);
+  const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
+  const infoRow=(label,value)=>'<div class="info-row"><div class="info-label">'+esc(label)+'</div><div class="info-value">'+esc(value||'—')+'</div></div>';
+  const memberCard=''
+   + '<div class="member-card">'
+     + '<div class="mc-brand">'+icon('shield','icon-sm')+' '+esc(gymName)+'</div>'
+     + '<div class="mc-eyebrow">Card de membru</div>'
+     + '<div class="mc-name">'+esc(c.name)+'</div>'
+     + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
+     + '<div class="mc-plan">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>'
+     + '<div class="mc-eyebrow">Cod membru · verificare manuală</div>'
+     + '<div class="code-chip mc-code">'+esc(c.code)+'</div>'
+     + '<div class="mc-footer">Prezintă QR-ul sau codul la fiecare vizită.</div>'
+   + '</div>'
+   + '<div class="flex" style="flex-direction:column;gap:8px;margin-top:12px;">'
+     + '<button class="btn btn-ghost btn-block" data-action="print-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' Tipărește cardul</button>'
+     + '<button class="btn btn-ghost btn-block" data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' Descarcă pentru telefon</button>'
+     + '<button class="btn btn-ghost btn-block" data-action="share-card" data-id="'+c.id+'">'+icon('send','icon-sm')+' Trimite cardul...</button>'
+     + '<div class="small faint center">Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.</div>'
+   + '</div>';
+  const leftCol=''
+   + '<div class="info-list">'
+     + infoRow('Telefon', c.phone)
+     + infoRow('Client din', c.createdAt? fmtDate((c.createdAt||'').slice(0,10)) : '')
+     + infoRow('Observații', c.notes)
+   + '</div>'
+   + '<hr class="hairline" style="margin:14px 0;">'
+   + '<div><div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Abonament curent</div>'
+     + '<div style="margin-top:8px;" class="small">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' → '+fmtDate(sub.validTo)+'<br>Achitat: '+money(sub.totalPaid,sub.currency)+' din '+money(sub.totalDue,sub.currency)+(due>0.5?(' <b style="color:var(--danger)">(rest '+money(due,sub.currency)+')</b>'):'')+'</div></div>'
+   + (myPay.length? ('<div style="margin-top:14px;"><div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Plățile clientului</div>'+myPay.map(p=>'<div class="flex justify-between small" style="margin-top:6px;"><span class="faint">'+fmtDateTime(p.date)+' · '+esc(payMethodLabel(p.method))+'</span><span class="mono">'+money(p.amount,p.currency)+'</span></div>').join('')+'</div>') : '')
+   + (myLog.length? ('<div style="margin-top:14px;"><div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Ultimele intrări</div>'+myLog.map(logRowHtml).join('')+'</div>') : '')
+   + '<div class="grid2" style="margin-top:16px;">'
+     + '<button class="btn btn-primary" data-action="open-renew" data-id="'+c.id+'">'+icon('refresh','icon-sm')+' Reînnoiește</button>'
+     + '<button class="btn btn-ghost" data-action="open-edit-client" data-id="'+c.id+'">'+icon('edit','icon-sm')+' Editează datele</button>'
+     + '<button class="btn btn-ghost" data-action="toggle-pause-client" data-id="'+c.id+'">'+icon(c.paused?'play':'pause','icon-sm')+' '+(c.paused?'Reactivează accesul':'Suspendă accesul')+'</button>'
+     + '<button class="btn btn-danger" data-action="delete-client" data-id="'+c.id+'">'+icon('trash','icon-sm')+' Șterge clientul</button>'
+   + '</div>';
+  return modalWrap(c.name, '', ''
+   + '<div class="flex items-center justify-between"><span class="pill pill-'+st.tone+'">'+esc(st.label)+'</span></div>'
+   + '<div class="detail-grid"><div>'+leftCol+'</div><div>'+memberCard+'</div></div>'
+  , {wide:true, eyebrow:'Fișă client'});
+}
+function openEditClient(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; openModal('editClient', {id, name:c.name, phone:c.phone||'', notes:c.notes||''}); }
+function modalEditClient(){
+  const f=state.form;
+  return modalWrap('Editează datele','', ''
+   + field('Nume și prenume','text','form.name',f.name)
+   + field('Telefon','tel','form.phone',f.phone)
+   + '<label class="field">Observații<textarea rows="2" data-bind="form.notes">'+esc(f.notes)+'</textarea></label>'
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="save-edit-client">'+icon('check','icon-sm')+' Salvează</button>');
+}
+async function saveEditClient(){
+  const f=state.form; if(!f.name||!f.name.trim()){ state.formErr='Numele nu poate fi gol.'; scheduleRender(); return; }
+  try{ await colClients().doc(f.id).update({name:f.name.trim(), phone:(f.phone||'').trim(), notes:f.notes||''}); await logMod('Date client actualizate', f.name); openModal('clientDetail',{id:f.id}); showToast('Date actualizate.'); }
+  catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); }
+}
+async function togglePauseClient(id){
+  const c=state.clients.find(x=>x.id===id); if(!c) return;
+  try{ await colClients().doc(id).update({paused: !c.paused}); await logMod(c.paused?'Acces reactivat':'Acces suspendat', c.name); openModal('clientDetail',{id}); }
+  catch(e){ showToast('Eroare.'); }
+}
+async function deleteClient(id){
+  const c=state.clients.find(x=>x.id===id); if(!c) return;
+  try{ await colClients().doc(id).delete(); await logMod('Client șters', c.name); closeModal(); showToast('Client șters.'); }
+  catch(e){ showToast('Eroare la ștergere.'); }
+}
+function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function buildCardCanvas(c){
+  const sub=c.subscription||{};
+  const gymName=((state.settings&&state.settings.gymName)||'Fitness Park').toUpperCase();
+  const W=560, H=1000;
+  const cv=document.createElement('canvas'); cv.width=W; cv.height=H;
+  const ctx=cv.getContext('2d');
+  if(!ctx) return null;
+  ctx.fillStyle='#12131C'; ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#C9A24B'; ctx.lineWidth=5; roundRectPath(ctx,14,14,W-28,H-28,26); ctx.stroke();
+  ctx.textAlign='center';
+  ctx.fillStyle='#C9A24B'; ctx.font='700 21px Sora, sans-serif'; ctx.fillText(gymName, W/2, 90);
+  ctx.fillStyle='#9599AC'; ctx.font='700 13px "Public Sans", sans-serif'; ctx.fillText('CARD DE MEMBRU', W/2, 116);
+  ctx.fillStyle='#FFFFFF'; ctx.font='700 30px Sora, sans-serif'; ctx.fillText(c.name, W/2, 172);
+  const qrEl=document.querySelector('.member-card [data-qr="'+(window.CSS&&CSS.escape?CSS.escape(c.code):c.code)+'"]');
+  const qrSrc = qrEl ? (qrEl.querySelector('canvas')||qrEl.querySelector('img')) : null;
+  const qrSize=240, qrX=(W-qrSize)/2, qrY=205;
+  ctx.fillStyle='#fff'; roundRectPath(ctx,qrX-14,qrY-14,qrSize+28,qrSize+28,14); ctx.fill();
+  if(qrSrc){ try{ ctx.drawImage(qrSrc, qrX, qrY, qrSize, qrSize); }catch(e){} }
+  ctx.fillStyle='#EDE2C4'; ctx.font='600 18px "Public Sans", sans-serif'; ctx.fillText(sub.typeName||'—', W/2, qrY+qrSize+55);
+  ctx.fillStyle='#B9AE8E'; ctx.font='400 14px "Public Sans", sans-serif'; ctx.fillText(fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo), W/2, qrY+qrSize+80);
+  ctx.fillStyle='#9599AC'; ctx.font='700 12px "Public Sans", sans-serif'; ctx.fillText('COD MEMBRU · VERIFICARE MANUALĂ', W/2, qrY+qrSize+120);
+  ctx.fillStyle='#C9A24B'; ctx.font='700 24px "JetBrains Mono", monospace'; ctx.fillText(c.code, W/2, qrY+qrSize+154);
+  ctx.fillStyle='#666C82'; ctx.font='400 13px "Public Sans", sans-serif'; ctx.fillText('Prezintă QR-ul sau codul la fiecare vizită.', W/2, H-40);
+  return cv;
+}
+async function saveCardPng(c, savedMsg){
+  try{ await document.fonts.ready; }catch(e){}
+  const cv=buildCardCanvas(c);
+  if(!cv){ showToast('Eroare la generarea cardului.'); return false; }
+  const blob=await new Promise(res=>cv.toBlob(res,'image/png'));
+  if(!blob){ showToast('Eroare la generarea cardului.'); return false; }
+  const ok=browserSave('card-'+c.code+'.png', blob);
+  if(ok){ showToast(savedMsg); } else { showToast('Nu am putut salva cardul.'); }
+  return ok;
+}
+function printCard(id){
+  const c=state.clients.find(x=>x.id===id); if(!c) return;
+  try{ window.print(); }catch(e){ showToast('Nu am putut deschide imprimanta.'); }
+}
+async function downloadCardForPhone(id){
+  const c=state.clients.find(x=>x.id===id); if(!c) return;
+  await saveCardPng(c, 'Cardul s-a salvat. Îl găsești în galeria telefonului.');
+}
+async function shareCard(id){
+  const c=state.clients.find(x=>x.id===id); if(!c) return;
+  try{
+    await document.fonts.ready;
+    const cv=buildCardCanvas(c);
+    const blob=cv? await new Promise(res=>cv.toBlob(res,'image/png')) : null;
+    if(blob && navigator.share){
+      const file=new File([blob], 'card-'+c.code+'.png', {type:'image/png'});
+      if(!navigator.canShare || navigator.canShare({files:[file]})){
+        await navigator.share({title:(state.settings&&state.settings.gymName)||'Fitness Park', text:'Card membru: '+c.name, files:[file]});
+        return;
+      }
+    }
+  }catch(e){ if(e && e.name==='AbortError') return; }
+  showToast('Trimiterea directă nu e susținută aici — se descarcă cardul.');
+  const c2=state.clients.find(x=>x.id===id); if(c2) await saveCardPng(c2, 'Cardul s-a descărcat.');
+}
+function openRenew(id){
+  const c=state.clients.find(x=>x.id===id); if(!c) return;
+  const sub=c.subscription||{}; const t=typeById(sub.typeId);
+  const startFrom=(sub.validTo && sub.validTo>=todayStr())? sub.validTo : todayStr();
+  openModal('renew', { id, typeId:sub.typeId||(t?t.id:''), price:t?t.price:(sub.price||0), currency:t?t.currency:(sub.currency||'MDL'),
+    validFrom:startFrom, validTo:addDays(startFrom,(t?t.durationDays:30)||30), paidFull:true, amountPaid:0, method:sub.paymentMethod||'cash' });
+}
+function applyTypeDefaultsRenew(){ const t=typeById(state.form.typeId); if(!t) return; state.form.price=t.price; state.form.currency=t.currency; state.form.validTo=addDays(state.form.validFrom||todayStr(), t.durationDays||30); }
+function modalRenew(){
+  const f=state.form; const c=state.clients.find(x=>x.id===f.id); if(!c) return modalWrap('Reînnoire','','<div class="empty-state">Clientul nu a fost găsit.</div>');
+  const typeOpts=state.types.filter(t=>t.active!==false).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+'</option>').join('');
+  return modalWrap('Reînnoiește · '+c.name,'', ''
+   + '<label class="field">Abonament<select data-bind="form.typeId">'+typeOpts+'</select></label>'
+   + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
+   + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>'
+   + '<label class="checkline"><input type="checkbox" data-bind="form.paidFull" '+(f.paidFull?'checked':'')+'> Achitat integral</label>'
+   + (f.paidFull
+       ? selectField('Metodă de plată','form.method',f.method,[['cash','Numerar'],['card','Card'],['transfer','Transfer bancar']])
+       : '<div class="grid2">'+field('Sumă încasată acum','number','form.amountPaid',f.amountPaid)+selectField('Metodă de plată','form.method',f.method,[['cash','Numerar'],['card','Card'],['transfer','Transfer bancar']])+'</div>')
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="save-renew">'+icon('check','icon-sm')+' Salvează reînnoirea</button>');
+}
+async function saveRenew(){
+  const f=state.form; const t=typeById(f.typeId); const c=state.clients.find(x=>x.id===f.id); if(!c) return;
+  const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
+  try{
+    await colClients().doc(f.id).update({ subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method }, paused:false });
+    if(paid>0){ await colPay().add({clientId:c.id, clientName:c.name, amount:paid, currency:f.currency, method:f.method, date:new Date().toISOString(), note:'Reînnoire abonament'}); }
+    await logMod('Abonament reînnoit', c.name+' · '+(t?t.name:''));
+    showToast('Abonament reînnoit.');
+    openModal('clientDetail', {id:c.id});
+  }catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); }
+}
+
+/* ---- History ---- */
+function renderHistory(){
+  const rows=state.log.length? state.log.map(logTableRow).join('') : '';
+  return '<div class="section-head"><div class="section-title">Istoricul accesului<small>Ultimele '+state.log.length+' verificări, cu rezultatul valabil la momentul scanării</small></div></div>'
+   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Client</th><th>Data și ora</th><th>Rezultat</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+   + (state.log.length? '' : '<div class="empty-state">'+icon('history','icon-lg')+'<div>Nicio scanare încă.</div></div>')+'</div>';
+}
+
+/* ---- Plans (catalog) ---- */
+function renderPlans(){
+  const cards=state.types.slice().sort((a,b)=>(a.order||0)-(b.order||0)).map(planCardHtml).join('') || '<div class="empty-state">Niciun tip de abonament încă.</div>';
+  return '<div class="section-head"><div class="section-title">Abonamentele sălii tale<small>Gestionează oferta și regulile fiecărui tip</small></div><button class="btn btn-ghost" data-action="open-new-type">'+icon('plus','icon-sm')+' Tip nou</button></div>'
+   + '<div class="plan-grid">'+cards+'</div>';
+}
+function planCardHtml(t){
+  const gold=t.tier==='gold';
+  const durLabel = (t.durationDays%30===0 && t.durationDays>=30) ? (t.durationDays/30)+' luni' : t.durationDays+' zile';
+  const hours = (t.accessFrom&&t.accessTo)? (' ('+t.accessFrom+'-'+t.accessTo+')') : '';
+  const styleAttr = t.active===false? ' style="opacity:.55;"' : '';
+  return '<div class="plan-card'+(gold?' gold':'')+'"'+styleAttr+'>'
+   + '<div class="plan-eyebrow">'+(gold?'Abonament Gold':'Abonament Fitness')+(t.active===false?' · retras':'')+'</div>'
+   + '<div class="plan-name">'+esc(t.name)+'</div>'
+   + '<div class="plan-price">'+t.price+' <span>'+esc(t.currency)+'</span></div>'
+   + '<div class="plan-meta">'+durLabel+hours+' · '+(t.entryLimit? (t.entryLimit+' intrări') : 'intrări nelimitate')+'</div>'
+   + '<div class="flex gap8" style="margin-top:6px;">'
+     + '<button class="btn '+(gold?'btn-gold':'btn-soft')+' btn-sm" style="flex:1;" data-action="open-new-client" data-type="'+t.id+'">'+icon('plus','icon-sm')+' Adaugă client</button>'
+     + '<button class="btn btn-ghost btn-sm" data-action="open-edit-type" data-id="'+t.id+'"'+(gold?' style="background:rgba(255,255,255,.1);color:#EDE2C4;border-color:rgba(255,255,255,.25);"':'')+'>'+icon('edit','icon-sm')+'</button>'
+   + '</div></div>';
+}
+function openNewType(){ openModal('editType', {id:null, name:'', price:0, currency:(state.settings&&state.settings.currency)||'MDL', durationDays:30, entryLimit:'', accessFrom:'', accessTo:'', tier:'fitness', active:true}); }
+function openEditType(id){ const t=typeById(id); if(!t) return; openModal('editType', Object.assign({}, t, {id})); }
+function modalEditType(){
+  const f=state.form;
+  return modalWrap(f.id?'Editează tipul':'Tip de abonament nou','', ''
+   + field('Denumire','text','form.name',f.name,'Ex: 1 lună - nelimitat')
+   + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
+   + '<div class="grid2">'+field('Durată (zile)','number','form.durationDays',f.durationDays)+field('Limită intrări (gol = nelimitat)','number','form.entryLimit',f.entryLimit)+'</div>'
+   + '<div class="grid2">'+field('Acces de la (opțional)','time','form.accessFrom',f.accessFrom)+field('Acces până la (opțional)','time','form.accessTo',f.accessTo)+'</div>'
+   + selectField('Nivel','form.tier',f.tier,[['fitness','Fitness'],['gold','Gold']])
+   + '<label class="checkline"><input type="checkbox" data-bind="form.active" '+(f.active!==false?'checked':'')+'> Activ (vizibil în ofertă)</label>'
+   + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+   + '<div class="grid2"><button class="btn btn-primary" data-action="save-type">'+icon('check','icon-sm')+' Salvează</button>'
+     + (f.id? ('<button class="btn btn-danger" data-action="delete-type" data-id="'+f.id+'">'+icon('trash','icon-sm')+' Șterge tipul</button>') : '<button class="btn btn-ghost" data-action="close-modal">Renunță</button>')
+   + '</div>');
+}
+async function saveType(){
+  const f=state.form;
+  if(!f.name||!f.name.trim()){ state.formErr='Introdu o denumire.'; scheduleRender(); return; }
+  const body={ name:f.name.trim(), price:Number(f.price||0), currency:f.currency||'MDL', durationDays:Number(f.durationDays||30),
+    entryLimit:(f.entryLimit===''||f.entryLimit==null)?null:Number(f.entryLimit), accessFrom:f.accessFrom||null, accessTo:f.accessTo||null,
+    tier:f.tier||'fitness', active:f.active!==false, order: (f.order!=null? f.order : state.types.length) };
+  try{
+    if(f.id){ await colTypes().doc(f.id).update(body); await logMod('Tip abonament actualizat', body.name); }
+    else{ await colTypes().add(body); await logMod('Tip abonament creat', body.name); }
+    closeModal(); showToast('Salvat.');
+  }catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); }
+}
+async function deleteType(id){
+  try{ await colTypes().doc(id).delete(); await logMod('Tip abonament șters',''); closeModal(); showToast('Tip șters.'); }
+  catch(e){ showToast('Eroare.'); }
+}
+
+/* ---- Reports ---- */
+function renderReports(){
+  const days=[]; const now=new Date();
+  for(let i=30;i>=0;i--){ const d=new Date(now); d.setDate(d.getDate()-i); days.push(d.toISOString().slice(0,10)); }
+  const counts=days.map(d=> state.log.filter(l=>l.result==='permis' && (l.timestamp||'').slice(0,10)===d).length);
+  const max=Math.max(1,...counts);
+  const totalVisits=counts.reduce((a,b)=>a+b,0);
+  const bars=counts.map(c=>'<div class="bar'+(c>0?' hi':'')+'" style="height:'+Math.max(3,Math.round(c/max*90))+'px;" title="'+c+'"></div>').join('');
+  const paySum=state.payments.reduce((s,p)=>s+Number(p.amount||0),0);
+  const payRows=state.payments.slice(0,10).map(p=>'<tr><td class="mono small">'+fmtDateTime(p.date)+'</td><td>'+esc(p.clientName)+'</td><td class="mono">'+money(p.amount,p.currency)+'</td><td><span class="pill pill-muted">'+esc(payMethodLabel(p.method))+'</span></td></tr>').join('');
+  return '<div class="section-title">Frecvență · ultimele 31 de zile</div>'
+   + '<div class="card" style="padding:18px 20px;"><div class="stat-num mono" style="font-size:22px;">'+totalVisits+' intrări</div><div class="bars" style="margin-top:14px;">'+bars+'</div></div>'
+   + '<div class="section-title">Încasări recente <span class="mono small" style="font-weight:700;">· '+money(paySum,(state.settings&&state.settings.currency))+'</span></div>'
+   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Client</th><th>Sumă</th><th>Metodă</th></tr></thead><tbody>'+payRows+'</tbody></table></div>'+(state.payments.length?'':'<div class="empty-state small">Nicio încasare încă.</div>')+'</div>'
+   + '<div class="section-title">Export &amp; copie de siguranță</div>'
+   + '<div class="card" style="padding:18px 20px;"><div class="flex gap8" style="flex-wrap:wrap;">'
+     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="clients">'+icon('export','icon-sm')+' Clienți · CSV</button>'
+     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="types">'+icon('export','icon-sm')+' Abonamente · CSV</button>'
+     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="payments">'+icon('export','icon-sm')+' Încasări · CSV</button>'
+   + '</div></div>'
+   + '<div class="section-title">Istoricul modificărilor</div>'
+   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Operație</th><th>Cine</th></tr></thead><tbody>'
+     + state.modLog.slice(0,20).map(m=>'<tr><td class="mono small">'+fmtDateTime(m.date)+'</td><td>'+esc(m.operation)+(m.details?(' · <span class="faint">'+esc(m.details)+'</span>'):'')+'</td><td class="small faint">'+esc(m.actor)+'</td></tr>').join('')+'</tbody></table></div>'+(state.modLog.length?'':'<div class="empty-state small">Niciun eveniment încă.</div>')+'</div>';
+}
+async function exportCSV(kind){
+  let rows=[], filename='';
+  if(kind==='clients'){ filename='clienti.csv'; rows=[['Nume','Telefon','Cod membru','Abonament','Valabil de la','Valabil până la','Stare']];
+    state.clients.forEach(c=>{ const st=subStatus(c); rows.push([c.name, c.phone||'', c.code, (c.subscription&&c.subscription.typeName)||'', (c.subscription&&c.subscription.validFrom)||'', (c.subscription&&c.subscription.validTo)||'', st.label]); }); }
+  else if(kind==='types'){ filename='abonamente.csv'; rows=[['Denumire','Preț','Monedă','Durată (zile)','Nivel']];
+    state.types.forEach(t=>rows.push([t.name,t.price,t.currency,t.durationDays,t.tier])); }
+  else if(kind==='payments'){ filename='incasari.csv'; rows=[['Data','Client','Sumă','Monedă','Metodă']];
+    state.payments.forEach(p=>rows.push([fmtDateTime(p.date), p.clientName, p.amount, p.currency, p.method])); }
+  const csv=rows.map(r=>r.map(v=>{ v=String(v==null?'':v); return /[",;\n]/.test(v)? ('"'+v.replace(/"/g,'""')+'"') : v; }).join(',')).join('\r\n');
+  const ok=browserSave(filename, new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'}));
+  showToast(ok? 'Fișier salvat.' : 'Exportul a eșuat.');
+}
+
+/* ---- Settings ---- */
+function draftFromSettings(s){
+  s=s||DEFAULT_SETTINGS;
+  return { gymName:s.gymName, warnDays:s.warnDays, minMinutesBetweenEntries:s.minMinutesBetweenEntries, openHour:s.openHour, closeHour:s.closeHour,
+    openDays:(s.openDays||DEFAULT_SETTINGS.openDays).slice(), closedDatesText:(s.closedDates||[]).join('\n'), newsText:s.newsText, currency:s.currency||'MDL' };
+}
+function renderSettings(){
+  if(!state.settingsDraft){ state.settingsDraft=draftFromSettings(state.settings); }
+  const d=state.settingsDraft;
+  const dayChecks=DAY_LABELS.map((lab,i)=>'<label class="checkline"><input type="checkbox" data-bind="settingsDraft.openDays.'+i+'" '+((d.openDays&&d.openDays[i])?'checked':'')+'> '+lab+'</label>').join('');
+  const team=(state.settings&&state.settings.team)||[];
+  const teamRows=team.length? team.map((m,i)=>'<div class="team-row"><div><b style="font-size:13px;">'+esc(m.email)+'</b><div class="small faint">'+(m.role==='admin'?'Administrator':'Recepție — doar scanare')+'</div></div><button class="btn btn-ghost btn-sm" data-action="remove-team" data-idx="'+i+'">Retrage acces</button></div>').join('') : '<div class="small faint">Niciun coleg adăugat încă.</div>';
+  return '<div class="section-title">Program, avertizări și scanare</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;">'
+     + '<div class="grid2">'+field('Avertizare înainte de expirare (zile)','number','settingsDraft.warnDays',d.warnDays)+field('Interval minim între intrări (minute)','number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
+     + '<div class="grid2">'+field('Deschidere','time','settingsDraft.openHour',d.openHour)+field('Închidere','time','settingsDraft.closeHour',d.closeHour)+'</div>'
+     + '<div><div class="small" style="font-weight:700;margin-bottom:8px;">Zile deschise</div><div class="flex gap8" style="flex-wrap:wrap;">'+dayChecks+'</div></div>'
+     + '<label class="field">Zile închise / sărbători (o dată pe linie, AAAA-LL-ZZ)<textarea rows="2" data-bind="settingsDraft.closedDatesText">'+esc(d.closedDatesText)+'</textarea></label>'
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-general">'+icon('check','icon-sm')+' Salvează regulile</button></div>'
+   + '<div class="section-title">Identitatea sălii</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;">'+field('Numele sălii','text','settingsDraft.gymName',d.gymName)
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-name">'+icon('check','icon-sm')+' Salvează denumirea</button></div>'
+   + '<div class="section-title">Noutăți &amp; reguli pentru clienți</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Acest text apare în contul fiecărui client, la secțiunea „Noutăți".</div>'
+     + '<label class="field"><textarea rows="6" data-bind="settingsDraft.newsText">'+esc(d.newsText)+'</textarea></label>'
+     + '<div class="news-preview">'+esc(d.newsText||'').replace(/\n/g,'<br>')+'</div>'
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-news">'+icon('check','icon-sm')+' Salvează noutățile</button></div>'
+   + '<div class="section-title">Parola administratorului</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;">'+field('Parolă curentă','password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')
+     + '<div class="grid2">'+field('Parolă nouă','password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field('Confirmă parola nouă','password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
+     + '<div class="err-text">'+esc(state.pwErr||'')+'</div>'
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' Schimbă parola</button></div>'
+   + '<div class="section-title">Echipa sălii</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Persoanele de mai jos vor putea, în versiunea publicată live, să intre cu propriul cont.</div>'
+     + field('E-mail coleg','email','teamForm.email',(state.teamForm&&state.teamForm.email)||'','coleg@exemplu.md')
+     + selectField('Rol','teamForm.role',(state.teamForm&&state.teamForm.role)||'reception',[['reception','Recepție — doar scanare'],['admin','Administrator']])
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' Adaugă acces</button>'
+     + '<hr class="hairline">'+teamRows+'</div>';
+}
+async function saveSettingsGeneral(){
+  const d=state.settingsDraft;
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, { warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) })); await logMod('Reguli program actualizate',''); showToast('Salvat.'); }
+  catch(e){ showToast('Eroare la salvare.'); }
+}
+async function saveSettingsName(){
+  const d=state.settingsDraft;
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {gymName:d.gymName||'Fitness Park'})); await logMod('Denumire sală actualizată', d.gymName); showToast('Salvat.'); }
+  catch(e){ showToast('Eroare.'); }
+}
+async function saveSettingsNews(){
+  const d=state.settingsDraft;
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {newsText:d.newsText||''})); await logMod('Noutăți pentru clienți actualizate',''); showToast('Salvat.'); }
+  catch(e){ showToast('Eroare.'); }
+}
+async function changePassword(){
+  const f=state.pwForm||{};
+  const cur=await sha256(f.current||'');
+  if(cur!==((state.settings&&state.settings.adminPasswordHash)||'')){ state.pwErr='Parola curentă este greșită.'; scheduleRender(); return; }
+  if(!f.next||f.next.length<4){ state.pwErr='Parola nouă trebuie să aibă minim 4 caractere.'; scheduleRender(); return; }
+  if(f.next!==f.confirm){ state.pwErr='Parolele nu coincid.'; scheduleRender(); return; }
+  const hash=await sha256(f.next);
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {adminPasswordHash:hash})); state.pwForm={}; state.pwErr=''; await logMod('Parolă administrator schimbată',''); showToast('Parola a fost schimbată.'); }
+  catch(e){ state.pwErr='Eroare la salvare.'; }
+  scheduleRender();
+}
+async function addTeam(){
+  const f=state.teamForm||{}; if(!f.email||!f.email.includes('@')){ showToast('Introdu un e-mail valid.'); return; }
+  const team=((state.settings&&state.settings.team)||[]).slice(); team.push({email:f.email.trim(), role:f.role||'reception'});
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', f.email); showToast('Acces adăugat.'); }
+  catch(e){ showToast('Eroare.'); }
+  scheduleRender();
+}
+async function removeTeam(idx){
+  const team=((state.settings&&state.settings.team)||[]).slice(); const rm=team.splice(idx,1);
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); await logMod('Acces echipă retras', rm[0]?rm[0].email:''); showToast('Acces retras.'); }
+  catch(e){ showToast('Eroare.'); }
+}
+
+/* ============ CLIENT PORTAL ============ */
+function renderClientPortal(){
+  const c=state.clients.find(x=>x.id===state.clientSession);
+  if(!c) return renderClientGate();
+  const st=subStatus(c); const sub=c.subscription||{};
+  const dl=sub.validTo? daysLeft(sub.validTo) : null;
+  const tone = st.tone==='success'?'success' : st.tone==='warning'?'warning' : st.tone==='danger'?'danger' : (sub.tier==='gold'?'gold':'muted');
+  const tab=state.clientTab||'sub';
+  const myLog=state.log.filter(l=>l.clientId===c.id).slice(0,20);
+  return '<div class="client-shell"><div class="client-top"><div class="client-header-row">'
+   + '<div class="brand" style="margin:0;"><div class="brand-mark disp">'+esc(initials((state.settings&&state.settings.gymName)||'FP'))+'</div><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub" style="color:var(--text-muted);">Contul meu</div></div></div>'
+   + '<button class="btn btn-ghost btn-sm" data-action="client-logout">'+icon('logOut','icon-sm')+'</button>'
+   + '</div></div>'
+   + '<div class="client-body">'
+     + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div><div class="small" style="opacity:.85;">'+esc(sub.typeName||'Fără abonament activ')+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
+       + (dl!==null? ('<div class="sub-days">'+(dl<0?0:dl)+'<span>'+(dl<0?'abonament expirat':'zile rămase')+'</span></div>') : '<div class="sub-days" style="font-size:20px;">Niciun abonament activ<span>Contactează recepția</span></div>')
+       + '<div class="sub-range"><span>De la '+fmtDate(sub.validFrom)+'</span><span>Până la '+fmtDate(sub.validTo)+'</span></div></div>'
+     + '<div class="client-tabs">'
+       + '<div class="client-tab'+(tab==='sub'?' active':'')+'" data-action="client-tab" data-tab="sub">Abonamentul meu</div>'
+       + '<div class="client-tab'+(tab==='news'?' active':'')+'" data-action="client-tab" data-tab="news">Noutăți &amp; reguli</div>'
+       + '<div class="client-tab'+(tab==='history'?' active':'')+'" data-action="client-tab" data-tab="history">Istoricul meu</div></div>'
+     + (tab==='sub'? clientTabSub(c) : tab==='news'? clientTabNews() : clientTabHistory(myLog))
+   + '</div></div>';
+}
+function clientTabSub(c){
+  const sub=c.subscription||{}; const due=(sub.totalDue||0)-(sub.totalPaid||0);
+  return '<div class="card" style="padding:20px;display:flex;flex-direction:column;gap:14px;">'
+   + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
+   + '<div class="code-chip">'+esc(c.code)+'</div>'
+   + '<div class="small muted center">Arată acest cod la recepție pentru acces.</div><hr class="hairline">'
+   + '<div class="flex justify-between small"><span class="muted">Preț abonament</span><span class="mono">'+money(sub.price,sub.currency)+'</span></div>'
+   + '<div class="flex justify-between small"><span class="muted">Achitat</span><span class="mono">'+money(sub.totalPaid,sub.currency)+'</span></div>'
+   + (due>0.5? ('<div class="flex justify-between small"><span class="muted">Rest de achitat</span><span class="mono" style="color:var(--danger);font-weight:700;">'+money(due,sub.currency)+'</span></div>') : '')
+   + (c.phone? ('<div class="flex justify-between small"><span class="muted">Telefon</span><span class="mono">'+esc(c.phone)+'</span></div>') : '')
+   + '</div>';
+}
+function clientTabNews(){
+  const text=(state.settings&&state.settings.newsText)||'';
+  return '<div class="card" style="padding:20px;"><div class="flex items-center gap8" style="margin-bottom:10px;">'+icon('news')+'<b>Noutăți &amp; reguli</b></div><div class="news-preview">'+esc(text).replace(/\n/g,'<br>')+'</div></div>';
+}
+function clientTabHistory(log){
+  return '<div class="card" style="padding:10px 16px 4px;">'+(log.length? log.map(logRowHtml).join('') : '<div class="empty-state small">Nicio intrare înregistrată încă.</div>')+'</div>';
+}
+
+/* ============ MODAL DISPATCH ============ */
+function openModal(type, seed){ state.modal={type}; state.form=seed||{}; state.formErr=''; scheduleRender(); }
+function closeModal(){ state.modal=null; state.form={}; state.formErr=''; scheduleRender(); }
+function renderModal(){
+  const t=state.modal.type;
+  if(t==='newClient') return modalNewClient();
+  if(t==='clientDetail') return modalClientDetail();
+  if(t==='editClient') return modalEditClient();
+  if(t==='renew') return modalRenew();
+  if(t==='editType') return modalEditType();
+  return '';
+}
+
+/* ============ TOP-LEVEL RENDER ============ */
+function render(){
+  const root=document.getElementById('app');
+  if(!root) return;
+  const active=document.activeElement;
+  let selKey=null, selStart=null, selEnd=null;
+  if(active && root.contains(active)){
+    const bindPath = active.getAttribute && active.getAttribute('data-bind');
+    if(bindPath) selKey='[data-bind="'+bindPath.replace(/"/g,'\\"')+'"]';
+    else if(active.id) selKey='#'+active.id;
+    if('selectionStart' in active){ selStart=active.selectionStart; selEnd=active.selectionEnd; }
+  }
+  let html='';
+  if(!state.ready){ html=renderLoading(); }
+  else if(state.screen==='landing'){ html=renderLanding(); }
+  else if(state.screen==='admin-gate'){ html=renderAdminGate(); }
+  else if(state.screen==='client-gate'){ html=renderClientGate(); }
+  else if(state.screen==='admin' && state.adminUnlocked){ html=renderAdminShell(); }
+  else if(state.screen==='client' && state.clientSession){ html=renderClientPortal(); }
+  else{ state.screen='landing'; html=renderLanding(); }
+  if(state.toast) html += '<div class="toast">'+esc(state.toast)+'</div>';
+  root.innerHTML=html;
+  bindEvents(root);
+  afterRenderHooks();
+  if(selKey){ try{ const el=root.querySelector(selKey); if(el){ el.focus(); if(selStart!=null && el.setSelectionRange){ try{ el.setSelectionRange(selStart, selEnd); }catch(e){} } } }catch(e){} }
+}
+function afterRenderHooks(){
+  document.querySelectorAll('[data-qr]').forEach(el=>{
+    const text=el.getAttribute('data-qr'); el.innerHTML='';
+    try{ new QRCode(el, {text, width:168, height:168, correctLevel:QRCode.CorrectLevel.M, colorDark:'#12131C', colorLight:'#ffffff'}); }catch(e){}
+  });
+  if(state.cameraOn && cameraStream){ const video=document.getElementById('scanVideo'); if(video && !video.srcObject) video.srcObject=cameraStream; }
+}
+
+/* ============ EVENTS ============ */
+function bindEvents(root){
+  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); });
+  root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
+  root.querySelectorAll('[data-nav]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const key=el.getAttribute('data-nav');
+      if(key==='settings' && !state.settingsDraft) state.settingsDraft=draftFromSettings(state.settings);
+      state.adminSection=key; state.modal=null; scheduleRender();
+    });
+  });
+  root.querySelectorAll('[data-bind]').forEach(el=>{
+    const path=el.getAttribute('data-bind');
+    const ev=(el.tagName==='SELECT'||el.type==='checkbox'||el.type==='date'||el.type==='time')?'change':'input';
+    el.addEventListener(ev, ()=>{
+      const val = el.type==='checkbox'? el.checked : el.value;
+      setPath(state, path, val);
+      if(path==='form.typeId'){ if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&state.modal.type==='renew') applyTypeDefaultsRenew(); }
+      scheduleRender();
+    });
+  });
+  root.querySelectorAll('[data-enter]').forEach(el=>{
+    el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); const a=el.getAttribute('data-enter'); const btn=root.querySelector('[data-action="'+a+'"]'); if(btn) btn.click(); } });
+  });
+}
+function onAction(el){
+  const a=el.getAttribute('data-action'); const id=el.getAttribute('data-id');
+  switch(a){
+    case 'go-admin': state.formErr=''; state.screen='admin-gate'; break;
+    case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); break;
+    case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); break;
+    case 'admin-login-submit': adminLoginSubmit(); return;
+    case 'admin-setup-submit': adminSetupSubmit(); return;
+    case 'client-login-submit': clientLoginSubmit(); return;
+    case 'admin-lock': state.adminUnlocked=false; state.screen='admin-gate'; state.modal=null; break;
+    case 'client-logout': state.clientSession=null; state.screen='landing'; break;
+    case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
+    case 'open-client-detail': openModal('clientDetail', {id}); return;
+    case 'open-renew': openRenew(id); return;
+    case 'open-edit-client': openEditClient(id); return;
+    case 'toggle-pause-client': togglePauseClient(id); return;
+    case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
+    case 'print-card': printCard(id); return;
+    case 'download-card': downloadCardForPhone(id); return;
+    case 'share-card': shareCard(id); return;
+    case 'close-modal': closeModal(); return;
+    case 'save-new-client': saveNewClient(); return;
+    case 'save-renew': saveRenew(); return;
+    case 'save-edit-client': saveEditClient(); return;
+    case 'open-new-type': openNewType(); return;
+    case 'open-edit-type': openEditType(id); return;
+    case 'save-type': saveType(); return;
+    case 'delete-type': if(confirm('Ștergi acest tip de abonament din catalog?')) deleteType(id); return;
+    case 'verify-scan': { const v=document.getElementById('scanInput'); verifyAccess(v?v.value:''); return; }
+    case 'toggle-camera-reception': toggleCamera('scanInput'); return;
+    case 'toggle-camera-client': toggleCamera('clientCode'); return;
+    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return;
+    case 'save-settings-general': saveSettingsGeneral(); return;
+    case 'save-settings-name': saveSettingsName(); return;
+    case 'save-settings-news': saveSettingsNews(); return;
+    case 'change-password': changePassword(); return;
+    case 'add-team': addTeam(); return;
+    case 'remove-team': removeTeam(Number(el.getAttribute('data-idx'))); return;
+    case 'client-tab': state.clientTab=el.getAttribute('data-tab'); break;
+  }
+  scheduleRender();
+}
+async function adminLoginSubmit(){
+  const v=document.getElementById('adminPass'); const val=v?v.value:'';
+  if(!val){ state.formErr='Introdu parola.'; scheduleRender(); return; }
+  const hash=await sha256(val);
+  if(hash===((state.settings&&state.settings.adminPasswordHash)||'')){ state.adminUnlocked=true; state.screen='admin'; state.formErr=''; state.adminSection='reception'; }
+  else{ state.formErr='Parolă incorectă.'; }
+  scheduleRender();
+}
+async function adminSetupSubmit(){
+  const v1=document.getElementById('setupPass1'), v2=document.getElementById('setupPass2');
+  const p1=v1?v1.value:'', p2=v2?v2.value:'';
+  if(!p1||p1.length<4){ state.formErr='Parola trebuie să aibă minim 4 caractere.'; scheduleRender(); return; }
+  if(p1!==p2){ state.formErr='Parolele nu coincid.'; scheduleRender(); return; }
+  const hash=await sha256(p1);
+  try{
+    await refSettings().set(Object.assign({}, DEFAULT_SETTINGS, state.settings||{}, {adminPasswordHash:hash}));
+    state.adminUnlocked=true; state.screen='admin'; state.formErr=''; state.adminSection='reception';
+    showToast('Panoul de administrare e gata.');
+  }catch(e){ state.formErr='Eroare la salvare. Încearcă din nou.'; }
+  scheduleRender();
+}
+function clientLoginSubmit(){
+  const v=document.getElementById('clientCode'); const code=(v?v.value:'').trim().toUpperCase();
+  if(!code){ state.formErr='Introdu codul de membru.'; scheduleRender(); return; }
+  const c=state.clients.find(x=>x.code===code);
+  if(!c){ state.formErr='Codul nu a fost găsit. Verifică-l pe cardul tău.'; scheduleRender(); return; }
+  state.clientSession=c.id; state.screen='client'; state.formErr=''; state.clientTab='sub'; stopCamera();
+  scheduleRender();
+}
+
+/* ============ CAMERA SCANNING ============ */
+async function toggleCamera(targetInputId){
+  if(state.cameraOn){ stopCamera(); scheduleRender(); return; }
+  state.cameraOn=true; state.cameraTarget=targetInputId; scheduleRender();
+  try{ cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
+  catch(e){ state.cameraOn=false; showToast('Camera nu este disponibilă aici. Folosește codul manual.'); scheduleRender(); return; }
+  setTimeout(()=>{
+    const video=document.getElementById('scanVideo');
+    if(!video){ stopCamera(); return; }
+    video.srcObject=cameraStream;
+    const canvas=document.getElementById('scanCanvas'); const ctx=canvas.getContext('2d');
+    function tick(){
+      if(!state.cameraOn) return;
+      if(video.readyState===video.HAVE_ENOUGH_DATA){
+        canvas.width=video.videoWidth||320; canvas.height=video.videoHeight||240;
+        ctx.drawImage(video,0,0,canvas.width,canvas.height);
+        const img=ctx.getImageData(0,0,canvas.width,canvas.height);
+        const res = window.jsQR ? jsQR(img.data, img.width, img.height) : null;
+        if(res && res.data){
+          const code=res.data.trim().toUpperCase();
+          const target=state.cameraTarget; stopCamera();
+          if(target==='scanInput'){ verifyAccess(code); }
+          else{
+            const c=state.clients.find(x=>x.code===code);
+            if(c){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; state.formErr=''; }
+            else{ state.formErr='Cod necunoscut.'; }
+            scheduleRender();
+          }
+          return;
+        }
+      }
+      cameraRAF=requestAnimationFrame(tick);
+    }
+    cameraRAF=requestAnimationFrame(tick);
+  }, 30);
+}
+function stopCamera(){
+  state.cameraOn=false;
+  if(cameraRAF){ cancelAnimationFrame(cameraRAF); cameraRAF=null; }
+  if(cameraStream){ cameraStream.getTracks().forEach(t=>t.stop()); cameraStream=null; }
+}
+
+/* ============ BOOT ============ */
+init();
+</script>
+</body>
+</html>
