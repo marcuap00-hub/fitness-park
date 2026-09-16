@@ -566,7 +566,6 @@ function scanCardHtml(){
   const r=state.lastResult;
   const zoneClass=!r?'':(r.result==='permis'?' ok':' bad');
   let zoneBody;
-
   if(state.cameraOn){ zoneBody='<video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint">Îndreaptă camera spre codul QR</div>'; }
   else if(r){ zoneBody='<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div><div class="scan-title">'+esc(r.client?r.client.name:'Cod: '+r.code)+'</div><div class="scan-sub">'+esc(r.message)+'</div>'; }
   else{ zoneBody='<div class="scan-ic-wrap">'+icon('qrcode','icon-lg')+'</div><div class="scan-title">Pregătit de verificare</div><div class="scan-sub">Scanează cu cititorul QR, camera, sau scrie codul.</div>'; }
