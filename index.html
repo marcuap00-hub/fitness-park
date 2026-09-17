@@ -319,8 +319,8 @@ function payMethodLabel(m){ return {cash:'Numerar',card:'Card',transfer:'Transfe
 const DAY_LABELS=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
 const DEFAULT_SETTINGS={
   gymName:'Fitness Park', adminPasswordHash:null, warnDays:5, minMinutesBetweenEntries:5,
-  openHour:'06:00', closeHour:'23:00', applyWeeklySchedule:false,
-  openDays:[true,true,true,true,true,true,true], closedDates:[],
+  openHour:'08:00', closeHour:'21:00', applyWeeklySchedule:false, saturdayDifferent:true, saturdayOpenHour:'09:00', saturdayCloseHour:'21:00',
+  openDays:[false,true,true,true,true,true,true], closedDates:[],
   newsText:'Bine ați venit la Fitness Park!\n\n- Vă rugăm să aveți un prosop propriu la antrenament.\n- Accesul se face doar cu codul personal, netransmisibil.\n- Vestiarele se eliberează cu 15 minute înainte de închidere.\n- Pentru pauza abonamentului, contactați recepția.',
   currency:'MDL', team:[]
 };
@@ -402,7 +402,7 @@ function subStatus(c){
 function toneForResult(r){
   if(r==='permis') return 'success';
   if(r==='necunoscut'||r==='neachitat'||r==='expirat') return 'danger';
-  if(r==='suspendat'||r==='orar'||r==='prea_devreme') return 'warning';
+  if(r==='suspendat'||r==='orar'||r==='orar_sala'||r==='inchis'||r==='prea_devreme') return 'warning';
   if(r==='neinceput') return 'info';
   return 'muted';
 }
@@ -411,7 +411,7 @@ function inTimeWindow(date, fromStr, toStr){
   const mins=date.getHours()*60+date.getMinutes(); const f=fh*60+fm, t=th*60+tm;
   if(f<=t) return mins>=f && mins<=t; return mins>=f || mins<=t;
 }
-function generateUniqueCode(){
+function gymScheduleFor(date, s){ s=s||DEFAULT_SETTINGS; const day=date.getDay(); const openDays=s.openDays||DEFAULT_SETTINGS.openDays; const closedToday = (openDays && openDays[day]===false) || (s.closedDates||[]).includes(todayStr()); const isSaturday = day===6; const from = (isSaturday && s.saturdayDifferent) ? (s.saturdayOpenHour||DEFAULT_SETTINGS.saturdayOpenHour) : (s.openHour||DEFAULT_SETTINGS.openHour); const to = (isSaturday && s.saturdayDifferent) ? (s.saturdayCloseHour||DEFAULT_SETTINGS.saturdayCloseHour) : (s.closeHour||DEFAULT_SETTINGS.closeHour); return {closedToday, from, to}; } function generateUniqueCode(){
   for(let i=0;i<25;i++){ const n=Math.floor(1000+Math.random()*9000); const code='GYM-'+n; if(!state.clients.some(c=>c.code===code)) return code; }
   return 'GYM-'+String(Date.now()).slice(-4);
 }
@@ -421,9 +421,9 @@ function formatGymCode(v){ v=(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(
   if(!code) return;
   const client=state.clients.find(c=>c.code===code);
   const now=new Date();
-  let result='permis', message='Acces permis';
+  const gs=gymScheduleFor(now, state.settings); let result='permis', message='Acces permis';
   if(!client){ result='necunoscut'; message='Cod QR necunoscut'; }
-  else if(client.paused){ result='suspendat'; message='Acces suspendat'; }
+  else if(client.paused){ result='suspendat'; message='Acces suspendat'; } else if(gs.closedToday){ result='inchis'; message='Sala este închisă în această zi.'; } else if(!inTimeWindow(now, gs.from, gs.to)){ result='orar_sala'; message='Sala este deschisă între '+gs.from+' și '+gs.to+'.'; }
   else{
     const sub=client.subscription||{};
     if(sub.validFrom && sub.validFrom>todayStr()){ result='neinceput'; message='Abonamentul începe pe '+fmtDate(sub.validFrom); }
@@ -910,7 +910,7 @@ async function exportCSV(kind){
 /* ---- Settings ---- */
 function draftFromSettings(s){
   s=s||DEFAULT_SETTINGS;
-  return { gymName:s.gymName, warnDays:s.warnDays, minMinutesBetweenEntries:s.minMinutesBetweenEntries, openHour:s.openHour, closeHour:s.closeHour,
+  return { gymName:s.gymName, warnDays:s.warnDays, minMinutesBetweenEntries:s.minMinutesBetweenEntries, openHour:s.openHour, closeHour:s.closeHour, saturdayDifferent: s.saturdayDifferent!==undefined? s.saturdayDifferent : DEFAULT_SETTINGS.saturdayDifferent, saturdayOpenHour:s.saturdayOpenHour||DEFAULT_SETTINGS.saturdayOpenHour, saturdayCloseHour:s.saturdayCloseHour||DEFAULT_SETTINGS.saturdayCloseHour,
     openDays:(s.openDays||DEFAULT_SETTINGS.openDays).slice(), closedDatesText:(s.closedDates||[]).join('\n'), newsText:s.newsText, currency:s.currency||'MDL' };
 }
 function renderSettings(){
@@ -922,7 +922,7 @@ function renderSettings(){
   return '<div class="section-title">Program, avertizări și scanare</div>'
    + '<div class="card settings-block" style="padding:20px 22px;">'
      + '<div class="grid2">'+field('Avertizare înainte de expirare (zile)','number','settingsDraft.warnDays',d.warnDays)+field('Interval minim între intrări (minute)','number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
-     + '<div class="grid2">'+field('Deschidere','time','settingsDraft.openHour',d.openHour)+field('Închidere','time','settingsDraft.closeHour',d.closeHour)+'</div>'
+     + '<div class="grid2">'+field('Deschidere','time','settingsDraft.openHour',d.openHour)+field('Închidere','time','settingsDraft.closeHour',d.closeHour)+'</div>' + '<label class="checkline"><input type="checkbox" data-bind="settingsDraft.saturdayDifferent" '+(d.saturdayDifferent?'checked':'')+'> Program diferit sâmbăta</label>' + (d.saturdayDifferent? ('<div class="grid2">'+field('Deschidere sâmbătă','time','settingsDraft.saturdayOpenHour',d.saturdayOpenHour)+field('Închidere sâmbătă','time','settingsDraft.saturdayCloseHour',d.saturdayCloseHour)+'</div>') : '')
      + '<div><div class="small" style="font-weight:700;margin-bottom:8px;">Zile deschise</div><div class="flex gap8" style="flex-wrap:wrap;">'+dayChecks+'</div></div>'
      + '<label class="field">Zile închise / sărbători (o dată pe linie, AAAA-LL-ZZ)<textarea rows="2" data-bind="settingsDraft.closedDatesText">'+esc(d.closedDatesText)+'</textarea></label>'
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-general">'+icon('check','icon-sm')+' Salvează regulile</button></div>'
@@ -948,7 +948,7 @@ function renderSettings(){
 }
 async function saveSettingsGeneral(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, { warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) })); await logMod('Reguli program actualizate',''); showToast('Salvat.'); }
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, { warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, saturdayDifferent:!!d.saturdayDifferent, saturdayOpenHour:d.saturdayOpenHour, saturdayCloseHour:d.saturdayCloseHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) })); await logMod('Reguli program actualizate',''); showToast('Salvat.'); }
   catch(e){ showToast('Eroare la salvare.'); }
 }
 async function saveSettingsName(){
