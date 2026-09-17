@@ -540,10 +540,10 @@ const ADMIN_NAV=[
 function renderAdminShell(){
   const sec=state.adminSection;
   const isReceptionRole = state.adminRole==='reception';
-  const navList = isReceptionRole? ADMIN_NAV.filter(n=>n.key==='reception') : ADMIN_NAV;
+  const navList = isReceptionRole? ADMIN_NAV.filter(n=>n.key==='reception') : (state.adminRole==='owner'? ADMIN_NAV : ADMIN_NAV.filter(n=>n.key!=='reports'));
   const navHtml=navList.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+n.label+'</div>').join('');
   const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
-  const body = isReceptionRole? renderReception() : (sec==='reception'?renderReception() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'?renderReports() : renderSettings());
+  const body = isReceptionRole? renderReception() : (sec==='reception'?renderReception() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings());
   return '<div class="admin-shell">'
    + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">Club Management</div></div></div>'
      + navHtml
@@ -816,7 +816,7 @@ async function saveRenew(){
 /* ---- History ---- */
 function renderHistory(){
   const rows=state.log.length? state.log.map(logTableRow).join('') : '';
-  return '<div class="section-head"><div class="section-title">Istoricul accesului<small>Ultimele '+state.log.length+' verificări, cu rezultatul valabil la momentul scanării</small></div></div>'
+  return '<div class="section-head"><div class="section-title">Istoricul accesului<small>Ultimele '+state.log.length+' verificări, cu rezultatul valabil la momentul scanării</small></div>'+(state.adminRole==='owner'&&state.log.length?('<button class="btn btn-danger btn-sm" data-action="clear-accesslog">'+icon('trash','icon-sm')+' Șterge istoricul</button>'):'')+'</div>'
    + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Client</th><th>Data și ora</th><th>Rezultat</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
    + (state.log.length? '' : '<div class="empty-state">'+icon('history','icon-lg')+'<div>Nicio scanare încă.</div></div>')+'</div>';
 }
@@ -875,6 +875,10 @@ async function deleteType(id){
   catch(e){ showToast('Eroare.'); }
 }
 
+async function clearCollection(colRef){ const snap=await colRef.get(); const docs=snap.docs; for(let i=0;i<docs.length;i+=400){ const batch=db.batch(); docs.slice(i,i+400).forEach(d=>batch.delete(d.ref)); await batch.commit(); } return docs.length; }
+async function clearPayments(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colPay()); await logMod('Istoric încasări șters', n+' înregistrări'); showToast('Istoricul încasărilor a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
+async function clearModLog(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colMod()); await logMod('Istoric modificări șters', n+' înregistrări'); showToast('Istoricul modificărilor a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
+async function clearAccessLog(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colLog()); await logMod('Istoric acces șters', n+' înregistrări'); showToast('Istoricul accesului a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
 /* ---- Reports ---- */
 function renderReports(){
   const days=[]; const now=new Date();
@@ -887,7 +891,7 @@ function renderReports(){
   const payRows=state.payments.slice(0,10).map(p=>'<tr><td class="mono small">'+fmtDateTime(p.date)+'</td><td>'+esc(p.clientName)+'</td><td class="mono">'+money(p.amount,p.currency)+'</td><td><span class="pill pill-muted">'+esc(payMethodLabel(p.method))+'</span></td></tr>').join('');
   return '<div class="section-title">Frecvență · ultimele 31 de zile</div>'
    + '<div class="card" style="padding:18px 20px;"><div class="stat-num mono" style="font-size:22px;">'+totalVisits+' intrări</div><div class="bars" style="margin-top:14px;">'+bars+'</div></div>'
-   + '<div class="section-title">Încasări recente <span class="mono small" style="font-weight:700;">· '+money(paySum,(state.settings&&state.settings.currency))+'</span></div>'
+   + '<div class="section-head"><div class="section-title">Încasări recente <span class="mono small" style="font-weight:700;">· '+money(paySum,(state.settings&&state.settings.currency))+'</span></div>'+(state.payments.length?('<button class="btn btn-danger btn-sm" data-action="clear-payments">'+icon('trash','icon-sm')+' Șterge istoricul</button>'):'')+'</div>'
    + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Client</th><th>Sumă</th><th>Metodă</th></tr></thead><tbody>'+payRows+'</tbody></table></div>'+(state.payments.length?'':'<div class="empty-state small">Nicio încasare încă.</div>')+'</div>'
    + '<div class="section-title">Export &amp; copie de siguranță</div>'
    + '<div class="card" style="padding:18px 20px;"><div class="flex gap8" style="flex-wrap:wrap;">'
@@ -895,7 +899,7 @@ function renderReports(){
      + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="types">'+icon('export','icon-sm')+' Abonamente · CSV</button>'
      + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="payments">'+icon('export','icon-sm')+' Încasări · CSV</button>'
    + '</div></div>'
-   + '<div class="section-title">Istoricul modificărilor</div>'
+   + '<div class="section-head"><div class="section-title">Istoricul modificărilor</div>'+(state.modLog.length?('<button class="btn btn-danger btn-sm" data-action="clear-modlog">'+icon('trash','icon-sm')+' Șterge istoricul</button>'):'')+'</div>'
    + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Operație</th><th>Cine</th></tr></thead><tbody>'
      + state.modLog.slice(0,20).map(m=>'<tr><td class="mono small">'+fmtDateTime(m.date)+'</td><td>'+esc(m.operation)+(m.details?(' · <span class="faint">'+esc(m.details)+'</span>'):'')+'</td><td class="small faint">'+esc(m.actor)+'</td></tr>').join('')+'</tbody></table></div>'+(state.modLog.length?'':'<div class="empty-state small">Niciun eveniment încă.</div>')+'</div>';
 }
@@ -1114,7 +1118,7 @@ function bindEvents(root){
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const key=el.getAttribute('data-nav');
-      if(state.adminRole==='reception' && key!=='reception') return;
+      if(state.adminRole==='reception' && key!=='reception') return; if(key==='reports' && state.adminRole!=='owner') return;
       if(key==='settings' && !state.settingsDraft) state.settingsDraft=draftFromSettings(state.settings);
       state.adminSection=key; state.modal=null; scheduleRender();
     });
@@ -1165,7 +1169,7 @@ function onAction(el){
     case 'verify-scan': { const v=document.getElementById('scanInput'); verifyAccess(v?v.value:''); return; }
     case 'toggle-camera-reception': toggleCamera('scanInput'); return;
     case 'toggle-camera-client': toggleCamera('clientCode'); return;
-    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return;
+    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': if(confirm('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.')) clearPayments(); return; case 'clear-modlog': if(confirm('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.')) clearModLog(); return; case 'clear-accesslog': if(confirm('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.')) clearAccessLog(); return;
     case 'save-settings-general': saveSettingsGeneral(); return;
     case 'save-settings-name': saveSettingsName(); return;
     case 'save-settings-news': saveSettingsNews(); return;
