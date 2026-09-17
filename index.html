@@ -486,9 +486,9 @@ function renderLanding(){
    + brandBlock(gymName)
    + '<div class="gate-title">Bun venit.</div>'
    + '<div class="gate-desc">Alege cum vrei să continui.</div>'
-   + choiceBtn('go-admin','shield','Recepție &amp; Administrare','Acces cu parolă — gestionezi clienți, abonamente și acces.')
    + choiceBtn('go-client','qrcode','Sunt client','Introdu codul tău de membru ca să-ți vezi abonamentul.')
    + '<div class="small faint center" style="margin-top:14px;">'+esc(gymName)+' · Club Management</div>'
+   + '<button class="back-link" data-action="go-admin" style="width:100%;justify-content:center;margin:18px 0 0;">'+icon('shield','icon-sm')+' Recepție &amp; Administrare</button>'
    + '</div></div>';
 }
 function renderAdminGate(){
