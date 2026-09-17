@@ -132,11 +132,13 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .topbar-title{font-size:21px;font-weight:800;font-family:var(--font-display);}
 .content{padding:24px 28px 60px;max-width:1180px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px;}
 .mobile-nav{display:none;}
+.mobile-nav-backdrop{display:none;}
 .nav-toggle{display:none;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;width:36px;height:36px;align-items:center;justify-content:center;cursor:pointer;color:var(--text);flex:none;}
 @media(max-width:880px){
   .sidebar{display:none;}
   .nav-toggle{display:flex;}
-  .mobile-nav{display:flex;flex-direction:column;gap:2px;padding:10px;background:var(--sidebar-bg);border-bottom:1px solid var(--border);}
+  .mobile-nav-backdrop{display:block;position:fixed;inset:0;background:rgba(10,11,20,.35);z-index:34;}
+  .mobile-nav{display:flex;flex-direction:column;gap:2px;padding:10px;background:var(--sidebar-bg);border:1px solid var(--border);border-radius:16px;position:fixed;left:10px;right:10px;top:64px;max-height:75vh;overflow-y:auto;box-shadow:var(--shadow-lg);z-index:35;}
   .mobile-nav .nav-item{color:var(--sidebar-text);padding:12px 14px;}
   .mobile-nav .nav-item.active{background:var(--sidebar-bg-2);color:var(--accent);}
   .topbar{padding:14px 16px;}
@@ -465,7 +467,7 @@ function selectField(label,path,value,options){ const opts=options.map(o=>{ cons
 function modalWrap(title, subtitle, body, opts){
   opts = opts || {};
   const eyebrowHtml = opts.eyebrow ? '<div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">'+esc(opts.eyebrow)+'</div>' : '';
-  return '<div class="overlay" data-action="close-modal"><div class="modal'+(opts.wide?' modal-wide':'')+'">'
+  return '<div class="overlay"><div class="modal'+(opts.wide?' modal-wide':'')+'">'
    + '<div class="modal-head"><div>'+eyebrowHtml+'<div class="gate-title" style="font-size:19px;margin:0;">'+esc(title)+'</div>'+(subtitle?'<div class="small faint mt4">'+esc(subtitle)+'</div>':'')+'</div><button class="modal-close" data-action="close-modal">'+icon('x','icon-sm')+'</button></div>'
    + body + '</div></div>';
 }
@@ -553,7 +555,7 @@ function renderAdminShell(){
    + '</div>'
    + '<div class="main">'
      + '<div class="topbar"><div class="flex items-center gap8"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div><div class="topbar-eyebrow">Administrare sală</div><div class="topbar-title">'+meta.label+'</div></div></div><button class="btn btn-ghost btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' Blochează</button></div>'
-     + (state.mobileNavOpen? ('<div class="mobile-nav">'+navHtml+'</div>') : '')
+     + (state.mobileNavOpen? ('<div class="mobile-nav-backdrop"></div><div class="mobile-nav">'+navHtml+'</div>') : '')
      + '<div class="content">'+body+'</div>'
    + '</div>'
    + (state.modal? renderModal() : '')
@@ -1123,6 +1125,7 @@ function afterRenderHooks(){
 function bindEvents(root){
   root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
+  root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const key=el.getAttribute('data-nav');
