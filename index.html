@@ -592,12 +592,16 @@ function scanCardHtml(){
 /* ---- Clients ---- */
 function renderClients(){
   const q=(state.clientQuery||'').toLowerCase().trim();
-  let list=state.clients.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ro'));
+  const sortBy=state.clientSort||'name'; const sortDir=state.clientSortDir||'asc'; const dirMul=sortDir==='desc'?-1:1;
+  let list=state.clients.slice();
   if(q) list=list.filter(c=>(c.name||'').toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.code||'').toLowerCase().includes(q));
+  list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
   const rows=list.length? list.map(clientRowHtml).join('') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>Niciun client găsit.</div></div>';
   return ''
    + '<div class="section-head"><div class="section-title">Clienți &amp; abonamente<small>'+state.clients.length+' clienți înregistrați</small></div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' Client nou</button></div>'
-   + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="Caută după nume, telefon sau cod" value="'+esc(state.clientQuery||'')+'"></div><div style="margin-top:6px;">'+rows+'</div></div>';
+   + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="Caută după nume, telefon sau cod" value="'+esc(state.clientQuery||'')+'"></div>'
+   + '<div class="grid2" style="margin-top:10px;">'+selectField('Sortează după','clientSort',sortBy,[['name','Nume (A-Z)'],['created','Data creării abonamentului'],['expiry','Data expirării']])+selectField('Ordine','clientSortDir',sortDir,[['asc','Crescător'],['desc','Descrescător']])+'</div>'
+   + '<div style="margin-top:6px;">'+rows+'</div></div>';
 }
 function clientRowHtml(c){
   const st=subStatus(c);
