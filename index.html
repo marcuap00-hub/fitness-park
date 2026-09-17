@@ -363,7 +363,7 @@ const colBuyReq=()=>db.collection('buyRequests');
 let rafPending=false;
 function scheduleRender(){ if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; render(); }); }
 function showToast(msg){ state.toast=msg; scheduleRender(); clearTimeout(showToast._t); showToast._t=setTimeout(()=>{ state.toast=null; scheduleRender(); },2600); }
-async function logMod(operation, details){ try{ await colMod().add({date:new Date().toISOString(), operation, actor:'Administrator', details:details||''}); }catch(e){} }
+async function logMod(operation, details){ try{ await colMod().add({date:new Date().toISOString(), operation, actor:(firebase.auth().currentUser&&firebase.auth().currentUser.email)||'Administrator', details:details||''}); }catch(e){} }
 
 /* ============ INIT & SUBSCRIPTIONS ============ */
 async function init(){
@@ -550,6 +550,7 @@ function renderBuyGate(){
    + field('Nume și prenume','text','buyForm.name',f.name,'Ex: Popescu Ion')
    + field('Telefon','tel','buyForm.phone',f.phone,'06X XXX XXX')
    + '<label class="field">Abonament dorit<select data-bind="buyForm.typeId">'+(typeOpts||'<option value="">Niciun abonament disponibil momentan</option>')+'</select></label>'
+   + '<label class="checkline"><input type="checkbox" data-bind="buyForm.wantsTrainer" '+(f.wantsTrainer?'checked':'')+'> Vreau și un antrenor personal</label>'
    + '<label class="field">Observații (opțional)<textarea rows="2" data-bind="buyForm.note">'+esc(f.note||'')+'</textarea></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
    + '<button class="btn btn-primary btn-block" data-action="submit-buy-request">'+icon('send','icon-sm')+' Trimite cererea</button>'
@@ -561,7 +562,7 @@ async function submitBuyRequest(){
   if(!f.phone||!f.phone.trim()){ state.formErr='Introdu numărul de telefon.'; scheduleRender(); return; }
   if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
   const t=typeById(f.typeId);
-  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; scheduleRender(); }
+  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; scheduleRender(); }
   catch(e){ state.formErr='Eroare la trimiterea cererii. Încearcă din nou.'; scheduleRender(); }
 }
 function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint mt4">Îndreaptă camera spre codul QR.</div></div>'; }
@@ -634,7 +635,7 @@ function renderClients(){
   list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
   const rows=list.length? list.map(clientRowHtml).join('') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>Niciun client găsit.</div></div>';
   const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending');
-  const buyPanel=pendingBuys.length? ('<div class="card" style="padding:14px 18px;background:var(--info-bg);border-color:var(--info);margin-bottom:14px;"><div class="small" style="font-weight:700;color:var(--info);margin-bottom:8px;">Cereri de cumpărare abonament ('+pendingBuys.length+')</div>'+pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+'</span><span class="flex gap8"><button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">Creează client</button><button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">Respinge</button></span></div>').join('')+'</div>') : '';
+  const buyPanel=pendingBuys.length? ('<div class="card" style="padding:14px 18px;background:var(--info-bg);border-color:var(--info);margin-bottom:14px;"><div class="small" style="font-weight:700;color:var(--info);margin-bottom:8px;">Cereri de cumpărare abonament ('+pendingBuys.length+')</div>'+pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ antrenor':'')+'</span><span class="flex gap8"><button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">Creează client</button><button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">Respinge</button></span></div>').join('')+'</div>') : '';
   return buyPanel
    + '<div class="section-head"><div class="section-title">Clienți &amp; abonamente<small>'+state.clients.length+' clienți înregistrați</small></div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' Client nou</button></div>'
    + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="Caută după nume, telefon sau cod" value="'+esc(state.clientQuery||'')+'"></div>'
@@ -663,7 +664,7 @@ function modalNewClient(){
   const typeOpts=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='gold')).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+(t.tier==='gold'?' 🔒':'')+'</option>').join('');
   return modalWrap('Client nou','Datele se salvează în baza de date a sălii.', ''
    + field('Nume și prenume','text','form.name',f.name,'Ex: Popescu Ion')
-   + field('Telefon (opțional)','tel','form.phone',f.phone,'06X XXX XXX')
+   + field('Telefon','tel','form.phone',f.phone,'06X XXX XXX')
    + '<label class="field">Alege abonamentul<select data-bind="form.typeId">'+(typeOpts||'<option value="">Niciun tip disponibil — adaugă unul în Abonamente</option>')+'</select></label>'
    + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
    + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>'
@@ -678,6 +679,7 @@ function modalNewClient(){
 async function saveNewClient(){
   const f=state.form;
   if(!f.name||!f.name.trim()){ state.formErr='Introdu numele clientului.'; scheduleRender(); return; }
+  if(!f.phone||!f.phone.trim()){ state.formErr='Introdu numărul de telefon.'; scheduleRender(); return; }
   if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
   const t=typeById(f.typeId); const code=generateUniqueCode();
   const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
@@ -752,6 +754,7 @@ function modalEditClient(){
 }
 async function saveEditClient(){
   const f=state.form; if(!f.name||!f.name.trim()){ state.formErr='Numele nu poate fi gol.'; scheduleRender(); return; }
+  if(!f.phone||!f.phone.trim()){ state.formErr='Introdu numărul de telefon.'; scheduleRender(); return; }
   try{ await colClients().doc(f.id).update({name:f.name.trim(), phone:(f.phone||'').trim(), notes:f.notes||''}); await logMod('Date client actualizate', f.name); openModal('clientDetail',{id:f.id}); showToast('Date actualizate.'); }
   catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); }
 }
@@ -765,6 +768,7 @@ async function deleteClient(id){
   try{ await colClients().doc(id).delete(); await logMod('Client șters', c.name); closeModal(); showToast('Client șters.'); }
   catch(e){ showToast('Eroare la ștergere.'); }
 }
+async function requestTrainer(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Trimiți o cerere pentru un antrenor personal către recepție?')) return; try{ await logMod('Cerere antrenor personal', c.name); showToast('Cerere trimisă. Te contactăm în curând.'); }catch(e){ showToast('Eroare la trimiterea cererii.'); } }
 async function requestNewCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Trimiți o cerere de card nou către recepție? Codul tău actual rămâne valabil până când cererea e aprobată.')) return; try{ await colClients().doc(id).update({cardRequestPending:true, cardRequestAt:new Date().toISOString()}); showToast('Cerere trimisă. Așteaptă aprobarea recepției.'); } catch(e){ showToast('Eroare la trimiterea cererii.'); } }
 async function approveCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Aprobi cererea și generezi un card nou? Codul vechi ('+c.code+') nu va mai funcționa după ce salvezi.')) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode, cardRequestPending:false}); await logMod('Card înlocuit (cerere aprobată)', c.name+' · cod nou '+newCode); openModal('clientDetail',{id}); showToast('Card nou generat: '+newCode); } catch(e){ showToast('Eroare la înlocuirea cardului.'); } }
 async function rejectCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ await colClients().doc(id).update({cardRequestPending:false}); await logMod('Cerere card nou respinsă', c.name); openModal('clientDetail',{id}); showToast('Cerere respinsă.'); } catch(e){ showToast('Eroare.'); } }
@@ -1108,6 +1112,7 @@ function clientTabSub(c){
    + '<div class="code-chip">'+esc(c.code)+'</div>'
    + '<div class="small muted center">Arată acest cod la recepție pentru acces.</div>'
    + (c.cardRequestPending? '<div class="small center" style="color:var(--warning);font-weight:600;">Cerere trimisă — se așteaptă aprobarea recepției.</div>' : '<button class="btn btn-ghost btn-sm btn-block" data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' Am pierdut cardul — solicită unul nou</button>')
+   + '<button class="btn btn-ghost btn-sm btn-block" data-action="request-trainer" data-id="'+c.id+'">'+icon('users','icon-sm')+' Solicită un antrenor personal</button>'
    + '<hr class="hairline">'
    + '<div class="flex justify-between small"><span class="muted">Preț abonament</span><span class="mono">'+money(sub.price,sub.currency)+'</span></div>'
    + '<div class="flex justify-between small"><span class="muted">Achitat</span><span class="mono">'+money(sub.totalPaid,sub.currency)+'</span></div>'
@@ -1217,7 +1222,7 @@ function onAction(el){
     case 'toggle-pause-client': togglePauseClient(id); return;
     case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
-    case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return;
+    case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return;
     case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false)||{}).id||''}; state.screen='buy-gate'; break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
     case 'download-card': downloadCardForPhone(id); return;
     case 'share-card': shareCard(id); return;
