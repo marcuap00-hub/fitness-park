@@ -415,7 +415,7 @@ function generateUniqueCode(){
   for(let i=0;i<25;i++){ const n=Math.floor(1000+Math.random()*9000); const code='GYM-'+n; if(!state.clients.some(c=>c.code===code)) return code; }
   return 'GYM-'+String(Date.now()).slice(-4);
 }
-async function verifyAccess(rawCode){
+function formatGymCode(v){ v=(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(v.slice(0,3)==='GYM') return 'GYM-'+v.slice(3); return v; } async function verifyAccess(rawCode){
   if(!db) return;
   const code=(rawCode||'').trim().toUpperCase();
   if(!code) return;
@@ -516,7 +516,7 @@ function renderClientGate(){
   return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
    + '<div class="gate-title">Contul tău</div>'
    + '<div class="gate-desc">Introdu codul tău de membru (de pe cardul QR) ca să-ți vezi abonamentul.</div>'
-   + '<label class="field">Cod membru<input id="clientCode" class="mono" style="text-transform:uppercase;letter-spacing:.04em;" placeholder="GYM-0000" data-enter="client-login-submit"></label>'
+   + '<label class="field">Cod membru<input id="clientCode" data-gymcode class="mono" style="text-transform:uppercase;letter-spacing:.04em;" placeholder="GYM-0000" data-enter="client-login-submit"></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
    + '<button class="btn btn-primary btn-block" data-action="client-login-submit">'+icon('check','icon-sm')+' Vezi abonamentul meu</button>'
    + '<button class="btn btn-ghost btn-block mt4" data-action="toggle-camera-client">'+icon('camera','icon-sm')+' '+(state.cameraOn?'Oprește camera':'Scanează cardul cu camera')+'</button>'
@@ -577,7 +577,7 @@ function scanCardHtml(){
   else{ zoneBody='<div class="scan-ic-wrap">'+icon('qrcode','icon-lg')+'</div><div class="scan-title">Pregătit de verificare</div><div class="scan-sub">Scanează cu cititorul QR, camera, sau scrie codul.</div>'; }
   return '<div class="card scan-box"><div class="section-title" style="margin-bottom:14px;">Verificare acces</div>'
    + '<div class="scan-zone'+zoneClass+'">'+zoneBody+'</div>'
-   + '<div class="flex gap8" style="margin-top:14px;"><input id="scanInput" placeholder="Scanează sau scrie codul" class="mono" data-enter="verify-scan"><button class="btn btn-primary" data-action="verify-scan">'+icon('check','icon-sm')+'</button></div>'
+   + '<div class="flex gap8" style="margin-top:14px;"><input id="scanInput" data-gymcode placeholder="Scanează sau scrie codul" class="mono" data-enter="verify-scan"><button class="btn btn-primary" data-action="verify-scan">'+icon('check','icon-sm')+'</button></div>'
    + '<button class="btn btn-ghost btn-block" style="margin-top:8px;" data-action="toggle-camera-reception">'+icon('camera','icon-sm')+' '+(state.cameraOn?'Oprește camera':'Folosește camera')+'</button>'
    + '<div class="small faint mt4">Un cititor QR USB funcționează ca o tastatură — scrie direct în câmp.</div></div>';
 }
@@ -713,7 +713,7 @@ async function deleteClient(id){
   try{ await colClients().doc(id).delete(); await logMod('Client șters', c.name); closeModal(); showToast('Client șters.'); }
   catch(e){ showToast('Eroare la ștergere.'); }
 }
-async function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Sigur înlocuiești cardul acestui client? Codul vechi ('+c.code+') nu va mai funcționa după ce salvezi.')) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode); openModal('clientDetail',{id}); showToast('Card nou generat: '+newCode); } catch(e){ showToast('Eroare la înlocuirea cardului.'); } } function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+async function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Sigur înlocuiești cardul acestui client? Codul vechi ('+c.code+') nu va mai funcționa după ce salvezi.')) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode); openModal('clientDetail',{id}); showToast('Card nou generat: '+newCode); } catch(e){ showToast('Eroare la înlocuirea cardului.'); } } function readImageResized(file, maxSize, quality){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=()=>reject(new Error('read-error')); reader.onload=()=>{ const img=new Image(); img.onerror=()=>reject(new Error('image-error')); img.onload=()=>{ let w=img.width, h=img.height; const scale=Math.min(1, maxSize/Math.max(w,h)); w=Math.max(1,Math.round(w*scale)); h=Math.max(1,Math.round(h*scale)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const ctx=cv.getContext('2d'); if(!ctx){ reject(new Error('no-ctx')); return; } ctx.drawImage(img,0,0,w,h); resolve(cv.toDataURL('image/jpeg', quality)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); } async function uploadClientPhoto(id, file){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ const dataUri=await readImageResized(file, 320, 0.62); await colClients().doc(id).update({photoDataUri:dataUri}); await logMod('Fotografie client actualizată', c.name); openModal('clientDetail',{id}); showToast('Fotografia a fost salvată.'); }catch(e){ showToast('Eroare la încărcarea fotografiei.'); } } function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function buildCardCanvas(c){
   const sub=c.subscription||{};
   const gymName=((state.settings&&state.settings.gymName)||'Fitness Park').toUpperCase();
@@ -1078,7 +1078,7 @@ function afterRenderHooks(){
 
 /* ============ EVENTS ============ */
 function bindEvents(root){
-  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); });
+  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
