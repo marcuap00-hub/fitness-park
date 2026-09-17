@@ -201,17 +201,21 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .info-row .info-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-faint);margin-bottom:2px;}
 .info-row .info-value{font-size:14px;}
 .member-card{border:1.5px solid var(--gold);border-radius:var(--radius-l);padding:16px;background:var(--surface-2);display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
+.print-card{display:none;}
 @media print{
   body *{visibility:hidden;}
-  .member-card,.member-card *{visibility:visible;}
-  .member-card{position:fixed;top:40px;left:50%;transform:translateX(-50%);width:280px;}
+  .print-card,.print-card *{visibility:visible;}
+  .print-card{display:flex;position:fixed;top:1cm;left:50%;transform:translateX(-50%);width:9cm;height:5cm;box-sizing:border-box;border:1.5px solid var(--gold);border-radius:4mm;background:#fff;padding:4mm;gap:4mm;align-items:center;}
+  .print-card .pc-left{flex:none;width:28mm;height:28mm;display:flex;align-items:center;justify-content:center;}
+  .print-card .qr-wrap{padding:0;background:#fff;width:100%;height:100%;}
+  .print-card .qr-wrap canvas,.print-card .qr-wrap img{width:26mm;height:26mm;}
+  .print-card .pc-right{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:1.5mm;}
+  .print-card .mc-brand{font-size:9px;}
+  .print-card .pc-name{font-family:var(--font-display);font-weight:800;font-size:15px;color:#171A24;}
+  .print-card .pc-plan{font-size:10.5px;color:#444;line-height:1.4;}
+  .print-card .pc-code{font-size:14px;padding:1.5mm 3mm;align-self:flex-start;}
 }
-.member-card .qr-wrap{padding:10px;}
-.member-card .mc-brand{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);}
-.member-card .mc-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;}
-.member-card .mc-name{font-family:var(--font-display);font-weight:700;font-size:15px;}
-.member-card .mc-plan{font-size:12px;color:var(--text-muted);line-height:1.5;}
-.member-card .mc-code{color:var(--gold);border-color:var(--gold);}
+.member-card .qr-wrap{padding:10px;} .member-card .mc-brand{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);} .member-card .mc-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;} .member-card .mc-name{font-family:var(--font-display);font-weight:700;font-size:15px;} .member-card .mc-plan{font-size:12px;color:var(--text-muted);line-height:1.5;} .member-card .mc-code{color:var(--gold);border-color:var(--gold);}
 .member-card .mc-footer{font-size:10.5px;color:var(--text-faint);margin-top:4px;}
 .bars{display:flex;align-items:flex-end;gap:3px;height:90px;}
 .bar{flex:1;background:var(--accent-soft);border-radius:3px 3px 0 0;min-height:2px;position:relative;}
@@ -656,7 +660,7 @@ function modalClientDetail(){
      + '<div class="code-chip mc-code">'+esc(c.code)+'</div>'
      + '<div class="mc-footer">Prezintă QR-ul sau codul la fiecare vizită.</div>'
    + '</div>'
-   + '<div class="flex" style="flex-direction:column;gap:8px;margin-top:12px;">'
+   + '<div class="print-card">' + '<div class="pc-left"><div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div></div>' + '<div class="pc-right">' + '<div class="mc-brand">'+icon('shield','icon-sm')+' '+esc(gymName)+'</div>' + '<div class="pc-name">'+esc(c.name)+'</div>' + '<div class="pc-plan">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>' + '<div class="code-chip pc-code">'+esc(c.code)+'</div>' + '</div>' + '</div>' + '<div class="flex" style="flex-direction:column;gap:8px;margin-top:12px;">'
      + '<button class="btn btn-ghost btn-block" data-action="print-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' Tipărește cardul</button>'
      + '<button class="btn btn-ghost btn-block" data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' Descarcă pentru telefon</button>'
      + '<button class="btn btn-ghost btn-block" data-action="share-card" data-id="'+c.id+'">'+icon('send','icon-sm')+' Trimite cardul...</button>'
