@@ -1213,7 +1213,7 @@ function onAction(el){
     case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return;
-    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={}; state.screen='buy-gate'; break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
+    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false)||{}).id||''}; state.screen='buy-gate'; break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
     case 'download-card': downloadCardForPhone(id); return;
     case 'share-card': shareCard(id); return;
     case 'close-modal': closeModal(); return;
