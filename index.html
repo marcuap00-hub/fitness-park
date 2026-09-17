@@ -132,11 +132,12 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .topbar-title{font-size:21px;font-weight:800;font-family:var(--font-display);}
 .content{padding:24px 28px 60px;max-width:1180px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px;}
 .mobile-nav{display:none;}
+.nav-toggle{display:none;background:var(--surface-2);border:1px solid var(--border);border-radius:9px;width:36px;height:36px;align-items:center;justify-content:center;cursor:pointer;color:var(--text);flex:none;}
 @media(max-width:880px){
   .sidebar{display:none;}
-  .mobile-nav{display:flex;gap:4px;overflow-x:auto;padding:8px 10px;background:var(--sidebar-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:30;scroll-snap-type:x proximity;-webkit-mask-image:linear-gradient(to right,transparent,black 14px,black calc(100% - 28px),transparent);mask-image:linear-gradient(to right,transparent,black 14px,black calc(100% - 28px),transparent);}
-  .mobile-nav::-webkit-scrollbar{display:none;}
-  .mobile-nav .nav-item{flex:none;color:var(--sidebar-text);white-space:nowrap;font-size:12.5px;padding:8px 10px;scroll-snap-align:start;}
+  .nav-toggle{display:flex;}
+  .mobile-nav{display:flex;flex-direction:column;gap:2px;padding:10px;background:var(--sidebar-bg);border-bottom:1px solid var(--border);}
+  .mobile-nav .nav-item{color:var(--sidebar-text);padding:12px 14px;}
   .mobile-nav .nav-item.active{background:var(--sidebar-bg-2);color:var(--accent);}
   .topbar{padding:14px 16px;}
   .content{padding:16px 14px 50px;}
@@ -274,6 +275,7 @@ const LOGO_DATA_URI='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAA
 /* ============ ICONS & UTILS ============ */
 const ICONS = {
   home:'<path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/>',
+  menu:'<path d="M4 6h16M4 12h16M4 18h16"/>',
   users:'<circle cx="9" cy="8" r="3.2"/><path d="M2.5 20c.6-3.6 3.2-6 6.5-6s5.9 2.4 6.5 6"/><circle cx="17" cy="8.5" r="2.6"/><path d="M15.5 14.3c2.6.3 4.6 2.4 5 5.7"/>',
   history:'<path d="M3 11a9 9 0 1 1 2.6 6.3"/><path d="M3 5v6h6"/><path d="M12 7v5l3.5 2"/>',
   tag:'<path d="M20 11.6 12.4 4H5a1 1 0 0 0-1 1v7.4L11.6 20a1.4 1.4 0 0 0 2 0l6.4-6.4a1.4 1.4 0 0 0 0-2Z"/><circle cx="9" cy="8" r="1.3"/>',
@@ -550,8 +552,8 @@ function renderAdminShell(){
      + '<div class="sidebar-foot"><button class="btn btn-ghost btn-block btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' Blochează panoul</button></div>'
    + '</div>'
    + '<div class="main">'
-     + '<div class="mobile-nav">'+navHtml+'</div>'
-     + '<div class="topbar"><div><div class="topbar-eyebrow">Administrare sală</div><div class="topbar-title">'+meta.label+'</div></div><button class="btn btn-ghost btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' Blochează</button></div>'
+     + '<div class="topbar"><div class="flex items-center gap8"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div><div class="topbar-eyebrow">Administrare sală</div><div class="topbar-title">'+meta.label+'</div></div></div><button class="btn btn-ghost btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' Blochează</button></div>'
+     + (state.mobileNavOpen? ('<div class="mobile-nav">'+navHtml+'</div>') : '')
      + '<div class="content">'+body+'</div>'
    + '</div>'
    + (state.modal? renderModal() : '')
@@ -1122,7 +1124,7 @@ function bindEvents(root){
       const key=el.getAttribute('data-nav');
       if(state.adminRole==='reception' && key!=='reception') return; if(key==='reports' && state.adminRole!=='owner') return;
       if(key==='settings' && !state.settingsDraft) state.settingsDraft=draftFromSettings(state.settings);
-      state.adminSection=key; state.modal=null; scheduleRender();
+      state.adminSection=key; state.modal=null; state.mobileNavOpen=false; scheduleRender();
     });
   });
   root.querySelectorAll('[data-bind]').forEach(el=>{
@@ -1178,6 +1180,7 @@ function onAction(el){
     case 'change-password': changePassword(); return;
     case 'add-team': addTeam(); return;
     case 'remove-team': removeTeam(Number(el.getAttribute('data-idx'))); return;
+    case 'toggle-mobile-nav': state.mobileNavOpen=!state.mobileNavOpen; break;
     case 'client-tab': state.clientTab=el.getAttribute('data-tab'); break;
   }
   scheduleRender();
