@@ -325,7 +325,7 @@ const DEFAULT_SETTINGS={
   currency:'MDL', team:[]
 };
 const state={
-  screen:'landing', adminUnlocked:false, adminSection:'reception',
+  screen:'landing', adminUnlocked:false, adminRole:null, adminSection:'reception',
   clientSession:null, clientTab:'sub',
   settings:null, types:[], clients:[], log:[], payments:[], modLog:[],
   ready:false, dbOk:null,
@@ -492,25 +492,28 @@ function renderLanding(){
    + '</div></div>';
 }
 function renderAdminGate(){
-  const needsSetup = state.settings && !state.settings.adminPasswordHash;
+  const needsSetup = !(state.settings && state.settings.team && state.settings.team.length);
   return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
    + (needsSetup? adminSetupForm() : adminLoginForm())
    + '</div></div>';
 }
 function adminLoginForm(){
-  return '<div class="gate-title">Parola de administrator</div>'
-   + '<div class="gate-desc">Introdu parola pentru a accesa panoul de recepție și administrare.</div>'
-   + '<label class="field">Parolă<input id="adminPass" type="password" placeholder="••••••••" data-enter="admin-login-submit"></label>'
+  return '<div class="gate-title">Intră în panou</div>'
+   + '<div class="gate-desc">Introdu emailul și parola contului tău, pentru acces la recepție și administrare.</div>'
+   + '<label class="field">Email<input id="adminEmail" type="email" autocomplete="username" placeholder="nume@exemplu.com" data-enter="admin-login-submit"></label>'
+   + '<label class="field">Parolă<input id="adminPass" type="password" autocomplete="current-password" placeholder="••••••••" data-enter="admin-login-submit"></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
-   + '<button class="btn btn-primary btn-block" data-action="admin-login-submit">'+icon('lock','icon-sm')+' Intră în panou</button>';
+   + '<button class="btn btn-primary btn-block" data-action="admin-login-submit">'+icon('lock','icon-sm')+' Intră în panou</button>'
+   + '<button class="btn btn-ghost btn-block mt4" data-action="admin-claim-submit">'+icon('shield','icon-sm')+' Prima intrare cu acest email — creează parola</button>';
 }
 function adminSetupForm(){
   return '<div class="gate-title">Prima configurare</div>'
-   + '<div class="gate-desc">Setează parola de administrator pentru acest panou. Ai nevoie de ea de fiecare dată când intri la recepție.</div>'
-   + '<label class="field">Parolă nouă (minim 4 caractere)<input id="setupPass1" type="password" placeholder="Parolă" data-enter="admin-setup-submit"></label>'
-   + '<label class="field">Confirmă parola<input id="setupPass2" type="password" placeholder="Repetă parola" data-enter="admin-setup-submit"></label>'
+   + '<div class="gate-desc">Creează contul tău de administrator — emailul și parola pe care le vei folosi de fiecare dată când intri la recepție.</div>'
+   + '<label class="field">Email<input id="setupEmail" type="email" autocomplete="username" placeholder="nume@exemplu.com" data-enter="admin-setup-submit"></label>'
+   + '<label class="field">Parolă nouă (minim 6 caractere)<input id="setupPass1" type="password" autocomplete="new-password" placeholder="Parolă" data-enter="admin-setup-submit"></label>'
+   + '<label class="field">Confirmă parola<input id="setupPass2" type="password" autocomplete="new-password" placeholder="Repetă parola" data-enter="admin-setup-submit"></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
-   + '<button class="btn btn-primary btn-block" data-action="admin-setup-submit">'+icon('shield','icon-sm')+' Creează parola și continuă</button>';
+   + '<button class="btn btn-primary btn-block" data-action="admin-setup-submit">'+icon('shield','icon-sm')+' Creează contul și continuă</button>';
 }
 function renderClientGate(){
   return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
@@ -536,9 +539,11 @@ const ADMIN_NAV=[
 ];
 function renderAdminShell(){
   const sec=state.adminSection;
-  const navHtml=ADMIN_NAV.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+n.label+'</div>').join('');
+  const isReceptionRole = state.adminRole==='reception';
+  const navList = isReceptionRole? ADMIN_NAV.filter(n=>n.key==='reception') : ADMIN_NAV;
+  const navHtml=navList.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+n.label+'</div>').join('');
   const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
-  const body = sec==='reception'?renderReception() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'?renderReports() : renderSettings();
+  const body = isReceptionRole? renderReception() : (sec==='reception'?renderReception() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'?renderReports() : renderSettings());
   return '<div class="admin-shell">'
    + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">Club Management</div></div></div>'
      + navHtml
@@ -934,14 +939,15 @@ function renderSettings(){
      + '<label class="field"><textarea rows="6" data-bind="settingsDraft.newsText">'+esc(d.newsText)+'</textarea></label>'
      + '<div class="news-preview">'+esc(d.newsText||'').replace(/\n/g,'<br>')+'</div>'
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-news">'+icon('check','icon-sm')+' Salvează noutățile</button></div>'
-   + '<div class="section-title">Parola administratorului</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;">'+field('Parolă curentă','password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')
-     + '<div class="grid2">'+field('Parolă nouă','password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field('Confirmă parola nouă','password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
+   + '<div class="section-title">Parola contului tău</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Cont curent: '+esc((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'—')+'</div>'+field('Parolă curentă','password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')
+     + '<div class="grid2">'+field('Parolă nouă (minim 6 caractere)','password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field('Confirmă parola nouă','password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
      + '<div class="err-text">'+esc(state.pwErr||'')+'</div>'
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' Schimbă parola</button></div>'
    + '<div class="section-title">Echipa sălii</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Persoanele de mai jos vor putea, în versiunea publicată live, să intre cu propriul cont.</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Rolul „Recepție" vede doar ecranul de scanare.</div>'
      + field('E-mail coleg','email','teamForm.email',(state.teamForm&&state.teamForm.email)||'','coleg@exemplu.md')
+     + field('Parolă inițială (minim 6 caractere)','password','teamForm.password',(state.teamForm&&state.teamForm.password)||'')
      + selectField('Rol','teamForm.role',(state.teamForm&&state.teamForm.role)||'reception',[['reception','Recepție — doar scanare'],['admin','Administrator']])
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' Adaugă acces</button>'
      + '<hr class="hairline">'+teamRows+'</div>';
@@ -963,20 +969,45 @@ async function saveSettingsNews(){
 }
 async function changePassword(){
   const f=state.pwForm||{};
-  const cur=await sha256(f.current||'');
-  if(cur!==((state.settings&&state.settings.adminPasswordHash)||'')){ state.pwErr='Parola curentă este greșită.'; scheduleRender(); return; }
-  if(!f.next||f.next.length<4){ state.pwErr='Parola nouă trebuie să aibă minim 4 caractere.'; scheduleRender(); return; }
+  const user=firebase.auth().currentUser;
+  if(!user || !user.email){ state.pwErr='Nu ești autentificat cu un cont de email.'; scheduleRender(); return; }
+  if(!f.current){ state.pwErr='Introdu parola curentă.'; scheduleRender(); return; }
+  if(!f.next||f.next.length<6){ state.pwErr='Parola nouă trebuie să aibă minim 6 caractere.'; scheduleRender(); return; }
   if(f.next!==f.confirm){ state.pwErr='Parolele nu coincid.'; scheduleRender(); return; }
-  const hash=await sha256(f.next);
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {adminPasswordHash:hash})); state.pwForm={}; state.pwErr=''; await logMod('Parolă administrator schimbată',''); showToast('Parola a fost schimbată.'); }
-  catch(e){ state.pwErr='Eroare la salvare.'; }
+  try{
+    const cred=firebase.auth.EmailAuthProvider.credential(user.email, f.current);
+    await user.reauthenticateWithCredential(cred);
+    await user.updatePassword(f.next);
+    state.pwForm={}; state.pwErr=''; await logMod('Parolă schimbată', user.email); showToast('Parola a fost schimbată.');
+  }catch(e){
+    if(e && (e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')){ state.pwErr='Parola curentă este greșită.'; }
+    else{ state.pwErr='Eroare la schimbarea parolei.'; }
+  }
   scheduleRender();
 }
 async function addTeam(){
-  const f=state.teamForm||{}; if(!f.email||!f.email.includes('@')){ showToast('Introdu un e-mail valid.'); return; }
-  const team=((state.settings&&state.settings.team)||[]).slice(); team.push({email:f.email.trim(), role:f.role||'reception'});
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', f.email); showToast('Acces adăugat.'); }
-  catch(e){ showToast('Eroare.'); }
+  const f=state.teamForm||{};
+  const email=(f.email||'').trim().toLowerCase();
+  if(!email||!email.includes('@')){ showToast('Introdu un e-mail valid.'); return; }
+  const pass=f.password||'';
+  if(!pass||pass.length<6){ showToast('Parola inițială trebuie să aibă minim 6 caractere.'); return; }
+  const existing=((state.settings&&state.settings.team)||[]);
+  if(existing.some(m=>(m.email||'').toLowerCase()===email)){ showToast('Acest email are deja acces.'); return; }
+  let secondaryApp=null;
+  try{
+    secondaryApp=firebase.initializeApp(firebase.app().options, 'teamAdd'+Date.now());
+    await secondaryApp.auth().createUserWithEmailAndPassword(email, pass);
+    await secondaryApp.delete();
+  }catch(e){
+    if(secondaryApp){ try{ await secondaryApp.delete(); }catch(_e){} }
+    if(e && e.code==='auth/email-already-in-use'){ showToast('Există deja un cont Firebase cu acest email.'); }
+    else if(e && e.code==='auth/weak-password'){ showToast('Parola trebuie să aibă minim 6 caractere.'); }
+    else{ showToast('Eroare la crearea contului.'); }
+    return;
+  }
+  const team=existing.slice(); team.push({email, role:f.role||'reception'});
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast('Cont creat — colegul poate intra cu acest email și parola primită.'); }
+  catch(e){ showToast('Eroare la salvarea accesului.'); }
   scheduleRender();
 }
 async function removeTeam(idx){
@@ -1083,6 +1114,7 @@ function bindEvents(root){
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const key=el.getAttribute('data-nav');
+      if(state.adminRole==='reception' && key!=='reception') return;
       if(key==='settings' && !state.settingsDraft) state.settingsDraft=draftFromSettings(state.settings);
       state.adminSection=key; state.modal=null; scheduleRender();
     });
@@ -1108,9 +1140,10 @@ function onAction(el){
     case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); break;
     case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); break;
     case 'admin-login-submit': adminLoginSubmit(); return;
+    case 'admin-claim-submit': adminClaimSubmit(); return;
     case 'admin-setup-submit': adminSetupSubmit(); return;
     case 'client-login-submit': clientLoginSubmit(); return;
-    case 'admin-lock': state.adminUnlocked=false; state.screen='admin-gate'; state.modal=null; break;
+    case 'admin-lock': state.adminUnlocked=false; state.adminRole=null; state.screen='admin-gate'; state.modal=null; lockAdminSession(); break;
     case 'client-logout': state.clientSession=null; state.screen='landing'; break;
     case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
     case 'open-client-detail': openModal('clientDetail', {id}); return;
@@ -1144,26 +1177,61 @@ function onAction(el){
   scheduleRender();
 }
 async function adminLoginSubmit(){
-  const v=document.getElementById('adminPass'); const val=v?v.value:'';
-  if(!val){ state.formErr='Introdu parola.'; scheduleRender(); return; }
-  const hash=await sha256(val);
-  if(hash===((state.settings&&state.settings.adminPasswordHash)||'')){ state.adminUnlocked=true; state.screen='admin'; state.formErr=''; state.adminSection='reception'; }
-  else{ state.formErr='Parolă incorectă.'; }
+  const ve=document.getElementById('adminEmail'), vp=document.getElementById('adminPass');
+  const email=(ve?ve.value:'').trim().toLowerCase(); const pass=vp?vp.value:'';
+  if(!email||!pass){ state.formErr='Introdu email și parolă.'; scheduleRender(); return; }
+  state.formErr='';
+  try{ await firebase.auth().signInWithEmailAndPassword(email, pass); }
+  catch(e){ state.formErr='Email sau parolă greșită.'; scheduleRender(); return; }
+  const team=(state.settings&&state.settings.team)||[];
+  const member=team.find(m=>(m.email||'').toLowerCase()===email);
+  if(!member){
+    try{ await firebase.auth().signOut(); await firebase.auth().signInAnonymously(); }catch(e){}
+    state.formErr='Acest cont nu (mai) are acces la panou.';
+    scheduleRender(); return;
+  }
+  state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
+  scheduleRender();
+}
+async function adminClaimSubmit(){
+  const ve=document.getElementById('adminEmail'), vp=document.getElementById('adminPass');
+  const email=(ve?ve.value:'').trim().toLowerCase(); const pass=vp?vp.value:'';
+  if(!email||!pass){ state.formErr='Introdu email și parolă.'; scheduleRender(); return; }
+  const team=(state.settings&&state.settings.team)||[];
+  const member=team.find(m=>(m.email||'').toLowerCase()===email);
+  if(!member){ state.formErr='Acest email nu are acces. Cere administratorului să te adauge în Echipă.'; scheduleRender(); return; }
+  if(pass.length<6){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; scheduleRender(); return; }
+  try{ await firebase.auth().createUserWithEmailAndPassword(email, pass); }
+  catch(e){
+    if(e && e.code==='auth/email-already-in-use'){ state.formErr='Acest cont există deja — folosește „Intră în panou" cu parola ta.'; }
+    else if(e && e.code==='auth/weak-password'){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; }
+    else{ state.formErr='Eroare la crearea contului.'; }
+    scheduleRender(); return;
+  }
+  state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr='';
+  state.adminSection='reception';
+  showToast('Cont creat. Ai acces la panou.');
   scheduleRender();
 }
 async function adminSetupSubmit(){
-  const v1=document.getElementById('setupPass1'), v2=document.getElementById('setupPass2');
-  const p1=v1?v1.value:'', p2=v2?v2.value:'';
-  if(!p1||p1.length<4){ state.formErr='Parola trebuie să aibă minim 4 caractere.'; scheduleRender(); return; }
+  const ve=document.getElementById('setupEmail'), v1=document.getElementById('setupPass1'), v2=document.getElementById('setupPass2');
+  const email=(ve?ve.value:'').trim().toLowerCase(); const p1=v1?v1.value:'', p2=v2?v2.value:'';
+  if(!email||!email.includes('@')){ state.formErr='Introdu un email valid.'; scheduleRender(); return; }
+  if(!p1||p1.length<6){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; scheduleRender(); return; }
   if(p1!==p2){ state.formErr='Parolele nu coincid.'; scheduleRender(); return; }
-  const hash=await sha256(p1);
   try{
-    await refSettings().set(Object.assign({}, DEFAULT_SETTINGS, state.settings||{}, {adminPasswordHash:hash}));
-    state.adminUnlocked=true; state.screen='admin'; state.formErr=''; state.adminSection='reception';
+    await firebase.auth().createUserWithEmailAndPassword(email, p1);
+    await refSettings().set(Object.assign({}, DEFAULT_SETTINGS, state.settings||{}, {team:[{email, role:'admin'}]}));
+    state.adminUnlocked=true; state.adminRole='admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
     showToast('Panoul de administrare e gata.');
-  }catch(e){ state.formErr='Eroare la salvare. Încearcă din nou.'; }
+  }catch(e){
+    if(e && e.code==='auth/email-already-in-use'){ state.formErr='Există deja un cont cu acest email.'; }
+    else if(e && e.code==='auth/weak-password'){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; }
+    else{ state.formErr='Eroare la salvare. Încearcă din nou.'; }
+  }
   scheduleRender();
 }
+function lockAdminSession(){ try{ firebase.auth().signOut().then(()=>firebase.auth().signInAnonymously()).catch(()=>{}); }catch(e){} }
 function clientLoginSubmit(){
   const v=document.getElementById('clientCode'); const code=(v?v.value:'').trim().toUpperCase();
   if(!code){ state.formErr='Introdu codul de membru.'; scheduleRender(); return; }
