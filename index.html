@@ -1000,20 +1000,19 @@ async function addTeam(){
   if(!pass||pass.length<6){ showToast('Parola inițială trebuie să aibă minim 6 caractere.'); return; }
   const existing=((state.settings&&state.settings.team)||[]); const hasOwner=existing.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast('Doar proprietarul poate gestiona echipa.'); return; }
   if(existing.some(m=>(m.email||'').toLowerCase()===email)){ showToast('Acest email are deja acces.'); return; }
-  let secondaryApp=null;
+  let secondaryApp=null; let reused=false;
   try{
     secondaryApp=firebase.initializeApp(firebase.app().options, 'teamAdd'+Date.now());
     await secondaryApp.auth().createUserWithEmailAndPassword(email, pass);
     await secondaryApp.delete();
   }catch(e){
     if(secondaryApp){ try{ await secondaryApp.delete(); }catch(_e){} }
-    if(e && e.code==='auth/email-already-in-use'){ showToast('Există deja un cont Firebase cu acest email.'); }
-    else if(e && e.code==='auth/weak-password'){ showToast('Parola trebuie să aibă minim 6 caractere.'); }
-    else{ showToast('Eroare la crearea contului.'); }
-    return;
+    if(e && e.code==='auth/email-already-in-use'){ reused=true; }
+    else if(e && e.code==='auth/weak-password'){ showToast('Parola trebuie să aibă minim 6 caractere.'); return; }
+    else{ showToast('Eroare la crearea contului.'); return; }
   }
   const team=existing.slice(); team.push({email, role:f.role||'reception'});
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast('Cont creat — colegul poate intra cu acest email și parola primită.'); }
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? 'Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.' : 'Cont creat — colegul poate intra cu acest email și parola primită.'); }
   catch(e){ showToast('Eroare la salvarea accesului.'); }
   scheduleRender();
 }
