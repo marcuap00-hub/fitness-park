@@ -664,7 +664,7 @@ function modalClientDetail(){
      + '<button class="btn btn-ghost btn-block" data-action="print-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' Tipărește cardul</button>'
      + '<button class="btn btn-ghost btn-block" data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' Descarcă pentru telefon</button>'
      + '<button class="btn btn-ghost btn-block" data-action="share-card" data-id="'+c.id+'">'+icon('send','icon-sm')+' Trimite cardul...</button>'
-     + '<div class="small faint center">Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.</div>'
+     + '<div class="small faint center">Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.</div>' + '<hr class="hairline" style="margin:4px 0;">' + '<button class="btn btn-ghost btn-block" data-action="replace-lost-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' Înlocuiește cardul pierdut</button>'
    + '</div>';
   const leftCol=''
    + '<div class="info-list">'
@@ -713,7 +713,7 @@ async function deleteClient(id){
   try{ await colClients().doc(id).delete(); await logMod('Client șters', c.name); closeModal(); showToast('Client șters.'); }
   catch(e){ showToast('Eroare la ștergere.'); }
 }
-function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+async function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Sigur înlocuiești cardul acestui client? Codul vechi ('+c.code+') nu va mai funcționa după ce salvezi.')) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode); openModal('clientDetail',{id}); showToast('Card nou generat: '+newCode); } catch(e){ showToast('Eroare la înlocuirea cardului.'); } } function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function buildCardCanvas(c){
   const sub=c.subscription||{};
   const gymName=((state.settings&&state.settings.gymName)||'Fitness Park').toUpperCase();
@@ -1118,7 +1118,7 @@ function onAction(el){
     case 'open-edit-client': openEditClient(id); return;
     case 'toggle-pause-client': togglePauseClient(id); return;
     case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
-    case 'print-card': printCard(id); return;
+    case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'download-card': downloadCardForPhone(id); return;
     case 'share-card': shareCard(id); return;
     case 'close-modal': closeModal(); return;
