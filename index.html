@@ -683,7 +683,7 @@ function modalClientDetail(){
    + (myPay.length? ('<div style="margin-top:14px;"><div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Plățile clientului</div>'+myPay.map(p=>'<div class="flex justify-between small" style="margin-top:6px;"><span class="faint">'+fmtDateTime(p.date)+' · '+esc(payMethodLabel(p.method))+'</span><span class="mono">'+money(p.amount,p.currency)+'</span></div>').join('')+'</div>') : '')
    + (myLog.length? ('<div style="margin-top:14px;"><div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Ultimele intrări</div>'+myLog.map(logRowHtml).join('')+'</div>') : '')
    + '<div class="grid2" style="margin-top:16px;">'
-     + '<button class="btn btn-primary" data-action="open-renew" data-id="'+c.id+'">'+icon('refresh','icon-sm')+' Reînnoiește</button>'
+     + '<button class="btn btn-primary" data-action="open-renew" data-id="'+c.id+'">'+icon('refresh','icon-sm')+' Reînnoiește</button>' + '<button class="btn btn-ghost" data-action="open-edit-sub" data-id="'+c.id+'">'+icon('edit','icon-sm')+' Editează abonamentul</button>'
      + '<button class="btn btn-ghost" data-action="open-edit-client" data-id="'+c.id+'">'+icon('edit','icon-sm')+' Editează datele</button>'
      + '<button class="btn btn-ghost" data-action="toggle-pause-client" data-id="'+c.id+'">'+icon(c.paused?'play':'pause','icon-sm')+' '+(c.paused?'Reactivează accesul':'Suspendă accesul')+'</button>'
      + '<button class="btn btn-danger" data-action="delete-client" data-id="'+c.id+'">'+icon('trash','icon-sm')+' Șterge clientul</button>'
@@ -779,6 +779,9 @@ async function shareCard(id){
   showToast('Trimiterea directă nu e susținută aici — se descarcă cardul.');
   const c2=state.clients.find(x=>x.id===id); if(c2) await saveCardPng(c2, 'Cardul s-a descărcat.');
 }
+function openEditSub(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; const sub=c.subscription||{}; const t=typeById(sub.typeId); openModal('editSub', { id, typeId:sub.typeId||'', price:sub.price!=null?sub.price:(t?t.price:0), currency:sub.currency||(t?t.currency:'MDL'), validFrom:sub.validFrom||todayStr(), validTo:sub.validTo||todayStr(), totalPaid:sub.totalPaid||0 }); }
+function modalEditSub(){ const f=state.form; const c=state.clients.find(x=>x.id===f.id); if(!c) return modalWrap('Abonament','','<div class="empty-state">Clientul nu a fost găsit.</div>'); const typeOpts=state.types.filter(t=>t.active!==false).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+'</option>').join(''); return modalWrap('Editează abonamentul · '+c.name,'Modifici prețul, perioada sau suma achitată — nu contează ca o reînnoire nouă și nu adaugă o încasare.', '' + '<label class="field">Abonament<select data-bind="form.typeId">'+typeOpts+'</select></label>' + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>' + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>' + field('Sumă achitată','number','form.totalPaid',f.totalPaid) + '<div class="err-text">'+esc(state.formErr||'')+'</div>' + '<button class="btn btn-primary btn-block" data-action="save-edit-sub">'+icon('check','icon-sm')+' Salvează modificarea</button>'); }
+async function saveEditSub(){ const f=state.form; const t=typeById(f.typeId); const c=state.clients.find(x=>x.id===f.id); if(!c) return; const sub=c.subscription||{}; try{ await colClients().doc(f.id).update({ subscription: Object.assign({}, sub, { typeId:f.typeId, typeName:t?t.name:sub.typeName, tier:t?t.tier:sub.tier, accessFrom:t?t.accessFrom:sub.accessFrom, accessTo:t?t.accessTo:sub.accessTo, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:Number(f.totalPaid||0) }) }); await logMod('Abonament modificat', c.name+' · '+(t?t.name:(sub.typeName||''))+' · '+money(Number(f.price||0),f.currency)); showToast('Abonament actualizat.'); openModal('clientDetail', {id:c.id}); }catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); } }
 function openRenew(id){
   const c=state.clients.find(x=>x.id===id); if(!c) return;
   const sub=c.subscription||{}; const t=typeById(sub.typeId);
@@ -1072,7 +1075,7 @@ function renderModal(){
   if(t==='newClient') return modalNewClient();
   if(t==='clientDetail') return modalClientDetail();
   if(t==='editClient') return modalEditClient();
-  if(t==='renew') return modalRenew();
+  if(t==='renew') return modalRenew(); if(t==='editSub') return modalEditSub();
   if(t==='editType') return modalEditType();
   return '';
 }
@@ -1151,7 +1154,7 @@ function onAction(el){
     case 'client-logout': state.clientSession=null; state.screen='landing'; break;
     case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
     case 'open-client-detail': openModal('clientDetail', {id}); return;
-    case 'open-renew': openRenew(id); return;
+    case 'open-renew': openRenew(id); return; case 'open-edit-sub': openEditSub(id); return;
     case 'open-edit-client': openEditClient(id); return;
     case 'toggle-pause-client': togglePauseClient(id); return;
     case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
@@ -1160,7 +1163,7 @@ function onAction(el){
     case 'share-card': shareCard(id); return;
     case 'close-modal': closeModal(); return;
     case 'save-new-client': saveNewClient(); return;
-    case 'save-renew': saveRenew(); return;
+    case 'save-renew': saveRenew(); return; case 'save-edit-sub': saveEditSub(); return;
     case 'save-edit-client': saveEditClient(); return;
     case 'open-new-type': openNewType(); return;
     case 'open-edit-type': openEditType(id); return;
