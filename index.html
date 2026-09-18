@@ -87,7 +87,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .toast{position:fixed;left:50%;top:16px;bottom:auto;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:11px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-lg);z-index:900;max-width:90vw;text-align:center;}
 .overlay{position:fixed;inset:0;background:rgba(10,11,20,.55);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:800;padding:0;}
 @media(min-width:720px){.overlay{align-items:center;padding:24px;}}
-.modal{background:var(--surface);width:100%;max-width:520px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;box-shadow:var(--shadow-lg);padding:22px;display:flex;flex-direction:column;gap:16px;}
+.modal{background:var(--surface);width:100%;max-width:520px;max-height:95vh;overflow:auto;border-radius:20px 20px 0 0;box-shadow:var(--shadow-lg);padding:22px;display:flex;flex-direction:column;gap:16px;}
 @media(min-width:720px){.modal{border-radius:20px;}}
 .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .modal-close{background:var(--surface-2);border:none;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);flex:none;}
@@ -107,6 +107,16 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .brand-sub{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
 .gate-title{font-size:23px;font-weight:800;margin:2px 0 6px;}
 .gate-desc{color:var(--text-muted);font-size:14px;line-height:1.5;margin-bottom:22px;}
+.buy-plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:2px;}
+.buy-plan-card{position:relative;border-radius:14px;padding:12px 14px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:.12s ease;}
+.buy-plan-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
+.buy-plan-card.selected{outline:2px solid var(--accent);outline-offset:-1px;}
+.buy-plan-card.gold{background:linear-gradient(155deg,var(--gold-card),var(--gold-card-2));border-color:transparent;color:#EDE2C4;}
+.buy-plan-card.gold .plan-eyebrow{color:var(--gold);}
+.buy-plan-card .plan-name{font-size:13.5px;margin:2px 0;}
+.buy-plan-card .plan-price{font-size:18px;}
+.buy-plan-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;}
+.buy-plan-check .icon{width:12px;height:12px;}
 .choice-btn{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:var(--surface-2);border:1px solid var(--border);border-radius:16px;padding:15px 16px;cursor:pointer;transition:.12s;margin-bottom:10px;}
 .choice-btn:hover{border-color:var(--accent);background:var(--accent-soft);}
 .choice-ic{width:42px;height:42px;border-radius:12px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--accent);flex:none;}
@@ -200,7 +210,10 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .qr-wrap img,.qr-wrap canvas{border-radius:8px;}
 .code-chip{font-family:var(--font-mono);font-weight:700;letter-spacing:.04em;background:var(--surface-2);border:1px dashed var(--border);border-radius:10px;padding:10px;text-align:center;font-size:17px;}
 .modal-wide{max-width:640px;}
-.detail-grid{display:grid;grid-template-columns:1fr 240px;gap:20px;align-items:start;min-width:0;}
+@media(min-width:900px){.modal-wide{max-width:840px;}}
+@media(min-width:1200px){.modal-wide{max-width:960px;}}
+.detail-grid{display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start;min-width:0;}
+@media(min-width:900px){.detail-grid{grid-template-columns:1fr 300px;}}
 .detail-grid>div{min-width:0;}
 @media(max-width:640px){.detail-grid{grid-template-columns:1fr;}}
 .info-list{display:flex;flex-direction:column;gap:12px;}
@@ -588,14 +601,25 @@ function renderBuyGate(){
      + '</div></div>';
   }
   const f=state.buyForm||{};
-  const typeOpts=state.types.filter(t=>t.active!==false && t.tier!=='exclusiv').map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+'</option>').join('');
-  return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock(gymName)
+  const buyTypes=state.types.filter(t=>t.active!==false && t.tier!=='exclusiv');
+  const planPicker=buyTypes.map((t,idx)=>{
+    const gold=t.tier==='gold'; const pastel=gold?null:PLAN_PASTELS[idx % PLAN_PASTELS.length]; const selected=f.typeId===t.id;
+    const styleBits=[]; if(pastel) styleBits.push('border-top:5px solid '+pastel);
+    return '<div class="buy-plan-card'+(gold?' gold':'')+(selected?' selected':'')+'" style="'+styleBits.join(';')+'" data-action="pick-buy-plan" data-id="'+t.id+'">'
+     + (selected? '<div class="buy-plan-check">'+icon('check','icon-sm')+'</div>' : '')
+     + '<div class="plan-eyebrow">'+(gold?'Gold':'Fitness')+'</div>'
+     + '<div class="plan-name">'+esc(t.name)+'</div>'
+     + '<div class="plan-price">'+t.price+' <span>'+esc(t.currency)+'</span></div>'
+     + '</div>';
+  }).join('') || '<div class="small muted">Niciun abonament disponibil momentan.</div>';
+  return '<div class="gate-wrap"><div class="gate-card" style="max-width:520px;">'+backLink()+brandBlock(gymName)
    + '<div class="gate-title">Cumpără un abonament</div>'
    + '<div class="gate-desc">Alege abonamentul dorit — te contactăm pentru plată. Plata online directă va fi disponibilă în curând.</div>'
    + field('Nume și prenume','text','buyForm.name',f.name,'Ex: Popescu Ion')
    + field('Telefon','tel','buyForm.phone',f.phone,'06X XXX XXX')
    + field('Email (opțional)','email','buyForm.email',f.email,'nume@exemplu.com')
-   + '<label class="field">Abonament dorit<select data-bind="buyForm.typeId">'+(typeOpts||'<option value="">Niciun abonament disponibil momentan</option>')+'</select></label>'
+   + '<label class="field">Abonament dorit</label>'
+   + '<div class="buy-plan-grid">'+planPicker+'</div>'
    + '<label class="checkline"><input type="checkbox" data-bind="buyForm.wantsTrainer" '+(f.wantsTrainer?'checked':'')+'> Vreau și un antrenor personal</label>'
    + '<label class="field">Observații (opțional)<textarea rows="2" data-bind="buyForm.note">'+esc(f.note||'')+'</textarea></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
@@ -850,6 +874,7 @@ async function enablePushNotifications(id){
   }catch(e){ showToast('Eroare la activarea notificărilor'+(e&&e.message?(': '+e.message):'.')); }
 }
 async function requestTrainer(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Trimiți o cerere pentru un antrenor personal către recepție?')) return; try{ await logMod('Cerere antrenor personal', c.name); showToast('Cerere trimisă. Te contactăm în curând.'); }catch(e){ showToast('Eroare la trimiterea cererii.'); } }
+async function requestPrintedCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Trimiți o cerere pentru un card tipărit către recepție?')) return; try{ await logMod('Cerere card tipărit', c.name); showToast('Cerere trimisă. Treci pe la recepție să ridici cardul.'); }catch(e){ showToast('Eroare la trimiterea cererii.'); } }
 async function requestNewCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Trimiți o cerere de card nou către recepție? Codul tău actual rămâne valabil până când cererea e aprobată.')) return; try{ await colClients().doc(id).update({cardRequestPending:true, cardRequestAt:new Date().toISOString()}); showToast('Cerere trimisă. Așteaptă aprobarea recepției.'); } catch(e){ showToast('Eroare la trimiterea cererii.'); } }
 async function approveCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm('Aprobi cererea și generezi un card nou? Codul vechi ('+c.code+') nu va mai funcționa după ce salvezi.')) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode, cardRequestPending:false}); await logMod('Card înlocuit (cerere aprobată)', c.name+' · cod nou '+newCode); openModal('clientDetail',{id}); showToast('Card nou generat: '+newCode); } catch(e){ showToast('Eroare la înlocuirea cardului.'); } }
 async function rejectCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ await colClients().doc(id).update({cardRequestPending:false}); await logMod('Cerere card nou respinsă', c.name); openModal('clientDetail',{id}); showToast('Cerere respinsă.'); } catch(e){ showToast('Eroare.'); } }
@@ -1209,6 +1234,7 @@ function clientTabSub(c){
    + (c.fcmToken? '<div class="small center" style="color:var(--success);font-weight:600;">🔔 Notificări active</div>' : '<button class="btn btn-ghost btn-sm btn-block" data-action="enable-push" data-id="'+c.id+'">'+icon('bell','icon-sm')+' Activează notificările</button>')
    + (c.cardRequestPending? '<div class="small center" style="color:var(--warning);font-weight:600;">Cerere trimisă — se așteaptă aprobarea recepției.</div>' : '<button class="btn btn-ghost btn-sm btn-block" data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' Am pierdut cardul — solicită unul nou</button>')
    + '<button class="btn btn-ghost btn-sm btn-block" data-action="request-trainer" data-id="'+c.id+'">'+icon('users','icon-sm')+' Solicită un antrenor personal</button>'
+   + '<button class="btn btn-ghost btn-sm btn-block" data-action="request-printed-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' Solicită un card tipărit</button>'
    + '<hr class="hairline">'
    + '<div class="flex justify-between small"><span class="muted">Preț abonament</span><span class="mono">'+money(sub.price,sub.currency)+'</span></div>'
    + '<div class="flex justify-between small"><span class="muted">Achitat</span><span class="mono">'+money(sub.totalPaid,sub.currency)+'</span></div>'
@@ -1318,8 +1344,8 @@ function onAction(el){
     case 'toggle-pause-client': togglePauseClient(id); return;
     case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
-    case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'enable-push': enablePushNotifications(id); return;
-    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false)||{}).id||''}; state.screen='buy-gate'; break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
+    case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return; case 'enable-push': enablePushNotifications(id); return;
+    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
     case 'download-card': downloadCardForPhone(id); return;
     case 'share-card': shareCard(id); return;
     case 'close-modal': closeModal(); return;
