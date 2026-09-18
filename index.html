@@ -407,17 +407,21 @@ function subscribeAll(){
   colTypes().orderBy('price','asc').onSnapshot(snap=>{ state.types=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
   colClients().onSnapshot(snap=>{
     state.clients=snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
-    if(!state.autoLoginTried){
-      state.autoLoginTried=true;
-      try{
-        let codeParam=new URLSearchParams(location.search).get('cod');
-        if(!codeParam){ codeParam=localStorage.getItem('fp_client_code'); }
-        if(codeParam){
-          const c=state.clients.find(x=>x.code===codeParam.trim().toUpperCase());
-          if(c){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; stopCamera(); try{ localStorage.setItem('fp_client_code', c.code); }catch(e){} }
+    try{
+      let codeParam=new URLSearchParams(location.search).get('cod');
+      if(!codeParam){ codeParam=localStorage.getItem('fp_client_code'); }
+      if(codeParam){
+        const c=state.clients.find(x=>x.code===codeParam.trim().toUpperCase());
+        if(c && state.clientSession!==c.id){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; stopCamera(); try{ localStorage.setItem('fp_client_code', c.code); }catch(e){} }
+      } else {
+        const pendingPhone=localStorage.getItem('fp_pending_phone');
+        if(pendingPhone && !state.clientSession){
+          const digits=pendingPhone.replace(/\D/g,'');
+          const c=state.clients.find(x=>(x.phone||'').replace(/\D/g,'')===digits);
+          if(c){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; stopCamera(); try{ localStorage.setItem('fp_client_code', c.code); localStorage.removeItem('fp_pending_phone'); }catch(e){} }
         }
-      }catch(e){}
-    }
+      }
+    }catch(e){}
     scheduleRender();
   }, ()=>{});
   colLog().orderBy('timestamp','desc').limit(120).onSnapshot(snap=>{ state.log=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
@@ -660,7 +664,7 @@ async function submitBuyRequest(){
   if(!isValidMdPhone(f.phone)){ state.formErr='Numărul de telefon nu este valid (format: 0XX XXX XXX).'; scheduleRender(); return; }
   if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
   const t=typeById(f.typeId);
-  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, note:f.note||'' }); }
+  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; try{ localStorage.setItem('fp_pending_phone', f.phone.trim()); }catch(e){} scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, note:f.note||'' }); }
   catch(e){ state.formErr='Eroare la trimiterea cererii. Încearcă din nou.'; scheduleRender(); }
 }
 function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint mt4">Îndreaptă camera spre codul QR.</div></div>'; }
@@ -1454,7 +1458,7 @@ function clientLoginSubmit(){
   const c=state.clients.find(x=>x.code===code);
   if(!c){ state.formErr='Codul nu a fost găsit. Verifică-l pe cardul tău.'; scheduleRender(); return; }
   state.clientSession=c.id; state.screen='client'; state.formErr=''; state.clientTab='sub'; stopCamera();
-  try{ localStorage.setItem('fp_client_code', code); }catch(e){}
+  try{ localStorage.setItem('fp_client_code', code); localStorage.removeItem('fp_pending_phone'); }catch(e){}
   scheduleRender();
 }
 
