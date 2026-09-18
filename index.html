@@ -413,6 +413,7 @@ function subscribeAll(){
 
 /* ============ DOMAIN HELPERS ============ */
 function typeById(id){ return state.types.find(t=>t.id===id); }
+function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[67]\d{7}$/.test(digits); }
 function pastelForClient(c){
   const sub=(c&&c.subscription)||{};
   if(sub.tier==='exclusiv') return EXCLUSIV_ACCENT;
@@ -420,6 +421,24 @@ function pastelForClient(c){
   const sorted=state.types.slice().sort((a,b)=>(a.price||0)-(b.price||0));
   const idx=sorted.findIndex(x=>x.id===sub.typeId);
   return idx>=0 ? PLAN_PASTELS[idx % PLAN_PASTELS.length] : null;
+}
+function renderMemberCard(c){
+  const sub=c.subscription||{};
+  const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
+  const cardAccent=pastelForClient(c);
+  const mcBrandStyle=cardAccent? (' style="color:'+cardAccent+';"') : '';
+  const mcCodeStyle=cardAccent? (' style="color:'+cardAccent+';border-color:'+cardAccent+';"') : '';
+  const memberCardStyle=cardAccent? (' style="border-color:'+cardAccent+';"') : '';
+  return '<div class="member-card"'+memberCardStyle+'>'
+   + '<div class="mc-brand"'+mcBrandStyle+'>'+icon('shield','icon-sm')+' '+esc(gymName)+'</div>'
+   + '<div class="mc-eyebrow">Card de membru</div>'
+   + '<div class="mc-name">'+esc(c.name)+'</div>'
+   + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
+   + '<div class="mc-plan">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>'
+   + '<div class="mc-eyebrow">Cod membru · verificare manuală</div>'
+   + '<div class="code-chip mc-code"'+mcCodeStyle+'>'+esc(c.code)+'</div>'
+   + '<div class="mc-footer">Prezintă QR-ul sau codul la fiecare vizită.</div>'
+   + '</div>';
 }
 function subStatus(c){
   const sub=c.subscription;
@@ -571,7 +590,7 @@ function renderBuyGate(){
      + '</div></div>';
   }
   const f=state.buyForm||{};
-  const typeOpts=state.types.filter(t=>t.active!==false).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+'</option>').join('');
+  const typeOpts=state.types.filter(t=>t.active!==false && t.tier!=='exclusiv').map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+'</option>').join('');
   return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock(gymName)
    + '<div class="gate-title">Cumpără un abonament</div>'
    + '<div class="gate-desc">Alege abonamentul dorit — te contactăm pentru plată. Plata online directă va fi disponibilă în curând.</div>'
@@ -611,6 +630,7 @@ async function submitBuyRequest(){
   const f=state.buyForm||{};
   if(!f.name||!f.name.trim()){ state.formErr='Introdu numele tău.'; scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr='Introdu numărul de telefon.'; scheduleRender(); return; }
+  if(!isValidMdPhone(f.phone)){ state.formErr='Numărul de telefon nu este valid (format: 0XX XXX XXX).'; scheduleRender(); return; }
   if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
   const t=typeById(f.typeId);
   try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, note:f.note||'' }); }
@@ -732,6 +752,7 @@ async function saveNewClient(){
   const f=state.form;
   if(!f.name||!f.name.trim()){ state.formErr='Introdu numele clientului.'; scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr='Introdu numărul de telefon.'; scheduleRender(); return; }
+  if(!isValidMdPhone(f.phone)){ state.formErr='Numărul de telefon nu este valid (format: 0XX XXX XXX).'; scheduleRender(); return; }
   if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
   const t=typeById(f.typeId);
   if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ state.formErr='Doar proprietarul poate atribui abonamente Exclusiv.'; scheduleRender(); return; }
@@ -759,20 +780,9 @@ function modalClientDetail(){
   const infoRow=(label,value)=>'<div class="info-row"><div class="info-label">'+esc(label)+'</div><div class="info-value">'+esc(value||'—')+'</div></div>';
   const cardAccent=pastelForClient(c);
   const mcBrandStyle=cardAccent? (' style="color:'+cardAccent+';"') : '';
-  const mcCodeStyle=cardAccent? (' style="color:'+cardAccent+';border-color:'+cardAccent+';"') : '';
-  const memberCardStyle=cardAccent? (' style="border-color:'+cardAccent+';"') : '';
   const printCardStyle=cardAccent? (' style="border-color:'+cardAccent+';"') : '';
   const memberCard=''
-   + '<div class="member-card"'+memberCardStyle+'>'
-     + '<div class="mc-brand"'+mcBrandStyle+'>'+icon('shield','icon-sm')+' '+esc(gymName)+'</div>'
-     + '<div class="mc-eyebrow">Card de membru</div>'
-     + '<div class="mc-name">'+esc(c.name)+'</div>'
-     + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
-     + '<div class="mc-plan">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>'
-     + '<div class="mc-eyebrow">Cod membru · verificare manuală</div>'
-     + '<div class="code-chip mc-code"'+mcCodeStyle+'>'+esc(c.code)+'</div>'
-     + '<div class="mc-footer">Prezintă QR-ul sau codul la fiecare vizită.</div>'
-   + '</div>'
+   + renderMemberCard(c)
    + '<div class="print-card"'+printCardStyle+'>' + '<div class="pc-left"><div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div></div>' + '<div class="pc-right">' + '<div class="mc-brand"'+mcBrandStyle+'>'+icon('shield','icon-sm')+' '+esc(gymName)+'</div>' + '<div class="pc-name">'+esc(c.name)+'</div>' + '<div class="pc-plan">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>' + '<div class="code-chip pc-code">'+esc(c.code)+'</div>' + '</div>' + '</div>' + '<div class="flex" style="flex-direction:column;gap:8px;margin-top:12px;">'
      + '<button class="btn btn-ghost btn-block" data-action="print-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' Tipărește cardul</button>'
      + '<button class="btn btn-ghost btn-block" data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' Descarcă pentru telefon</button>'
@@ -816,6 +826,7 @@ function modalEditClient(){
 async function saveEditClient(){
   const f=state.form; if(!f.name||!f.name.trim()){ state.formErr='Numele nu poate fi gol.'; scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr='Introdu numărul de telefon.'; scheduleRender(); return; }
+  if(!isValidMdPhone(f.phone)){ state.formErr='Numărul de telefon nu este valid (format: 0XX XXX XXX).'; scheduleRender(); return; }
   try{ await colClients().doc(f.id).update({name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim(), notes:f.notes||''}); await logMod('Date client actualizate', f.name); openModal('clientDetail',{id:f.id}); showToast('Date actualizate.'); }
   catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); }
 }
@@ -1199,9 +1210,7 @@ function renderClientPortal(){
 function clientTabSub(c){
   const sub=c.subscription||{}; const due=(sub.totalDue||0)-(sub.totalPaid||0);
   return '<div class="card" style="padding:20px;display:flex;flex-direction:column;gap:14px;">'
-   + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
-   + '<div class="code-chip">'+esc(c.code)+'</div>'
-   + '<div class="small muted center">Arată acest cod la recepție pentru acces.</div>'
+   + renderMemberCard(c)
    + (c.fcmToken? '<div class="small center" style="color:var(--success);font-weight:600;">🔔 Notificări active</div>' : '<button class="btn btn-ghost btn-sm btn-block" data-action="enable-push" data-id="'+c.id+'">'+icon('bell','icon-sm')+' Activează notificările</button>')
    + (c.cardRequestPending? '<div class="small center" style="color:var(--warning);font-weight:600;">Cerere trimisă — se așteaptă aprobarea recepției.</div>' : '<button class="btn btn-ghost btn-sm btn-block" data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' Am pierdut cardul — solicită unul nou</button>')
    + '<button class="btn btn-ghost btn-sm btn-block" data-action="request-trainer" data-id="'+c.id+'">'+icon('users','icon-sm')+' Solicită un antrenor personal</button>'
