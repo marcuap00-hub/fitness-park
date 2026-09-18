@@ -489,9 +489,15 @@ function gymScheduleFor(date, s){ s=s||DEFAULT_SETTINGS; const day=date.getDay()
   for(let i=0;i<25;i++){ const n=Math.floor(1000+Math.random()*9000); const code='GYM-'+n; if(!state.clients.some(c=>c.code===code)) return code; }
   return 'GYM-'+String(Date.now()).slice(-4);
 }
+function normalizeMemberCode(input){
+  let v=(input||'').trim().toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(v.slice(0,3)==='GYM') v=v.slice(3);
+  const digits=v.replace(/[^0-9]/g,'');
+  return digits? ('GYM-'+digits) : '';
+}
 function formatGymCode(v){ v=(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(v.slice(0,3)==='GYM') return 'GYM-'+v.slice(3); return v; } async function verifyAccess(rawCode){
   if(!db) return;
-  const code=(rawCode||'').trim().toUpperCase();
+  const code=normalizeMemberCode(rawCode);
   if(!code) return;
   const client=state.clients.find(c=>c.code===code);
   const now=new Date();
@@ -593,8 +599,8 @@ function adminSetupForm(){
 function renderClientGate(){
   return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
    + '<div class="gate-title">Contul tău</div>'
-   + '<div class="gate-desc">Introdu codul tău de membru (de pe cardul QR) ca să-ți vezi abonamentul.</div>'
-   + '<label class="field">Cod membru<input id="clientCode" data-gymcode class="mono" style="text-transform:uppercase;letter-spacing:.04em;" placeholder="GYM-0000" data-enter="client-login-submit"></label>'
+   + '<div class="gate-desc">Introdu codul tău de membru (doar cifrele, de pe cardul QR) ca să-ți vezi abonamentul.</div>'
+   + '<label class="field">Cod membru<input id="clientCode" data-gymcode class="mono" style="text-transform:uppercase;letter-spacing:.04em;" placeholder="ex: 7114" data-enter="client-login-submit"></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
    + '<button class="btn btn-primary btn-block" data-action="client-login-submit">'+icon('check','icon-sm')+' Vezi abonamentul meu</button>'
    + '<button class="btn btn-ghost btn-block mt4" data-action="toggle-camera-client">'+icon('camera','icon-sm')+' '+(state.cameraOn?'Oprește camera':'Scanează cardul cu camera')+'</button>'
@@ -1475,7 +1481,7 @@ async function adminSetupSubmit(){
 }
 function lockAdminSession(){ try{ firebase.auth().signOut().then(()=>firebase.auth().signInAnonymously()).catch(()=>{}); }catch(e){} }
 function clientLoginSubmit(){
-  const v=document.getElementById('clientCode'); const code=(v?v.value:'').trim().toUpperCase();
+  const v=document.getElementById('clientCode'); const code=normalizeMemberCode(v?v.value:'');
   if(!code){ state.formErr='Introdu codul de membru.'; scheduleRender(); return; }
   const c=state.clients.find(x=>x.code===code);
   if(!c){ state.formErr='Codul nu a fost găsit. Verifică-l pe cardul tău.'; scheduleRender(); return; }
