@@ -107,7 +107,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .brand-sub{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
 .gate-title{font-size:23px;font-weight:800;margin:2px 0 6px;}
 .gate-desc{color:var(--text-muted);font-size:14px;line-height:1.5;margin-bottom:22px;}
-.buy-plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:2px;}
+.buy-plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;margin-bottom:6px;}
 .buy-plan-card{position:relative;border-radius:14px;padding:12px 14px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:.12s ease;}
 .buy-plan-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
 .buy-plan-card.selected{outline:2px solid var(--accent);outline-offset:-1px;}
@@ -621,6 +621,7 @@ function renderBuyGate(){
    + '<label class="field">Abonament dorit</label>'
    + '<div class="buy-plan-grid">'+planPicker+'</div>'
    + '<label class="checkline"><input type="checkbox" data-bind="buyForm.wantsTrainer" '+(f.wantsTrainer?'checked':'')+'> Vreau și un antrenor personal</label>'
+   + '<label class="checkline"><input type="checkbox" data-bind="buyForm.wantsPrinted" '+(f.wantsPrinted?'checked':'')+'> Vreau și abonamentul în format tipărit</label>'
    + '<label class="field">Observații (opțional)<textarea rows="2" data-bind="buyForm.note">'+esc(f.note||'')+'</textarea></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
    + '<button class="btn btn-primary btn-block" data-action="submit-buy-request">'+icon('send','icon-sm')+' Trimite cererea</button>'
@@ -631,7 +632,7 @@ function notifyOwnerByEmail(data){
     if(!window.emailjs || typeof EMAILJS_SERVICE_ID==='undefined' || !EMAILJS_SERVICE_ID || typeof EMAILJS_TEMPLATE_ID_OWNER==='undefined' || !EMAILJS_TEMPLATE_ID_OWNER) return;
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID_OWNER, {
       client_name:data.name, client_phone:data.phone, plan_name:data.typeName,
-      price:data.price+' '+data.currency, wants_trainer:data.wantsTrainer?'Da':'Nu', note:data.note||'-',
+      price:data.price+' '+data.currency, wants_trainer:data.wantsTrainer?'Da':'Nu', wants_printed:data.wantsPrinted?'Da':'Nu', note:data.note||'-',
       to_email:(typeof OWNER_NOTIFY_EMAIL!=='undefined'?OWNER_NOTIFY_EMAIL:'')
     }).catch(function(){});
   }catch(e){}
@@ -655,7 +656,7 @@ async function submitBuyRequest(){
   if(!isValidMdPhone(f.phone)){ state.formErr='Numărul de telefon nu este valid (format: 0XX XXX XXX).'; scheduleRender(); return; }
   if(!f.typeId){ state.formErr='Alege un abonament.'; scheduleRender(); return; }
   const t=typeById(f.typeId);
-  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, note:f.note||'' }); }
+  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, note:f.note||'' }); }
   catch(e){ state.formErr='Eroare la trimiterea cererii. Încearcă din nou.'; scheduleRender(); }
 }
 function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint mt4">Îndreaptă camera spre codul QR.</div></div>'; }
@@ -728,7 +729,7 @@ function renderClients(){
   list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
   const rows=list.length? list.map(clientRowHtml).join('') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>Niciun client găsit.</div></div>';
   const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending');
-  const buyPanel=pendingBuys.length? ('<div class="card" style="padding:14px 18px;background:var(--info-bg);border-color:var(--info);margin-bottom:14px;"><div class="small" style="font-weight:700;color:var(--info);margin-bottom:8px;">Cereri de cumpărare abonament ('+pendingBuys.length+')</div>'+pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ antrenor':'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">🔒 Necesită aprobarea unui proprietar</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">Creează client</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">Respinge</button></span></div>').join('')+'</div>') : '';
+  const buyPanel=pendingBuys.length? ('<div class="card" style="padding:14px 18px;background:var(--info-bg);border-color:var(--info);margin-bottom:14px;"><div class="small" style="font-weight:700;color:var(--info);margin-bottom:8px;">Cereri de cumpărare abonament ('+pendingBuys.length+')</div>'+pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ antrenor':'')+(r.wantsPrinted?' · 🖨️ tipărit':'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">🔒 Necesită aprobarea unui proprietar</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">Creează client</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">Respinge</button></span></div>').join('')+'</div>') : '';
   return buyPanel
    + '<div class="section-head"><div class="section-title">Clienți &amp; abonamente<small>'+state.clients.length+' clienți înregistrați</small></div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' Client nou</button></div>'
    + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="Caută după nume, telefon sau cod" value="'+esc(state.clientQuery||'')+'"></div>'
