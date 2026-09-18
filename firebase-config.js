@@ -26,10 +26,10 @@ const FCM_VAPID_KEY = "";
 //    receptie sau dupa ce aprobi cererea lui). Variabile: {{client_name}}, {{plan_name}}, {{valid_until}},
 //    {{member_code}}, {{portal_link}} (link catre contul lui, unde intra automat si isi vede codul QR).
 //    Campul "To Email" din template pune-l tot pe {{to_email}}.
-const EMAILJS_PUBLIC_KEY = "";
-const EMAILJS_SERVICE_ID = "";
-const EMAILJS_TEMPLATE_ID_OWNER = "";
-const EMAILJS_TEMPLATE_ID_CLIENT = "";
+const EMAILJS_PUBLIC_KEY = "ayfStW2w7VhfkjjUW";
+const EMAILJS_SERVICE_ID = "service_wy9lfxo";
+const EMAILJS_TEMPLATE_ID_OWNER = "template_8jr921c";
+const EMAILJS_TEMPLATE_ID_CLIENT = "template_34o7sg7";
 // Adresa de gmail unde vrei sa primesti notificarile cand cineva cumpara/cere un abonament.
-const OWNER_NOTIFY_EMAIL = "marcu.ap00@gmail.com";
+const OWNER_NOTIFY_EMAIL = "fintessart@gmail.com";
 
