@@ -683,6 +683,7 @@ function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><vi
 /* ============ ADMIN SHELL ============ */
 const ADMIN_NAV=[
   {key:'reception', label:'Recepție', ic:'home'},
+  {key:'requests', label:'Solicitări', ic:'bell'},
   {key:'clients', label:'Clienți & abonamente', ic:'users'},
   {key:'history', label:'Istoric acces', ic:'history'},
   {key:'plans', label:'Abonamente', ic:'tag'},
@@ -693,9 +694,10 @@ function renderAdminShell(){
   const sec=state.adminSection;
   const isReceptionRole = state.adminRole==='reception';
   const navList = isReceptionRole? ADMIN_NAV.filter(n=>n.key==='reception') : (state.adminRole==='owner'? ADMIN_NAV : ADMIN_NAV.filter(n=>n.key!=='reports'));
-  const navHtml=navList.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+n.label+'</div>').join('');
+  const pendingReqCount=(state.buyRequests||[]).filter(r=>r.status==='pending').length + state.clients.filter(c=>c.cardRequestPending).length;
+  const navHtml=navList.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+n.label+((n.key==='requests'&&pendingReqCount)? (' <span class="pill pill-danger" style="margin-left:auto;">'+pendingReqCount+'</span>') : '')+'</div>').join('');
   const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
-  const body = isReceptionRole? renderReception() : (sec==='reception'?renderReception() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings());
+  const body = isReceptionRole? renderReception() : (sec==='reception'?renderReception() : sec==='requests'?renderRequests() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings());
   return '<div class="admin-shell">'
    + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">Club Management</div></div></div>'
      + navHtml
@@ -739,6 +741,27 @@ function scanCardHtml(){
    + '<div class="small faint mt4">Un cititor QR USB funcționează ca o tastatură — scrie direct în câmp.</div></div>';
 }
 
+/* ---- Requests (all client requests in one place) ---- */
+function renderRequests(){
+  const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending');
+  const cardPending=state.clients.filter(c=>c.cardRequestPending);
+  const recentOps=(state.modLog||[]).filter(l=>l.operation==='Cerere antrenor personal' || l.operation==='Cerere card tipărit').slice(0,20);
+
+  const buyRows=pendingBuys.length? pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ antrenor':'')+(r.wantsPrinted?' · 🖨️ tipărit':'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">🔒 Necesită aprobarea unui proprietar</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">Creează client</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">Respinge</button></span></div>').join('') : '<div class="empty-state small">Nicio cerere în așteptare.</div>';
+
+  const cardRows=cardPending.length? cardPending.map(c=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(c.name)+' · '+esc(c.phone)+' · cod curent '+esc(c.code)+'</span><span class="flex gap8"><button class="btn btn-primary btn-sm" data-action="approve-card-request" data-id="'+c.id+'">Aprobă (10 MDL)</button><button class="btn btn-ghost btn-sm" data-action="reject-card-request" data-id="'+c.id+'">Respinge</button><button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">Vezi fișa</button></span></div>').join('') : '<div class="empty-state small">Nicio cerere în așteptare.</div>';
+
+  const recentRows=recentOps.length? recentOps.map(l=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+(l.operation==='Cerere antrenor personal'?'🏋️':'🖨️')+' '+esc(l.operation)+' — '+esc(l.details||'')+'</span><span class="mono faint">'+fmtDateTime(l.date)+'</span></div>').join('') : '<div class="empty-state small">Nimic recent.</div>';
+
+  return '<div class="section-head"><div class="section-title">Solicitări<small>Toate cererile clienților, într-un singur loc</small></div></div>'
+   + '<div class="section-title">Cereri de cumpărare abonament ('+pendingBuys.length+')</div>'
+   + '<div class="card" style="padding:10px 18px 6px;margin-bottom:14px;">'+buyRows+'</div>'
+   + '<div class="section-title">Cereri card pierdut ('+cardPending.length+')</div>'
+   + '<div class="card" style="padding:10px 18px 6px;margin-bottom:14px;">'+cardRows+'</div>'
+   + '<div class="section-title">Cereri recente (antrenor personal / card tipărit)</div>'
+   + '<div class="card" style="padding:10px 18px 6px;">'+recentRows+'</div>';
+}
+
 /* ---- Clients ---- */
 function renderClients(){
   const q=(state.clientQuery||'').toLowerCase().trim();
@@ -747,10 +770,7 @@ function renderClients(){
   if(q) list=list.filter(c=>(c.name||'').toLowerCase().includes(q) || (c.phone||'').includes(q) || (c.code||'').toLowerCase().includes(q));
   list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
   const rows=list.length? list.map(clientRowHtml).join('') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>Niciun client găsit.</div></div>';
-  const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending');
-  const buyPanel=pendingBuys.length? ('<div class="card" style="padding:14px 18px;background:var(--info-bg);border-color:var(--info);margin-bottom:14px;"><div class="small" style="font-weight:700;color:var(--info);margin-bottom:8px;">Cereri de cumpărare abonament ('+pendingBuys.length+')</div>'+pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ antrenor':'')+(r.wantsPrinted?' · 🖨️ tipărit':'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">🔒 Necesită aprobarea unui proprietar</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">Creează client</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">Respinge</button></span></div>').join('')+'</div>') : '';
-  return buyPanel
-   + '<div class="section-head"><div class="section-title">Clienți &amp; abonamente<small>'+state.clients.length+' clienți înregistrați</small></div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' Client nou</button></div>'
+  return '<div class="section-head"><div class="section-title">Clienți &amp; abonamente<small>'+state.clients.length+' clienți înregistrați</small></div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' Client nou</button></div>'
    + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="Caută după nume, telefon sau cod" value="'+esc(state.clientQuery||'')+'"></div>'
    + '<div class="grid2" style="margin-top:10px;">'+selectField('Sortează după','clientSort',sortBy,[['name','Nume (A-Z)'],['created','Data creării abonamentului'],['expiry','Data expirării']])+selectField('Ordine','clientSortDir',sortDir,[['asc','Crescător'],['desc','Descrescător']])+'</div>'
    + '<div style="margin-top:6px;">'+rows+'</div></div>';
