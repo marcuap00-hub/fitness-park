@@ -789,6 +789,7 @@ async function saveNewClient(){
       validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method } };
   try{
     const ref=await colClients().add(doc);
+    if(!state.clients.find(x=>x.id===ref.id)){ state.clients=state.clients.concat([Object.assign({id:ref.id}, doc)]); }
     if(paid>0){ await colPay().add({clientId:ref.id, clientName:doc.name, amount:paid, currency:f.currency, method:f.method, date:new Date().toISOString(), note:'Abonament nou'}); }
     await logMod('Client nou înregistrat', doc.name+' · '+doc.subscription.typeName);
     showToast('Client creat: '+code);
