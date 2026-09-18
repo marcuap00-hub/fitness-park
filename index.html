@@ -74,6 +74,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 
 label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);font-weight:600;}
 .checkline{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);}
 .checkline input{width:16px;height:16px;padding:0;}
+.addon-check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text);background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;}
+.addon-check input{width:20px;height:20px;padding:0;flex:none;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);box-shadow:var(--shadow);}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.01em;}
 .pill-success{background:var(--success-bg);color:var(--success);}
@@ -87,7 +89,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .toast{position:fixed;left:50%;top:16px;bottom:auto;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:11px 18px;border-radius:11px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-lg);z-index:900;max-width:90vw;text-align:center;}
 .overlay{position:fixed;inset:0;background:rgba(10,11,20,.55);backdrop-filter:blur(2px);display:flex;align-items:flex-end;justify-content:center;z-index:800;padding:0;}
 @media(min-width:720px){.overlay{align-items:center;padding:24px;}}
-.modal{background:var(--surface);width:100%;max-width:520px;max-height:95vh;overflow:auto;border-radius:20px 20px 0 0;box-shadow:var(--shadow-lg);padding:22px;display:flex;flex-direction:column;gap:16px;}
+.modal{background:var(--surface);width:100%;max-width:520px;max-height:95vh;overflow:auto;border-radius:20px 20px 0 0;box-shadow:var(--shadow-lg);padding:22px;display:flex;flex-direction:column;gap:20px;}
 @media(min-width:720px){.modal{border-radius:20px;}}
 .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
 .modal-close{background:var(--surface-2);border:none;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text-muted);flex:none;}
@@ -620,8 +622,8 @@ function renderBuyGate(){
    + field('Email (opțional)','email','buyForm.email',f.email,'nume@exemplu.com')
    + '<label class="field">Abonament dorit</label>'
    + '<div class="buy-plan-grid">'+planPicker+'</div>'
-   + '<label class="checkline"><input type="checkbox" data-bind="buyForm.wantsTrainer" '+(f.wantsTrainer?'checked':'')+'> Vreau și un antrenor personal</label>'
-   + '<label class="checkline"><input type="checkbox" data-bind="buyForm.wantsPrinted" '+(f.wantsPrinted?'checked':'')+'> Vreau și abonamentul în format tipărit</label>'
+   + '<label class="addon-check"><input type="checkbox" data-bind="buyForm.wantsTrainer" '+(f.wantsTrainer?'checked':'')+'> Vreau și un antrenor personal</label>'
+   + '<label class="addon-check"><input type="checkbox" data-bind="buyForm.wantsPrinted" '+(f.wantsPrinted?'checked':'')+'> Vreau și abonamentul în format tipărit</label>'
    + '<label class="field">Observații (opțional)<textarea rows="2" data-bind="buyForm.note">'+esc(f.note||'')+'</textarea></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
    + '<button class="btn btn-primary btn-block" data-action="submit-buy-request">'+icon('send','icon-sm')+' Trimite cererea</button>'
@@ -807,7 +809,7 @@ function modalClientDetail(){
      + '<button class="btn btn-ghost btn-block" data-action="print-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' Tipărește cardul</button>'
      + '<button class="btn btn-ghost btn-block" data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' Descarcă pentru telefon</button>'
      + '<button class="btn btn-ghost btn-block" data-action="share-card" data-id="'+c.id+'">'+icon('send','icon-sm')+' Trimite cardul...</button>'
-     + '<div class="small faint center">Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.</div>' + '<hr class="hairline" style="margin:4px 0;">' + '<button class="btn btn-ghost btn-block" data-action="replace-lost-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' Înlocuiește cardul pierdut</button>'
+     + '<div class="small faint center">Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.</div>' + '<button class="btn btn-ghost btn-block" data-action="replace-lost-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' Înlocuiește cardul pierdut</button>'
    + '</div>';
   const leftCol=''
    + '<div class="info-list">'
