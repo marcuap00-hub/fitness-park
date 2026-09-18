@@ -116,6 +116,8 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .buy-plan-card.selected{outline:2px solid var(--accent);outline-offset:-1px;}
 .buy-plan-card.gold{background:linear-gradient(155deg,var(--gold-card),var(--gold-card-2));border-color:transparent;color:#EDE2C4;}
 .buy-plan-card.gold .plan-eyebrow{color:var(--gold);}
+.buy-plan-card.exclusiv{background:linear-gradient(155deg,#211F2E,#302C46);border-color:transparent;color:#E7E4F3;}
+.buy-plan-card.exclusiv .plan-eyebrow{color:#C7C2E8;}
 .buy-plan-card .plan-name{font-size:13.5px;margin:2px 0;}
 .buy-plan-card .plan-price{font-size:18px;}
 .buy-plan-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;}
@@ -763,12 +765,13 @@ function openNewClient(presetTypeId){
 function applyTypeDefaultsNew(){ const t=typeById(state.form.typeId); if(!t) return; state.form.price=t.price; state.form.currency=t.currency; state.form.validTo=addDays(state.form.validFrom||todayStr(), t.durationDays||30); }
 function modalNewClient(){
   const f=state.form;
-  const typeOpts=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv')).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+(t.tier==='exclusiv'?' 🔒':'')+'</option>').join('');
+  const availableTypes=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv'));
   return modalWrap('Client nou','Datele se salvează în baza de date a sălii.', ''
    + field('Nume și prenume','text','form.name',f.name,'Ex: Popescu Ion')
    + field('Telefon','tel','form.phone',f.phone,'06X XXX XXX')
    + field('Email (opțional)','email','form.email',f.email,'nume@exemplu.com')
-   + '<label class="field">Alege abonamentul<select data-bind="form.typeId">'+(typeOpts||'<option value="">Niciun tip disponibil — adaugă unul în Abonamente</option>')+'</select></label>'
+   + '<label class="field">Alege abonamentul</label>'
+   + '<div class="buy-plan-grid">'+typePickerHtml(availableTypes, f.typeId)+'</div>'
    + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
    + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>'
    + '<label class="checkline"><input type="checkbox" data-bind="form.paidFull" '+(f.paidFull?'checked':'')+'> Abonament achitat integral</label>'
@@ -953,7 +956,8 @@ async function shareCard(id){
   const c2=state.clients.find(x=>x.id===id); if(c2) await saveCardPng(c2, 'Cardul s-a descărcat.');
 }
 function openEditSub(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; const sub=c.subscription||{}; if(sub.tier==='exclusiv' && state.adminRole!=='owner'){ showToast('Doar proprietarul poate modifica abonamente Exclusiv.'); return; } const t=typeById(sub.typeId); openModal('editSub', { id, typeId:sub.typeId||'', price:sub.price!=null?sub.price:(t?t.price:0), currency:sub.currency||(t?t.currency:'MDL'), validFrom:sub.validFrom||todayStr(), validTo:sub.validTo||todayStr(), totalPaid:sub.totalPaid||0 }); }
-function modalEditSub(){ const f=state.form; const c=state.clients.find(x=>x.id===f.id); if(!c) return modalWrap('Abonament','','<div class="empty-state">Clientul nu a fost găsit.</div>'); const typeOpts=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv')).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+(t.tier==='exclusiv'?' 🔒':'')+'</option>').join(''); return modalWrap('Editează abonamentul · '+c.name,'Modifici prețul, perioada sau suma achitată — nu contează ca o reînnoire nouă și nu adaugă o încasare.', '' + '<label class="field">Abonament<select data-bind="form.typeId">'+typeOpts+'</select></label>' + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>' + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>' + field('Sumă achitată','number','form.totalPaid',f.totalPaid) + '<div class="err-text">'+esc(state.formErr||'')+'</div>' + '<button class="btn btn-primary btn-block" data-action="save-edit-sub">'+icon('check','icon-sm')+' Salvează modificarea</button>'); }
+function modalEditSub(){ const f=state.form; const c=state.clients.find(x=>x.id===f.id); if(!c) return modalWrap('Abonament','','<div class="empty-state">Clientul nu a fost găsit.</div>'); const availableTypes=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv')); return modalWrap('Editează abonamentul · '+c.name,'Modifici prețul, perioada sau suma achitată — nu contează ca o reînnoire nouă și nu adaugă o încasare.', '' + '<label class="field">Abonament</label>'
+   + '<div class="buy-plan-grid">'+typePickerHtml(availableTypes, f.typeId)+'</div>' + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>' + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>' + field('Sumă achitată','number','form.totalPaid',f.totalPaid) + '<div class="err-text">'+esc(state.formErr||'')+'</div>' + '<button class="btn btn-primary btn-block" data-action="save-edit-sub">'+icon('check','icon-sm')+' Salvează modificarea</button>'); }
 async function saveEditSub(){ const f=state.form; const t=typeById(f.typeId); const c=state.clients.find(x=>x.id===f.id); if(!c) return; const sub=c.subscription||{}; if(((t&&t.tier==='exclusiv')||sub.tier==='exclusiv') && state.adminRole!=='owner'){ showToast('Doar proprietarul poate atribui abonamente Exclusiv.'); return; } try{ await colClients().doc(f.id).update({ subscription: Object.assign({}, sub, { typeId:f.typeId, typeName:t?t.name:sub.typeName, tier:t?t.tier:sub.tier, accessFrom:t?t.accessFrom:sub.accessFrom, accessTo:t?t.accessTo:sub.accessTo, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:Number(f.totalPaid||0) }) }); await logMod('Abonament modificat', c.name+' · preț '+money(sub.price,sub.currency)+' → '+money(Number(f.price||0),f.currency)+(Number(sub.totalPaid||0)!==Number(f.totalPaid||0)? (' · achitat '+money(sub.totalPaid,sub.currency)+' → '+money(Number(f.totalPaid||0),f.currency)) : '')); showToast('Abonament actualizat.'); openModal('clientDetail', {id:c.id}); }catch(e){ state.formErr='Eroare la salvare.'; scheduleRender(); } }
 function openRenew(id){
   const c=state.clients.find(x=>x.id===id); if(!c) return;
@@ -965,9 +969,10 @@ function openRenew(id){
 function applyTypeDefaultsRenew(){ const t=typeById(state.form.typeId); if(!t) return; state.form.price=t.price; state.form.currency=t.currency; state.form.validTo=addDays(state.form.validFrom||todayStr(), t.durationDays||30); }
 function modalRenew(){
   const f=state.form; const c=state.clients.find(x=>x.id===f.id); if(!c) return modalWrap('Reînnoire','','<div class="empty-state">Clientul nu a fost găsit.</div>');
-  const typeOpts=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv')).map(t=>'<option value="'+t.id+'"'+(f.typeId===t.id?' selected':'')+'>'+esc(t.name)+' · '+money(t.price,t.currency)+(t.tier==='exclusiv'?' 🔒':'')+'</option>').join('');
+  const availableTypes=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv'));
   return modalWrap('Reînnoiește · '+c.name,'', ''
-   + '<label class="field">Abonament<select data-bind="form.typeId">'+typeOpts+'</select></label>'
+   + '<label class="field">Abonament</label>'
+   + '<div class="buy-plan-grid">'+typePickerHtml(availableTypes, f.typeId)+'</div>'
    + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
    + '<div class="grid2">'+field('Valabil de la','date','form.validFrom',f.validFrom)+field('Valabil până la','date','form.validTo',f.validTo)+'</div>'
    + '<label class="checkline"><input type="checkbox" data-bind="form.paidFull" '+(f.paidFull?'checked':'')+'> Achitat integral</label>'
@@ -1008,6 +1013,22 @@ function renderPlans(){
 }
 const PLAN_PASTELS=['#FFB4B4','#AFD8FF','#B8F2D2','#FFE39B','#D9C2FF','#FFCBA4'];
 const EXCLUSIV_ACCENT='#C7C2E8';
+function typePickerHtml(types, selectedId){
+  const sorted=types.slice().sort((a,b)=>(a.price||0)-(b.price||0));
+  const cards=sorted.map((t,idx)=>{
+    const gold=t.tier==='gold'; const exclusiv=t.tier==='exclusiv'; const premium=gold||exclusiv;
+    const pastel=premium? null : PLAN_PASTELS[idx % PLAN_PASTELS.length];
+    const selected=selectedId===t.id;
+    const styleBits=[]; if(pastel) styleBits.push('border-top:5px solid '+pastel);
+    return '<div class="buy-plan-card'+(gold?' gold':(exclusiv?' exclusiv':''))+(selected?' selected':'')+'" style="'+styleBits.join(';')+'" data-action="pick-plan-type" data-id="'+t.id+'">'
+     + (selected? '<div class="buy-plan-check">'+icon('check','icon-sm')+'</div>' : '')
+     + '<div class="plan-eyebrow">'+(gold?'Gold':(exclusiv?'Exclusiv':'Fitness'))+'</div>'
+     + '<div class="plan-name">'+esc(t.name)+'</div>'
+     + '<div class="plan-price">'+t.price+' <span>'+esc(t.currency)+'</span></div>'
+     + '</div>';
+  }).join('');
+  return cards || '<div class="small muted">Niciun tip de abonament disponibil.</div>';
+}
 function planCardHtml(t, idx){
   const gold=t.tier==='gold';
   const exclusiv=t.tier==='exclusiv';
@@ -1370,7 +1391,7 @@ function onAction(el){
     case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return; case 'enable-push': enablePushNotifications(id); return;
-    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
+    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
     case 'download-card': downloadCardForPhone(id); return;
     case 'share-card': shareCard(id); return;
     case 'close-modal': closeModal(); return;
