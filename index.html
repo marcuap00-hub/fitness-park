@@ -410,10 +410,11 @@ function subscribeAll(){
     if(!state.autoLoginTried){
       state.autoLoginTried=true;
       try{
-        const codeParam=new URLSearchParams(location.search).get('cod');
+        let codeParam=new URLSearchParams(location.search).get('cod');
+        if(!codeParam){ codeParam=localStorage.getItem('fp_client_code'); }
         if(codeParam){
           const c=state.clients.find(x=>x.code===codeParam.trim().toUpperCase());
-          if(c){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; stopCamera(); }
+          if(c){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; stopCamera(); try{ localStorage.setItem('fp_client_code', c.code); }catch(e){} }
         }
       }catch(e){}
     }
@@ -1356,7 +1357,7 @@ function onAction(el){
     case 'admin-setup-submit': adminSetupSubmit(); return;
     case 'client-login-submit': clientLoginSubmit(); return;
     case 'admin-lock': state.adminUnlocked=false; state.adminRole=null; state.screen='admin-gate'; state.modal=null; lockAdminSession(); break;
-    case 'client-logout': state.clientSession=null; state.screen='landing'; break;
+    case 'client-logout': state.clientSession=null; state.screen='landing'; try{ localStorage.removeItem('fp_client_code'); }catch(e){} break;
     case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
     case 'open-client-detail': openModal('clientDetail', {id}); return;
     case 'open-renew': openRenew(id); return; case 'open-edit-sub': openEditSub(id); return;
@@ -1453,6 +1454,7 @@ function clientLoginSubmit(){
   const c=state.clients.find(x=>x.code===code);
   if(!c){ state.formErr='Codul nu a fost găsit. Verifică-l pe cardul tău.'; scheduleRender(); return; }
   state.clientSession=c.id; state.screen='client'; state.formErr=''; state.clientTab='sub'; stopCamera();
+  try{ localStorage.setItem('fp_client_code', code); }catch(e){}
   scheduleRender();
 }
 
