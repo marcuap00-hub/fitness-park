@@ -900,8 +900,7 @@ function renderHistory(){
 
 /* ---- Plans (catalog) ---- */
 function renderPlans(){
-  const visibleTypes=state.types.filter(t=>state.adminRole==='owner' || t.tier!=='gold');
-  const cards=visibleTypes.slice().sort((a,b)=>(a.price||0)-(b.price||0)).map(planCardHtml).join('') || '<div class="empty-state">Niciun tip de abonament încă.</div>';
+  const cards=state.types.slice().sort((a,b)=>(a.price||0)-(b.price||0)).map(planCardHtml).join('') || '<div class="empty-state">Niciun tip de abonament încă.</div>';
   return '<div class="section-head"><div class="section-title">Abonamentele sălii tale<small>Gestionează oferta și regulile fiecărui tip</small></div>'+(state.adminRole==='owner'?('<button class="btn btn-ghost" data-action="open-new-type">'+icon('plus','icon-sm')+' Tip nou</button>'):'')+'</div>'
    + '<div class="plan-grid">'+cards+'</div>';
 }
