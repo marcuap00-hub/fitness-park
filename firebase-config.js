@@ -11,13 +11,23 @@ const FIREBASE_CONFIG = {
 // Pana nu pui cheia reala aici, butonul "Activeaza notificarile" din contul clientului va arata o eroare - e normal.
 const FCM_VAPID_KEY = "";
 
-// Notificare pe email (EmailJS) cand un client trimite o cerere de cumparare abonament online.
-// Pasi (o singura data, gratuit): mergi pe emailjs.com -> creeaza cont -> Email Services -> conecteaza-ti Gmail-ul ->
-// Email Templates -> creeaza un template cu variabilele: client_name, client_phone, plan_name, price, wants_trainer, note, to_email ->
-// copiaza Service ID, Template ID si Public Key (din Account -> General) si pune-le mai jos.
+// Notificari pe email (EmailJS) - functioneaza fara server, gratuit pana la 200 email-uri/luna.
+// Pasi (o singura data): mergi pe emailjs.com -> creeaza cont -> Email Services -> conecteaza-ti Gmail-ul.
+// Din Account -> General copiezi Public Key si Service ID, le pui mai jos. Apoi creezi DOUA template-uri
+// (Email Templates -> Create New Template) si pui ID-ul fiecaruia in constantele corespunzatoare:
+//
+// 1) EMAILJS_TEMPLATE_ID_OWNER - trimis TIE cand un client cere online un abonament (inainte de aprobare).
+//    Variabile disponibile in template: {{client_name}}, {{client_phone}}, {{plan_name}}, {{price}},
+//    {{wants_trainer}}, {{note}}. Campul "To Email" din template pune-l pe {{to_email}}.
+//
+// 2) EMAILJS_TEMPLATE_ID_CLIENT - trimis CLIENTULUI cand i se activeaza efectiv abonamentul (creat de
+//    receptie sau dupa ce aprobi cererea lui). Variabile: {{client_name}}, {{plan_name}}, {{valid_until}},
+//    {{member_code}}, {{portal_link}} (link catre contul lui, unde intra automat si isi vede codul QR).
+//    Campul "To Email" din template pune-l tot pe {{to_email}}.
 const EMAILJS_PUBLIC_KEY = "";
 const EMAILJS_SERVICE_ID = "";
-const EMAILJS_TEMPLATE_ID = "";
+const EMAILJS_TEMPLATE_ID_OWNER = "";
+const EMAILJS_TEMPLATE_ID_CLIENT = "";
 // Adresa de gmail unde vrei sa primesti notificarile cand cineva cumpara/cere un abonament.
 const OWNER_NOTIFY_EMAIL = "marcu.ap00@gmail.com";
 
