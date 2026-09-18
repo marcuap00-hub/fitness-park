@@ -1054,6 +1054,14 @@ async function deleteType(id){
 }
 
 async function clearCollection(colRef){ const snap=await colRef.get(); const docs=snap.docs; for(let i=0;i<docs.length;i+=400){ const batch=db.batch(); docs.slice(i,i+400).forEach(d=>batch.delete(d.ref)); await batch.commit(); } return docs.length; }
+async function clearAllClients(){
+  if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate face asta.'); return; }
+  if(!confirm('Ștergi PERMANENT toți clienții ('+state.clients.length+')? Abonamentele, codurile QR și fișele lor dispar ireversibil. Istoricul de plăți/acces rămâne neatins.')) return;
+  const typed=prompt('Pentru confirmare, scrie STERGE TOT și apasă OK:');
+  if(!typed || typed.trim().toUpperCase()!=='STERGE TOT'){ showToast('Anulat — textul nu a coincis.'); return; }
+  try{ const n=await clearCollection(colClients()); await logMod('Toți clienții au fost șterși', n+' clienți'); showToast('Toți clienții au fost șterși.'); }
+  catch(e){ showToast('Eroare la ștergere.'); }
+}
 async function clearPayments(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colPay()); await logMod('Istoric încasări șters', n+' înregistrări'); showToast('Istoricul încasărilor a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
 async function clearModLog(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colMod()); await logMod('Istoric modificări șters', n+' înregistrări'); showToast('Istoricul modificărilor a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
 async function clearAccessLog(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colLog()); await logMod('Istoric acces șters', n+' înregistrări'); showToast('Istoricul accesului a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
@@ -1132,7 +1140,14 @@ function renderSettings(){
      + field('Parolă inițială (minim 6 caractere)','password','teamForm.password',(state.teamForm&&state.teamForm.password)||'')
      + selectField('Rol','teamForm.role',(state.teamForm&&state.teamForm.role)||'reception',[['reception','Recepție — doar scanare'],['admin','Administrator'],['owner','Proprietar — acces total']])
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' Adaugă acces</button>'
-     + '<hr class="hairline">'+teamRows+'</div>') : '');
+     + '<hr class="hairline">'+teamRows+'</div>') : '')
+   + (state.adminRole==='owner'? (
+     '<div class="section-title">Zonă BETA — testare</div>'
+     + '<div class="card settings-block" style="padding:20px 22px;border-color:var(--danger);">'
+     + '<div class="small" style="color:var(--danger);font-weight:600;margin-bottom:10px;">Folosește doar cât timp saitul e în testare, cu date de test. Șterge PERMANENT toți clienții din bază — abonamente, coduri QR, fișele lor. Istoricul de plăți/acces/modificări nu e afectat (se șterge separat, din Rapoarte).</div>'
+     + '<button class="btn btn-danger-solid" data-action="clear-all-clients">'+icon('trash','icon-sm')+' Șterge TOȚI clienții</button>'
+     + '</div>'
+   ) : '');
 }
 async function saveSettingsGeneral(){
   const d=state.settingsDraft;
@@ -1364,7 +1379,7 @@ function onAction(el){
     case 'save-settings-name': saveSettingsName(); return;
     case 'save-settings-news': saveSettingsNews(); return;
     case 'change-password': changePassword(); return;
-    case 'add-team': addTeam(); return;
+    case 'add-team': addTeam(); return; case 'clear-all-clients': clearAllClients(); return;
     case 'remove-team': removeTeam(Number(el.getAttribute('data-idx'))); return;
     case 'toggle-mobile-nav': state.mobileNavOpen=!state.mobileNavOpen; break;
     case 'client-tab': state.clientTab=el.getAttribute('data-tab'); break;
