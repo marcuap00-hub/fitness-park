@@ -12,7 +12,9 @@ const FIREBASE_CONFIG = {
 const FCM_VAPID_KEY = "";
 
 // Notificari pe email (EmailJS) - functioneaza fara server, gratuit pana la 200 email-uri/luna.
-// Pasi (o singura data): mergi pe emailjs.com -> creeaza cont -> Email Services -> conecteaza-ti Gmail-ul.
+// Pasi (o singura data): mergi pe emailjs.com -> creeaza cont -> Email Services -> conecteaza contul
+// fintessart@gmail.com (acesta e Gmail-ul de la care vor porni efectiv toate email-urile - il alegi
+// cand conectezi serviciul, nu se poate schimba din cod).
 // Din Account -> General copiezi Public Key si Service ID, le pui mai jos. Apoi creezi DOUA template-uri
 // (Email Templates -> Create New Template) si pui ID-ul fiecaruia in constantele corespunzatoare:
 //
