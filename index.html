@@ -1306,11 +1306,13 @@ async function saveRenew(){
   const curSub=c.subscription||{};
   if(((t&&t.tier==='exclusiv')||curSub.tier==='exclusiv') && state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate atribui abonamente Exclusiv.')); return; }
   const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
+  const newSub={ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method };
   try{
-    await colClients().doc(f.id).update({ subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method }, paused:false });
+    await colClients().doc(f.id).update({ subscription:newSub, paused:false });
     if(paid>0){ await colPay().add({clientId:c.id, clientName:c.name, amount:paid, currency:f.currency, method:f.method, date:new Date().toISOString(), note:'Reînnoire abonament'}); }
     await logMod('Abonament reînnoit', c.name+' · '+(t?t.name:''));
     showToast(ra('Abonament reînnoit.'));
+    if(paid>=Number(f.price||0)-0.5){ notifyClientByEmail(Object.assign({}, c, {subscription:newSub})); }
     openModal('clientDetail', {id:c.id});
   }catch(e){ state.formErr=ra('Eroare la salvare.'); scheduleRender(); }
 }
