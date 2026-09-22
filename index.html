@@ -347,6 +347,8 @@ function payMethodLabel(m){ return {cash:'Numerar',card:'Card',transfer:'Transfe
 
 /* ============ STATE & DB REFS ============ */
 const DAY_LABELS=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
+const DAY_LABELS_RU=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+function dayLabel(i){ return state.lang==='ru'? DAY_LABELS_RU[i] : DAY_LABELS[i]; }
 const DEFAULT_SETTINGS={
   gymName:'Fitness Park', adminPasswordHash:null, warnDays:5, minMinutesBetweenEntries:5,
   openHour:'08:00', closeHour:'21:00', applyWeeklySchedule:false, saturdayDifferent:true, saturdayOpenHour:'09:00', saturdayCloseHour:'21:00',
@@ -579,6 +581,29 @@ const RO_RU = {
   'Cardul s-a salvat. Îl găsești în galeria telefonului.':'Карта сохранена. Найдёте её в галерее телефона.',
   'Trimiterea directă nu e susținută aici — se descarcă cardul.':'Прямая отправка здесь не поддерживается — карта скачивается.',
   'Cardul s-a descărcat.':'Карта скачана.',
+  'Doar proprietarul poate face asta.':'Только владелец может это сделать.',
+  'Ștergi PERMANENT toți clienții (':'Удалить НАВСЕГДА всех клиентов (',
+  ')? Abonamentele, codurile QR și fișele lor dispar ireversibil. Istoricul de plăți/acces rămâne neatins.':')? Абонементы, QR-коды и их карточки исчезнут безвозвратно. История платежей/доступа не затрагивается.',
+  'Anulat — textul nu a coincis.':'Отменено — текст не совпал.', 'Toți clienții au fost șterși.':'Все клиенты удалены.',
+  'Doar proprietarul poate șterge istoricul.':'Только владелец может удалить историю.',
+  'Istoricul încasărilor a fost șters.':'История платежей удалена.', 'Istoricul modificărilor a fost șters.':'История изменений удалена.',
+  'Istoricul accesului a fost șters.':'История доступа удалена.', 'Eroare la ștergere.':'Ошибка при удалении.',
+  'Fișier salvat.':'Файл сохранён.', 'Exportul a eșuat.':'Экспорт не удался.',
+  'Sigur ștergi acest client? Acțiunea nu poate fi anulată.':'Точно удалить этого клиента? Действие нельзя отменить.',
+  'Ștergi acest tip de abonament din catalog?':'Удалить этот тип абонемента из каталога?',
+  'Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.':'Точно удалить всю историю платежей? Действие нельзя отменить.',
+  'Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.':'Точно удалить всю историю изменений? Действие нельзя отменить.',
+  'Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.':'Точно удалить всю историю доступа? Действие нельзя отменить.',
+  'Introdu email și parolă.':'Введите email и пароль.', 'Email sau parolă greșită.':'Неверный email или пароль.',
+  'Acest cont nu (mai) are acces la panou.':'Этот аккаунт больше не имеет доступа к панели.',
+  'Acest email nu are acces. Cere administratorului să te adauge în Echipă.':'У этого email нет доступа. Попросите администратора добавить вас в команду.',
+  'Acest cont există deja — folosește „Intră în panou" cu parola ta.':'Этот аккаунт уже существует — используйте «Вход в панель» со своим паролем.',
+  'Cont creat. Ai acces la panou.':'Аккаунт создан. У вас есть доступ к панели.',
+  'Introdu un email valid.':'Введите действительный email.', 'Există deja un cont cu acest email.':'Уже есть аккаунт с этим email.',
+  'Eroare la salvare. Încearcă din nou.':'Ошибка при сохранении. Попробуйте снова.', 'Panoul de administrare e gata.':'Панель администрирования готова.',
+  'Camera nu este disponibilă aici. Folosește codul manual.':'Камера здесь недоступна. Используйте код вручную.',
+  'Scrie emailul contului tău mai sus, apoi apasă din nou „Am uitat parola".':'Введите email вашего аккаунта выше, затем снова нажмите «Забыли пароль».',
+  'Dacă acest cont există, ți-am trimis un email cu link de resetare a parolei.':'Если этот аккаунт существует, мы отправили вам email со ссылкой для сброса пароля.',
 };
 function themeToggleBtn(){ const dt=document.documentElement.getAttribute('data-theme'); const isDark = dt==='dark' || (dt!=='light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); return '<button class="modal-close" data-action="toggle-theme" title="Temă / Тема" style="flex:none;">'+icon(isDark?'sun':'moon','icon-sm')+'</button>'; }
 function langToggleBtn(){ return '<button class="modal-close" data-action="toggle-lang" title="RU / RO" style="flex:none;">'+icon('globe','icon-sm')+'</button>'; }
@@ -916,7 +941,7 @@ async function submitBuyRequest(){
   if(!f.typeId){ state.formErr=tr('errChoosePlan'); scheduleRender(); return; }
   const t=typeById(f.typeId);
   try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; try{ localStorage.setItem('fp_pending_phone', f.phone.trim()); }catch(e){} scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, note:f.note||'' }); }
-  catch(e){ state.formErr='Eroare la trimiterea cererii. Încearcă din nou.'; scheduleRender(); }
+  catch(e){ state.formErr=tr('toastReqError'); scheduleRender(); }
 }
 function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint mt4">'+tr('aimCamera')+'</div></div>'; }
 
@@ -1375,16 +1400,17 @@ async function deleteType(id){
 
 async function clearCollection(colRef){ const snap=await colRef.get(); const docs=snap.docs; for(let i=0;i<docs.length;i+=400){ const batch=db.batch(); docs.slice(i,i+400).forEach(d=>batch.delete(d.ref)); await batch.commit(); } return docs.length; }
 async function clearAllClients(){
-  if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate face asta.'); return; }
-  if(!confirm('Ștergi PERMANENT toți clienții ('+state.clients.length+')? Abonamentele, codurile QR și fișele lor dispar ireversibil. Istoricul de plăți/acces rămâne neatins.')) return;
-  const typed=prompt('Pentru confirmare, scrie STERGE TOT și apasă OK:');
-  if(!typed || typed.trim().toUpperCase()!=='STERGE TOT'){ showToast('Anulat — textul nu a coincis.'); return; }
-  try{ const n=await clearCollection(colClients()); await logMod('Toți clienții au fost șterși', n+' clienți'); showToast('Toți clienții au fost șterși.'); }
-  catch(e){ showToast('Eroare la ștergere.'); }
+  if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate face asta.')); return; }
+  const confirmWord = state.lang==='ru' ? 'УДАЛИТЬ ВСЁ' : 'STERGE TOT';
+  if(!confirm(ra('Ștergi PERMANENT toți clienții (')+state.clients.length+ra(')? Abonamentele, codurile QR și fișele lor dispar ireversibil. Istoricul de plăți/acces rămâne neatins.'))) return;
+  const typed=prompt((state.lang==='ru'?'Для подтверждения напишите ':'Pentru confirmare, scrie ')+confirmWord+(state.lang==='ru'?' и нажмите OK:':' și apasă OK:'));
+  if(!typed || typed.trim().toUpperCase()!==confirmWord){ showToast(ra('Anulat — textul nu a coincis.')); return; }
+  try{ const n=await clearCollection(colClients()); await logMod('Toți clienții au fost șterși', n+' clienți'); showToast(ra('Toți clienții au fost șterși.')); }
+  catch(e){ showToast(ra('Eroare la ștergere.')); }
 }
-async function clearPayments(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colPay()); await logMod('Istoric încasări șters', n+' înregistrări'); showToast('Istoricul încasărilor a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
-async function clearModLog(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colMod()); await logMod('Istoric modificări șters', n+' înregistrări'); showToast('Istoricul modificărilor a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
-async function clearAccessLog(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate șterge istoricul.'); return; } try{ const n=await clearCollection(colLog()); await logMod('Istoric acces șters', n+' înregistrări'); showToast('Istoricul accesului a fost șters.'); }catch(e){ showToast('Eroare la ștergere.'); } }
+async function clearPayments(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colPay()); await logMod('Istoric încasări șters', n+' înregistrări'); showToast(ra('Istoricul încasărilor a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
+async function clearModLog(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colMod()); await logMod('Istoric modificări șters', n+' înregistrări'); showToast(ra('Istoricul modificărilor a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
+async function clearAccessLog(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colLog()); await logMod('Istoric acces șters', n+' înregistrări'); showToast(ra('Istoricul accesului a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
 /* ---- Reports ---- */
 function renderReports(){
   const days=[]; const now=new Date();
@@ -1395,19 +1421,19 @@ function renderReports(){
   const bars=counts.map(c=>'<div class="bar'+(c>0?' hi':'')+'" style="height:'+Math.max(3,Math.round(c/max*90))+'px;" title="'+c+'"></div>').join('');
   const paySum=state.payments.reduce((s,p)=>s+Number(p.amount||0),0);
   const payRows=state.payments.slice(0,10).map(p=>'<tr><td class="mono small">'+fmtDateTime(p.date)+'</td><td>'+esc(p.clientName)+'</td><td class="mono">'+money(p.amount,p.currency)+'</td><td><span class="pill pill-muted">'+esc(payMethodLabel(p.method))+'</span></td></tr>').join('');
-  return '<div class="section-title">Frecvență · ultimele 31 de zile</div>'
-   + '<div class="card" style="padding:18px 20px;"><div class="stat-num mono" style="font-size:22px;">'+totalVisits+' intrări</div><div class="bars" style="margin-top:14px;">'+bars+'</div></div>'
-   + '<div class="section-head"><div class="section-title">Încasări recente <span class="mono small" style="font-weight:700;">· '+money(paySum,(state.settings&&state.settings.currency))+'</span></div>'+(state.payments.length?('<button class="btn btn-danger btn-sm" data-action="clear-payments">'+icon('trash','icon-sm')+' Șterge istoricul</button>'):'')+'</div>'
-   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Client</th><th>Sumă</th><th>Metodă</th></tr></thead><tbody>'+payRows+'</tbody></table></div>'+(state.payments.length?'':'<div class="empty-state small">Nicio încasare încă.</div>')+'</div>'
-   + '<div class="section-title">Export &amp; copie de siguranță</div>'
+  return '<div class="section-title">'+ra('Frecvență · ultimele 31 de zile')+'</div>'
+   + '<div class="card" style="padding:18px 20px;"><div class="stat-num mono" style="font-size:22px;">'+totalVisits+' '+(state.lang==='ru'?ruEntriesShort(totalVisits):'intrări')+'</div><div class="bars" style="margin-top:14px;">'+bars+'</div></div>'
+   + '<div class="section-head"><div class="section-title">'+ra('Încasări recente')+' <span class="mono small" style="font-weight:700;">· '+money(paySum,(state.settings&&state.settings.currency))+'</span></div>'+(state.payments.length?('<button class="btn btn-danger btn-sm" data-action="clear-payments">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>'):'')+'</div>'
+   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>'+ra('Data')+'</th><th>'+ra('Client')+'</th><th>'+ra('Sumă')+'</th><th>'+ra('Metodă')+'</th></tr></thead><tbody>'+payRows+'</tbody></table></div>'+(state.payments.length?'':'<div class="empty-state small">'+ra('Nicio încasare încă.')+'</div>')+'</div>'
+   + '<div class="section-title">'+ra('Export & copie de siguranță')+'</div>'
    + '<div class="card" style="padding:18px 20px;"><div class="flex gap8" style="flex-wrap:wrap;">'
-     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="clients">'+icon('export','icon-sm')+' Clienți · CSV</button>'
-     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="types">'+icon('export','icon-sm')+' Abonamente · CSV</button>'
-     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="payments">'+icon('export','icon-sm')+' Încasări · CSV</button>'
+     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="clients">'+icon('export','icon-sm')+' '+ra('Clienți · CSV')+'</button>'
+     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="types">'+icon('export','icon-sm')+' '+ra('Abonamente · CSV')+'</button>'
+     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="payments">'+icon('export','icon-sm')+' '+ra('Încasări · CSV')+'</button>'
    + '</div></div>'
-   + '<div class="section-head"><div class="section-title">Istoricul modificărilor</div>'+(state.modLog.length?('<button class="btn btn-danger btn-sm" data-action="clear-modlog">'+icon('trash','icon-sm')+' Șterge istoricul</button>'):'')+'</div>'
-   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>Data</th><th>Operație</th><th>Cine</th></tr></thead><tbody>'
-     + state.modLog.slice(0,20).map(m=>'<tr><td class="mono small">'+fmtDateTime(m.date)+'</td><td>'+esc(m.operation)+(m.details?(' · <span class="faint">'+esc(m.details)+'</span>'):'')+'</td><td class="small faint">'+esc(m.actor)+'</td></tr>').join('')+'</tbody></table></div>'+(state.modLog.length?'':'<div class="empty-state small">Niciun eveniment încă.</div>')+'</div>';
+   + '<div class="section-head"><div class="section-title">'+ra('Istoricul modificărilor')+'</div>'+(state.modLog.length?('<button class="btn btn-danger btn-sm" data-action="clear-modlog">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>'):'')+'</div>'
+   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>'+ra('Data')+'</th><th>'+ra('Operație')+'</th><th>'+ra('Cine')+'</th></tr></thead><tbody>'
+     + state.modLog.slice(0,20).map(m=>'<tr><td class="mono small">'+fmtDateTime(m.date)+'</td><td>'+ra(esc(m.operation))+(m.details?(' · <span class="faint">'+esc(m.details)+'</span>'):'')+'</td><td class="small faint">'+esc(m.actor)+'</td></tr>').join('')+'</tbody></table></div>'+(state.modLog.length?'':'<div class="empty-state small">'+ra('Niciun eveniment încă.')+'</div>')+'</div>';
 }
 async function exportCSV(kind){
   let rows=[], filename='';
@@ -1419,7 +1445,7 @@ async function exportCSV(kind){
     state.payments.forEach(p=>rows.push([fmtDateTime(p.date), p.clientName, p.amount, p.currency, p.method])); }
   const csv=rows.map(r=>r.map(v=>{ v=String(v==null?'':v); return /[",;\n]/.test(v)? ('"'+v.replace(/"/g,'""')+'"') : v; }).join(',')).join('\r\n');
   const ok=browserSave(filename, new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'}));
-  showToast(ok? 'Fișier salvat.' : 'Exportul a eșuat.');
+  showToast(ok? ra('Fișier salvat.') : ra('Exportul a eșuat.'));
 }
 
 /* ---- Settings ---- */
@@ -1431,91 +1457,91 @@ function draftFromSettings(s){
 function renderSettings(){
   if(!state.settingsDraft){ state.settingsDraft=draftFromSettings(state.settings); }
   const d=state.settingsDraft;
-  const dayChecks=DAY_LABELS.map((lab,i)=>'<label class="checkline"><input type="checkbox" data-bind="settingsDraft.openDays.'+i+'" '+((d.openDays&&d.openDays[i])?'checked':'')+'> '+lab+'</label>').join('');
+  const dayChecks=DAY_LABELS.map((lab,i)=>'<label class="checkline"><input type="checkbox" data-bind="settingsDraft.openDays.'+i+'" '+((d.openDays&&d.openDays[i])?'checked':'')+'> '+dayLabel(i)+'</label>').join('');
   const team=(state.settings&&state.settings.team)||[];
-  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'); const roleLabel=r=>r==='owner'?'Proprietar — acces total':(r==='admin'?'Administrator':'Recepție — doar scanare'); const teamRows=team.length? team.map((m,i)=>'<div class="team-row"><div><b style="font-size:13px;">'+esc(m.email)+'</b><div class="small faint">'+roleLabel(m.role)+'</div></div>'+(m.role==='owner'?'':'<button class="btn btn-ghost btn-sm" data-action="remove-team" data-idx="'+i+'">Retrage acces</button>')+'</div>').join('') : '<div class="small faint">Niciun coleg adăugat încă.</div>';
-  return '<div class="section-title">Program, avertizări și scanare</div>'
+  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'); const roleLabel=r=>ra(r==='owner'?'Proprietar — acces total':(r==='admin'?'Administrator':'Recepție — doar scanare')); const teamRows=team.length? team.map((m,i)=>'<div class="team-row"><div><b style="font-size:13px;">'+esc(m.email)+'</b><div class="small faint">'+roleLabel(m.role)+'</div></div>'+(m.role==='owner'?'':'<button class="btn btn-ghost btn-sm" data-action="remove-team" data-idx="'+i+'">'+ra('Retrage acces')+'</button>')+'</div>').join('') : '<div class="small faint">'+ra('Niciun coleg adăugat încă.')+'</div>';
+  return '<div class="section-title">'+ra('Program, avertizări și scanare')+'</div>'
    + '<div class="card settings-block" style="padding:20px 22px;">'
-     + '<div class="grid2">'+field('Avertizare înainte de expirare (zile)','number','settingsDraft.warnDays',d.warnDays)+field('Interval minim între intrări (minute)','number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
-     + '<div class="grid2">'+field('Deschidere','time','settingsDraft.openHour',d.openHour)+field('Închidere','time','settingsDraft.closeHour',d.closeHour)+'</div>' + '<label class="checkline"><input type="checkbox" data-bind="settingsDraft.saturdayDifferent" '+(d.saturdayDifferent?'checked':'')+'> Program diferit sâmbăta</label>' + (d.saturdayDifferent? ('<div class="grid2">'+field('Deschidere sâmbătă','time','settingsDraft.saturdayOpenHour',d.saturdayOpenHour)+field('Închidere sâmbătă','time','settingsDraft.saturdayCloseHour',d.saturdayCloseHour)+'</div>') : '')
-     + '<div><div class="small" style="font-weight:700;margin-bottom:8px;">Zile deschise</div><div class="flex gap8" style="flex-wrap:wrap;">'+dayChecks+'</div></div>'
-     + '<label class="field">Zile închise / sărbători (o dată pe linie, AAAA-LL-ZZ)<textarea rows="2" data-bind="settingsDraft.closedDatesText">'+esc(d.closedDatesText)+'</textarea></label>'
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-general">'+icon('check','icon-sm')+' Salvează regulile</button></div>'
-   + '<div class="section-title">Identitatea sălii</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;">'+field('Numele sălii','text','settingsDraft.gymName',d.gymName)
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-name">'+icon('check','icon-sm')+' Salvează denumirea</button></div>'
-   + '<div class="section-title">Noutăți &amp; reguli pentru clienți</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Acest text apare în contul fiecărui client, la secțiunea „Noutăți".</div>'
+     + '<div class="grid2">'+field(ra('Avertizare înainte de expirare (zile)'),'number','settingsDraft.warnDays',d.warnDays)+field(ra('Interval minim între intrări (minute)'),'number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
+     + '<div class="grid2">'+field(ra('Deschidere'),'time','settingsDraft.openHour',d.openHour)+field(ra('Închidere'),'time','settingsDraft.closeHour',d.closeHour)+'</div>' + '<label class="checkline"><input type="checkbox" data-bind="settingsDraft.saturdayDifferent" '+(d.saturdayDifferent?'checked':'')+'> '+ra('Program diferit sâmbăta')+'</label>' + (d.saturdayDifferent? ('<div class="grid2">'+field(ra('Deschidere sâmbătă'),'time','settingsDraft.saturdayOpenHour',d.saturdayOpenHour)+field(ra('Închidere sâmbătă'),'time','settingsDraft.saturdayCloseHour',d.saturdayCloseHour)+'</div>') : '')
+     + '<div><div class="small" style="font-weight:700;margin-bottom:8px;">'+ra('Zile deschise')+'</div><div class="flex gap8" style="flex-wrap:wrap;">'+dayChecks+'</div></div>'
+     + '<label class="field">'+ra('Zile închise / sărbători (o dată pe linie, AAAA-LL-ZZ)')+'<textarea rows="2" data-bind="settingsDraft.closedDatesText">'+esc(d.closedDatesText)+'</textarea></label>'
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-general">'+icon('check','icon-sm')+' '+ra('Salvează regulile')+'</button></div>'
+   + '<div class="section-title">'+ra('Identitatea sălii')+'</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;">'+field(ra('Numele sălii'),'text','settingsDraft.gymName',d.gymName)
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-name">'+icon('check','icon-sm')+' '+ra('Salvează denumirea')+'</button></div>'
+   + '<div class="section-title">'+ra('Noutăți & reguli pentru clienți')+'</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Acest text apare în contul fiecărui client, la secțiunea „Noutăți".')+'</div>'
      + '<label class="field"><textarea rows="6" data-bind="settingsDraft.newsText">'+esc(d.newsText)+'</textarea></label>'
      + '<div class="news-preview">'+esc(d.newsText||'').replace(/\n/g,'<br>')+'</div>'
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-news">'+icon('check','icon-sm')+' Salvează noutățile</button></div>'
-   + '<div class="section-title">Parola contului tău</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Cont curent: '+esc((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'—')+'</div>'+field('Parolă curentă','password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')
-     + '<div class="grid2">'+field('Parolă nouă (minim 6 caractere)','password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field('Confirmă parola nouă','password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-news">'+icon('check','icon-sm')+' '+ra('Salvează noutățile')+'</button></div>'
+   + '<div class="section-title">'+ra('Parola contului tău')+'</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Cont curent: ')+esc((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'—')+'</div>'+field(ra('Parolă curentă'),'password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')
+     + '<div class="grid2">'+field(ra('Parolă nouă (minim 6 caractere)'),'password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field(ra('Confirmă parola nouă'),'password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
      + '<div class="err-text">'+esc(state.pwErr||'')+'</div>'
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' Schimbă parola</button></div>'
-   + (canManageTeam? ('<div class="section-title">Echipa sălii</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Rolul „Recepție" vede doar ecranul de scanare.</div>'
-     + field('E-mail coleg','email','teamForm.email',(state.teamForm&&state.teamForm.email)||'','coleg@exemplu.md')
-     + field('Parolă inițială (minim 6 caractere)','password','teamForm.password',(state.teamForm&&state.teamForm.password)||'')
-     + selectField('Rol','teamForm.role',(state.teamForm&&state.teamForm.role)||'reception',[['reception','Recepție — doar scanare'],['admin','Administrator'],['owner','Proprietar — acces total']])
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' Adaugă acces</button>'
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' '+ra('Schimbă parola')+'</button></div>'
+   + (canManageTeam? ('<div class="section-title">'+ra('Echipa sălii')+'</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Rolul „Recepție" vede doar ecranul de scanare.')+'</div>'
+     + field(ra('E-mail coleg'),'email','teamForm.email',(state.teamForm&&state.teamForm.email)||'','coleg@exemplu.md')
+     + field(ra('Parolă inițială (minim 6 caractere)'),'password','teamForm.password',(state.teamForm&&state.teamForm.password)||'')
+     + selectField(ra('Rol'),'teamForm.role',(state.teamForm&&state.teamForm.role)||'reception',[['reception',ra('Recepție — doar scanare')],['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]])
+     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă acces')+'</button>'
      + '<hr class="hairline">'+teamRows+'</div>') : '')
    + (state.adminRole==='owner'? (
-     '<div class="section-title">Zonă BETA — testare</div>'
+     '<div class="section-title">'+ra('Zonă BETA — testare')+'</div>'
      + '<div class="card settings-block" style="padding:20px 22px;border-color:var(--danger);">'
-     + '<div class="small" style="color:var(--danger);font-weight:600;margin-bottom:10px;">Folosește doar cât timp saitul e în testare, cu date de test. Șterge PERMANENT toți clienții din bază — abonamente, coduri QR, fișele lor. Istoricul de plăți/acces/modificări nu e afectat (se șterge separat, din Rapoarte).</div>'
-     + '<button class="btn btn-danger-solid" data-action="clear-all-clients">'+icon('trash','icon-sm')+' Șterge TOȚI clienții</button>'
+     + '<div class="small" style="color:var(--danger);font-weight:600;margin-bottom:10px;">'+ra('Folosește doar cât timp saitul e în testare, cu date de test. Șterge PERMANENT toți clienții din bază — abonamente, coduri QR, fișele lor. Istoricul de plăți/acces/modificări nu e afectat (se șterge separat, din Rapoarte).')+'</div>'
+     + '<button class="btn btn-danger-solid" data-action="clear-all-clients">'+icon('trash','icon-sm')+' '+ra('Șterge TOȚI clienții')+'</button>'
      + '</div>'
    ) : '');
 }
 async function saveSettingsGeneral(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, { warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, saturdayDifferent:!!d.saturdayDifferent, saturdayOpenHour:d.saturdayOpenHour, saturdayCloseHour:d.saturdayCloseHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) })); await logMod('Reguli program actualizate',''); showToast('Salvat.'); }
-  catch(e){ showToast('Eroare la salvare.'); }
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, { warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, saturdayDifferent:!!d.saturdayDifferent, saturdayOpenHour:d.saturdayOpenHour, saturdayCloseHour:d.saturdayCloseHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) })); await logMod('Reguli program actualizate',''); showToast(ra('Salvat.')); }
+  catch(e){ showToast(ra('Eroare la salvare.')); }
 }
 async function saveSettingsName(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {gymName:d.gymName||'Fitness Park'})); await logMod('Denumire sală actualizată', d.gymName); showToast('Salvat.'); }
-  catch(e){ showToast('Eroare.'); }
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {gymName:d.gymName||'Fitness Park'})); await logMod('Denumire sală actualizată', d.gymName); showToast(ra('Salvat.')); }
+  catch(e){ showToast(ra('Eroare.')); }
 }
 async function saveSettingsNews(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {newsText:d.newsText||''})); await logMod('Noutăți pentru clienți actualizate',''); showToast('Salvat.'); }
-  catch(e){ showToast('Eroare.'); }
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {newsText:d.newsText||''})); await logMod('Noutăți pentru clienți actualizate',''); showToast(ra('Salvat.')); }
+  catch(e){ showToast(ra('Eroare.')); }
 }
 async function changePassword(){
   const f=state.pwForm||{};
   const user=firebase.auth().currentUser;
-  if(!user || !user.email){ state.pwErr='Nu ești autentificat cu un cont de email.'; scheduleRender(); return; }
-  if(!f.current){ state.pwErr='Introdu parola curentă.'; scheduleRender(); return; }
-  if(!f.next||f.next.length<6){ state.pwErr='Parola nouă trebuie să aibă minim 6 caractere.'; scheduleRender(); return; }
-  if(f.next!==f.confirm){ state.pwErr='Parolele nu coincid.'; scheduleRender(); return; }
+  if(!user || !user.email){ state.pwErr=ra('Nu ești autentificat cu un cont de email.'); scheduleRender(); return; }
+  if(!f.current){ state.pwErr=ra('Introdu parola curentă.'); scheduleRender(); return; }
+  if(!f.next||f.next.length<6){ state.pwErr=ra('Parola nouă trebuie să aibă minim 6 caractere.'); scheduleRender(); return; }
+  if(f.next!==f.confirm){ state.pwErr=ra('Parolele nu coincid.'); scheduleRender(); return; }
   try{
     const cred=firebase.auth.EmailAuthProvider.credential(user.email, f.current);
     await user.reauthenticateWithCredential(cred);
     await user.updatePassword(f.next);
   }catch(e){
-    if(e && (e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')){ state.pwErr='Parola curentă este greșită.'; }
-    else if(e && e.code==='auth/password-does-not-meet-requirements'){ state.pwErr='Parola nouă nu îndeplinește cerințele de securitate (adaugă litere mari, mici și cifre).'; }
-    else if(e && e.code==='auth/too-many-requests'){ state.pwErr='Prea multe încercări. Așteaptă puțin și mai încearcă o dată.'; }
-    else if(e && e.code==='auth/requires-recent-login'){ state.pwErr='Sesiunea a expirat. Ieși din cont și intră din nou, apoi încearcă.'; }
-    else{ state.pwErr='Eroare la schimbarea parolei'+(e&&e.code?(' ('+e.code+')'):(e&&e.message?(': '+e.message):''))+'.'; }
+    if(e && (e.code==='auth/wrong-password'||e.code==='auth/invalid-credential')){ state.pwErr=ra('Parola curentă este greșită.'); }
+    else if(e && e.code==='auth/password-does-not-meet-requirements'){ state.pwErr=ra('Parola nouă nu îndeplinește cerințele de securitate (adaugă litere mari, mici și cifre).'); }
+    else if(e && e.code==='auth/too-many-requests'){ state.pwErr=ra('Prea multe încercări. Așteaptă puțin și mai încearcă o dată.'); }
+    else if(e && e.code==='auth/requires-recent-login'){ state.pwErr=ra('Sesiunea a expirat. Ieși din cont și intră din nou, apoi încearcă.'); }
+    else{ state.pwErr=ra('Eroare la schimbarea parolei')+(e&&e.code?(' ('+e.code+')'):(e&&e.message?(': '+e.message):''))+'.'; }
     scheduleRender();
     return;
   }
-  state.pwForm={}; state.pwErr=''; showToast('Parola a fost schimbată.');
+  state.pwForm={}; state.pwErr=''; showToast(ra('Parola a fost schimbată.'));
   scheduleRender();
   try{ await logMod('Parolă schimbată', user.email); }catch(e){}
 }
 async function addTeam(){
   const f=state.teamForm||{};
   const email=(f.email||'').trim().toLowerCase();
-  if(!email||!email.includes('@')){ showToast('Introdu un e-mail valid.'); return; }
+  if(!email||!email.includes('@')){ showToast(ra('Introdu un e-mail valid.')); return; }
   const pass=f.password||'';
-  if(!pass||pass.length<6){ showToast('Parola inițială trebuie să aibă minim 6 caractere.'); return; }
-  const existing=((state.settings&&state.settings.team)||[]); const hasOwner=existing.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast('Doar proprietarul poate gestiona echipa.'); return; }
-  if(existing.some(m=>(m.email||'').toLowerCase()===email)){ showToast('Acest email are deja acces.'); return; }
+  if(!pass||pass.length<6){ showToast(ra('Parola inițială trebuie să aibă minim 6 caractere.')); return; }
+  const existing=((state.settings&&state.settings.team)||[]); const hasOwner=existing.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast(ra('Doar proprietarul poate gestiona echipa.')); return; }
+  if(existing.some(m=>(m.email||'').toLowerCase()===email)){ showToast(ra('Acest email are deja acces.')); return; }
   let secondaryApp=null; let reused=false;
   try{
     secondaryApp=firebase.initializeApp(firebase.app().options, 'teamAdd'+Date.now());
@@ -1524,18 +1550,18 @@ async function addTeam(){
   }catch(e){
     if(secondaryApp){ try{ await secondaryApp.delete(); }catch(_e){} }
     if(e && e.code==='auth/email-already-in-use'){ reused=true; }
-    else if(e && e.code==='auth/weak-password'){ showToast('Parola trebuie să aibă minim 6 caractere.'); return; }
-    else{ showToast('Eroare la crearea contului.'); return; }
+    else if(e && e.code==='auth/weak-password'){ showToast(ra('Parola trebuie să aibă minim 6 caractere.')); return; }
+    else{ showToast(ra('Eroare la crearea contului.')); return; }
   }
   const team=existing.slice(); team.push({email, role:f.role||'reception'});
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? 'Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.' : 'Cont creat — colegul poate intra cu acest email și parola primită.'); }
-  catch(e){ showToast('Eroare la salvarea accesului.'); }
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
+  catch(e){ showToast(ra('Eroare la salvarea accesului.')); }
   scheduleRender();
 }
 async function removeTeam(idx){
-  const team=((state.settings&&state.settings.team)||[]).slice(); const hasOwner=team.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast('Doar proprietarul poate gestiona echipa.'); return; } if(team[idx] && team[idx].role==='owner'){ showToast('Accesul proprietarului nu poate fi retras.'); return; } const rm=team.splice(idx,1);
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); await logMod('Acces echipă retras', rm[0]?rm[0].email:''); showToast('Acces retras.'); }
-  catch(e){ showToast('Eroare.'); }
+  const team=((state.settings&&state.settings.team)||[]).slice(); const hasOwner=team.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast(ra('Doar proprietarul poate gestiona echipa.')); return; } if(team[idx] && team[idx].role==='owner'){ showToast(ra('Accesul proprietarului nu poate fi retras.')); return; } const rm=team.splice(idx,1);
+  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); await logMod('Acces echipă retras', rm[0]?rm[0].email:''); showToast(ra('Acces retras.')); }
+  catch(e){ showToast(ra('Eroare.')); }
 }
 
 /* ============ CLIENT PORTAL ============ */
@@ -1677,7 +1703,7 @@ function onAction(el){
     case 'open-renew': openRenew(id); return; case 'open-edit-sub': openEditSub(id); return;
     case 'open-edit-client': openEditClient(id); return;
     case 'toggle-pause-client': togglePauseClient(id); return;
-    case 'delete-client': if(confirm('Sigur ștergi acest client? Acțiunea nu poate fi anulată.')) deleteClient(id); return;
+    case 'delete-client': if(confirm(ra('Sigur ștergi acest client? Acțiunea nu poate fi anulată.'))) deleteClient(id); return;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return; case 'enable-push': enablePushNotifications(id); return;
     case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
@@ -1690,11 +1716,11 @@ function onAction(el){
     case 'open-new-type': openNewType(); return;
     case 'open-edit-type': openEditType(id); return;
     case 'save-type': saveType(); return;
-    case 'delete-type': if(confirm('Ștergi acest tip de abonament din catalog?')) deleteType(id); return;
+    case 'delete-type': if(confirm(ra('Ștergi acest tip de abonament din catalog?'))) deleteType(id); return;
     case 'verify-scan': { const v=document.getElementById('scanInput'); verifyAccess(v?v.value:''); return; }
     case 'toggle-camera-reception': toggleCamera('scanInput'); return;
     case 'toggle-camera-client': toggleCamera('clientCode'); return;
-    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': if(confirm('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.')) clearPayments(); return; case 'clear-modlog': if(confirm('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.')) clearModLog(); return; case 'clear-accesslog': if(confirm('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.')) clearAccessLog(); return;
+    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': if(confirm(ra('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.'))) clearPayments(); return; case 'clear-modlog': if(confirm(ra('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.'))) clearModLog(); return; case 'clear-accesslog': if(confirm(ra('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.'))) clearAccessLog(); return;
     case 'save-settings-general': saveSettingsGeneral(); return;
     case 'save-settings-name': saveSettingsName(); return;
     case 'save-settings-news': saveSettingsNews(); return;
@@ -1713,15 +1739,15 @@ function onAction(el){
 async function adminLoginSubmit(){
   const ve=document.getElementById('adminEmail'), vp=document.getElementById('adminPass');
   const email=(ve?ve.value:'').trim().toLowerCase(); const pass=vp?vp.value:'';
-  if(!email||!pass){ state.formErr='Introdu email și parolă.'; scheduleRender(); return; }
+  if(!email||!pass){ state.formErr=ra('Introdu email și parolă.'); scheduleRender(); return; }
   state.formErr='';
   try{ await firebase.auth().signInWithEmailAndPassword(email, pass); }
-  catch(e){ state.formErr='Email sau parolă greșită.'; scheduleRender(); return; }
+  catch(e){ state.formErr=ra('Email sau parolă greșită.'); scheduleRender(); return; }
   const team=(state.settings&&state.settings.team)||[];
   const member=team.find(m=>(m.email||'').toLowerCase()===email);
   if(!member){
     try{ await firebase.auth().signOut(); await firebase.auth().signInAnonymously(); }catch(e){}
-    state.formErr='Acest cont nu (mai) are acces la panou.';
+    state.formErr=ra('Acest cont nu (mai) are acces la panou.');
     scheduleRender(); return;
   }
   state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
@@ -1730,46 +1756,46 @@ async function adminLoginSubmit(){
 async function adminForgotPassword(){
   const ve=document.getElementById('adminEmail');
   const email=(ve?ve.value:'').trim().toLowerCase();
-  if(!email||!email.includes('@')){ state.formErr='Scrie emailul contului tău mai sus, apoi apasă din nou „Am uitat parola".'; scheduleRender(); return; }
+  if(!email||!email.includes('@')){ state.formErr=ra('Scrie emailul contului tău mai sus, apoi apasă din nou „Am uitat parola".'); scheduleRender(); return; }
   state.formErr='';
   try{ await firebase.auth().sendPasswordResetEmail(email); }catch(e){}
-  showToast('Dacă acest cont există, ți-am trimis un email cu link de resetare a parolei.');
+  showToast(ra('Dacă acest cont există, ți-am trimis un email cu link de resetare a parolei.'));
 }
 async function adminClaimSubmit(){
   const ve=document.getElementById('adminEmail'), vp=document.getElementById('adminPass');
   const email=(ve?ve.value:'').trim().toLowerCase(); const pass=vp?vp.value:'';
-  if(!email||!pass){ state.formErr='Introdu email și parolă.'; scheduleRender(); return; }
+  if(!email||!pass){ state.formErr=ra('Introdu email și parolă.'); scheduleRender(); return; }
   const team=(state.settings&&state.settings.team)||[];
   const member=team.find(m=>(m.email||'').toLowerCase()===email);
-  if(!member){ state.formErr='Acest email nu are acces. Cere administratorului să te adauge în Echipă.'; scheduleRender(); return; }
-  if(pass.length<6){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; scheduleRender(); return; }
+  if(!member){ state.formErr=ra('Acest email nu are acces. Cere administratorului să te adauge în Echipă.'); scheduleRender(); return; }
+  if(pass.length<6){ state.formErr=ra('Parola trebuie să aibă minim 6 caractere.'); scheduleRender(); return; }
   try{ await firebase.auth().createUserWithEmailAndPassword(email, pass); }
   catch(e){
-    if(e && e.code==='auth/email-already-in-use'){ state.formErr='Acest cont există deja — folosește „Intră în panou" cu parola ta.'; }
-    else if(e && e.code==='auth/weak-password'){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; }
-    else{ state.formErr='Eroare la crearea contului.'; }
+    if(e && e.code==='auth/email-already-in-use'){ state.formErr=ra('Acest cont există deja — folosește „Intră în panou" cu parola ta.'); }
+    else if(e && e.code==='auth/weak-password'){ state.formErr=ra('Parola trebuie să aibă minim 6 caractere.'); }
+    else{ state.formErr=ra('Eroare la crearea contului.'); }
     scheduleRender(); return;
   }
   state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr='';
   state.adminSection='reception';
-  showToast('Cont creat. Ai acces la panou.');
+  showToast(ra('Cont creat. Ai acces la panou.'));
   scheduleRender();
 }
 async function adminSetupSubmit(){
   const ve=document.getElementById('setupEmail'), v1=document.getElementById('setupPass1'), v2=document.getElementById('setupPass2');
   const email=(ve?ve.value:'').trim().toLowerCase(); const p1=v1?v1.value:'', p2=v2?v2.value:'';
-  if(!email||!email.includes('@')){ state.formErr='Introdu un email valid.'; scheduleRender(); return; }
-  if(!p1||p1.length<6){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; scheduleRender(); return; }
-  if(p1!==p2){ state.formErr='Parolele nu coincid.'; scheduleRender(); return; }
+  if(!email||!email.includes('@')){ state.formErr=ra('Introdu un email valid.'); scheduleRender(); return; }
+  if(!p1||p1.length<6){ state.formErr=ra('Parola trebuie să aibă minim 6 caractere.'); scheduleRender(); return; }
+  if(p1!==p2){ state.formErr=ra('Parolele nu coincid.'); scheduleRender(); return; }
   try{
     await firebase.auth().createUserWithEmailAndPassword(email, p1);
     await refSettings().set(Object.assign({}, DEFAULT_SETTINGS, state.settings||{}, {team:[{email, role:'owner'}]}));
     state.adminUnlocked=true; state.adminRole='owner'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
-    showToast('Panoul de administrare e gata.');
+    showToast(ra('Panoul de administrare e gata.'));
   }catch(e){
-    if(e && e.code==='auth/email-already-in-use'){ state.formErr='Există deja un cont cu acest email.'; }
-    else if(e && e.code==='auth/weak-password'){ state.formErr='Parola trebuie să aibă minim 6 caractere.'; }
-    else{ state.formErr='Eroare la salvare. Încearcă din nou.'; }
+    if(e && e.code==='auth/email-already-in-use'){ state.formErr=ra('Există deja un cont cu acest email.'); }
+    else if(e && e.code==='auth/weak-password'){ state.formErr=ra('Parola trebuie să aibă minim 6 caractere.'); }
+    else{ state.formErr=ra('Eroare la salvare. Încearcă din nou.'); }
   }
   scheduleRender();
 }
@@ -1789,7 +1815,7 @@ async function toggleCamera(targetInputId){
   if(state.cameraOn){ stopCamera(); scheduleRender(); return; }
   state.cameraOn=true; state.cameraTarget=targetInputId; scheduleRender();
   try{ cameraStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
-  catch(e){ state.cameraOn=false; showToast('Camera nu este disponibilă aici. Folosește codul manual.'); scheduleRender(); return; }
+  catch(e){ state.cameraOn=false; showToast(ra('Camera nu este disponibilă aici. Folosește codul manual.')); scheduleRender(); return; }
   setTimeout(()=>{
     const video=document.getElementById('scanVideo');
     if(!video){ stopCamera(); return; }
@@ -1809,7 +1835,7 @@ async function toggleCamera(targetInputId){
           else{
             const c=state.clients.find(x=>x.code===code);
             if(c){ state.clientSession=c.id; state.screen='client'; state.clientTab='sub'; state.formErr=''; }
-            else{ state.formErr='Cod necunoscut.'; }
+            else{ state.formErr=tr('errCodeNotFound'); }
             scheduleRender();
           }
           return;
