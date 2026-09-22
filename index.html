@@ -520,6 +520,8 @@ function subscribeAll(){
 
 /* ============ DOMAIN HELPERS ============ */
 function typeById(id){ return state.types.find(t=>t.id===id); }
+function typeDisplayName(t){ if(!t) return ''; return (state.lang==='ru' && t.nameRu) ? t.nameRu : t.name; }
+function subTypeDisplayName(c){ const sub=(c&&c.subscription)||{}; const t=typeById(sub.typeId); if(t) return typeDisplayName(t); return sub.typeName||''; }
 function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[67]\d{7}$/.test(digits); }
 function pastelForClient(c){
   const sub=(c&&c.subscription)||{};
@@ -541,7 +543,7 @@ function renderMemberCard(c){
    + '<div class="mc-eyebrow">'+tr('memberCardLabel')+'</div>'
    + '<div class="mc-name">'+esc(c.name)+'</div>'
    + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
-   + '<div class="mc-plan">'+esc(sub.typeName||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>'
+   + '<div class="mc-plan">'+esc(subTypeDisplayName(c)||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>'
    + '<div class="mc-eyebrow">'+tr('memberCodeVerify')+'</div>'
    + '<div class="code-chip mc-code"'+mcCodeStyle+'>'+esc(c.code)+'</div>'
    + '<div class="mc-footer">'+tr('presentQr')+'</div>'
@@ -712,7 +714,7 @@ function renderBuyGate(){
     return '<div class="buy-plan-card'+(gold?' gold':'')+(selected?' selected':'')+'" style="'+styleBits.join(';')+'" data-action="pick-buy-plan" data-id="'+t.id+'">'
      + (selected? '<div class="buy-plan-check">'+icon('check','icon-sm')+'</div>' : '')
      + '<div class="plan-eyebrow">'+(gold?'Gold':'Fitness')+'</div>'
-     + '<div class="plan-name">'+esc(t.name)+'</div>'
+     + '<div class="plan-name">'+esc(typeDisplayName(t))+'</div>'
      + '<div class="plan-price">'+t.price+' <span>'+esc(t.currency)+'</span></div>'
      + '</div>';
   }).join('') || '<div class="small muted">Niciun abonament disponibil momentan.</div>';
@@ -1173,12 +1175,13 @@ function planCardHtml(t, idx){
      + (state.adminRole==='owner'? ('<button class="btn btn-ghost btn-sm" data-action="open-edit-type" data-id="'+t.id+'"'+(premium?' style="background:rgba(255,255,255,.1);color:#EDE2C4;border-color:rgba(255,255,255,.25);"':'')+'>'+icon('edit','icon-sm')+'</button>') : '')
    + '</div></div>';
 }
-function openNewType(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate gestiona tipurile de abonament.'); return; } openModal('editType', {id:null, name:'', price:0, currency:(state.settings&&state.settings.currency)||'MDL', durationDays:30, entryLimit:'', accessFrom:'', accessTo:'', tier:'fitness', active:true}); }
+function openNewType(){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate gestiona tipurile de abonament.'); return; } openModal('editType', {id:null, name:'', nameRu:'', price:0, currency:(state.settings&&state.settings.currency)||'MDL', durationDays:30, entryLimit:'', accessFrom:'', accessTo:'', tier:'fitness', active:true}); }
 function openEditType(id){ if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate gestiona tipurile de abonament.'); return; } const t=typeById(id); if(!t) return; openModal('editType', Object.assign({}, t, {id})); }
 function modalEditType(){
   const f=state.form;
   return modalWrap(f.id?'Editează tipul':'Tip de abonament nou','', ''
    + field('Denumire','text','form.name',f.name,'Ex: 1 lună - nelimitat')
+   + field('Denumire în rusă (opțional — pentru clienții care văd saitul în rusă)','text','form.nameRu',f.nameRu,'ex: 1 месяц - безлимит')
    + '<div class="grid2">'+field('Preț','number','form.price',f.price)+selectField('Monedă','form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
    + '<div class="grid2">'+field('Durată (zile)','number','form.durationDays',f.durationDays)+field('Limită intrări (gol = nelimitat)','number','form.entryLimit',f.entryLimit)+'</div>'
    + '<div class="grid2">'+field('Acces de la (opțional)','time','form.accessFrom',f.accessFrom)+field('Acces până la (opțional)','time','form.accessTo',f.accessTo)+'</div>'
@@ -1193,7 +1196,7 @@ async function saveType(){
   if(state.adminRole!=='owner'){ showToast('Doar proprietarul poate gestiona tipurile de abonament.'); return; }
   const f=state.form;
   if(!f.name||!f.name.trim()){ state.formErr='Introdu o denumire.'; scheduleRender(); return; }
-  const body={ name:f.name.trim(), price:Number(f.price||0), currency:f.currency||'MDL', durationDays:Number(f.durationDays||30),
+  const body={ name:f.name.trim(), nameRu:(f.nameRu||'').trim()||null, price:Number(f.price||0), currency:f.currency||'MDL', durationDays:Number(f.durationDays||30),
     entryLimit:(f.entryLimit===''||f.entryLimit==null)?null:Number(f.entryLimit), accessFrom:f.accessFrom||null, accessTo:f.accessTo||null,
     tier:f.tier||'fitness', active:f.active!==false, order: (f.order!=null? f.order : state.types.length) };
   try{
@@ -1387,7 +1390,7 @@ function renderClientPortal(){
    + '<div class="flex gap8 items-center">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="client-logout">'+icon('logOut','icon-sm')+'</button></div>'
    + '</div></div>'
    + '<div class="client-body">'
-     + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div><div class="small" style="opacity:.85;">'+esc(sub.typeName||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
+     + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div><div class="small" style="opacity:.85;">'+esc(subTypeDisplayName(c)||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
        + (dl!==null? ('<div class="sub-days">'+(dl<0?0:dl)+'<span>'+(dl<0?tr('subExpired'):tr('daysLeft'))+'</span></div>') : '<div class="sub-days" style="font-size:20px;">'+tr('noSubShort')+'<span>'+tr('contactReception')+'</span></div>')
        + '<div class="sub-range"><span>'+tr('fromLabel')+' '+fmtDate(sub.validFrom)+'</span><span>'+tr('toLabel')+' '+fmtDate(sub.validTo)+'</span></div></div>'
      + '<div class="client-tabs">'
