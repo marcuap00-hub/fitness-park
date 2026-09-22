@@ -608,6 +608,7 @@ const RO_RU = {
   'Niciun client cu email de contactat.':'Нет клиентов с email для связи.',
   'Caută după nume sau cod':'Поиск по имени или коду', 'De la':'С', 'Până la':'По',
   'Nicio verificare pentru acest filtru.':'Нет проверок для этого фильтра.',
+  'Anulează':'Отмена', 'Confirmă':'Подтвердить',
 };
 function themeToggleBtn(){ const dt=document.documentElement.getAttribute('data-theme'); const isDark = dt==='dark' || (dt!=='light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); return '<button class="modal-close" data-action="toggle-theme" title="Temă / Тема" style="flex:none;">'+icon(isDark?'sun':'moon','icon-sm')+'</button>'; }
 function langToggleBtn(){ return '<button class="modal-close" data-action="toggle-lang" title="RU / RO" style="flex:none;">'+icon('globe','icon-sm')+'</button>'; }
@@ -1203,15 +1204,15 @@ async function enablePushNotifications(id){
     showToast(tr('notifEnabled'));
   }catch(e){ showToast(tr('notifError')+(e&&e.message?(': '+e.message):'.')); }
 }
-async function requestTrainer(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm(tr('confirmTrainer'))) return; try{ await logClientRequest('Cerere antrenor personal', c); notifyOwnerOfClientRequest(c, 'Antrenor personal'); showToast(tr('toastTrainerSent')); }catch(e){ showToast(tr('toastReqError')); } }
-async function requestPrintedCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm(tr('confirmPrinted'))) return; try{ await logClientRequest('Cerere card tipărit', c); notifyOwnerOfClientRequest(c, 'Card tipărit'); showToast(tr('toastPrintedSent')); }catch(e){ showToast(tr('toastReqError')); } }
-async function requestNewCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm(tr('confirmNewCard'))) return; try{ await colClients().doc(id).update({cardRequestPending:true, cardRequestAt:new Date().toISOString()}); notifyOwnerOfClientRequest(c, 'Card pierdut - card nou'); showToast(tr('toastNewCardSent')); } catch(e){ showToast(tr('toastReqError')); } }
+function requestTrainer(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmTrainer'), async ()=>{ try{ await logClientRequest('Cerere antrenor personal', c); notifyOwnerOfClientRequest(c, 'Antrenor personal'); showToast(tr('toastTrainerSent')); }catch(e){ showToast(tr('toastReqError')); } }); }
+function requestPrintedCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmPrinted'), async ()=>{ try{ await logClientRequest('Cerere card tipărit', c); notifyOwnerOfClientRequest(c, 'Card tipărit'); showToast(tr('toastPrintedSent')); }catch(e){ showToast(tr('toastReqError')); } }); }
+function requestNewCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmNewCard'), async ()=>{ try{ await colClients().doc(id).update({cardRequestPending:true, cardRequestAt:new Date().toISOString()}); notifyOwnerOfClientRequest(c, 'Card pierdut - card nou'); showToast(tr('toastNewCardSent')); } catch(e){ showToast(tr('toastReqError')); } }); }
 async function resolveRequest(id){ try{ await colMod().doc(id).update({resolved:true}); showToast(ra('Marcat ca rezolvat.')); }catch(e){ showToast(ra('Eroare.')); } }
-async function approveCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm(ra('Aprobi cererea și generezi un card nou? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'))) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode, cardRequestPending:false}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (cerere aprobată)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }
+function approveCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Aprobi cererea și generezi un card nou? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'), async ()=>{ const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode, cardRequestPending:false}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (cerere aprobată)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }); }
 async function rejectCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ await colClients().doc(id).update({cardRequestPending:false}); await logMod('Cerere card nou respinsă', c.name); openModal('clientDetail',{id}); showToast(ra('Cerere respinsă.')); } catch(e){ showToast(ra('Eroare.')); } }
 function convertBuyRequest(id){ const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return; const t=typeById(r.typeId); if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ showToast(ra('Abonamentele Exclusiv necesită aprobarea unui proprietar.')); return; } const from=todayStr(); openModal('newClient', { name:r.name, phone:r.phone, email:r.email||'', typeId:r.typeId, price:t?t.price:r.price, currency:t?t.currency:r.currency, validFrom:from, validTo:t?addDays(from,t.durationDays||30):addDays(from,30), paidFull:true, amountPaid:0, method:'cash', notes:r.note||'' }); colBuyReq().doc(id).update({status:'converted'}).catch(()=>{}); }
 async function rejectBuyRequest(id){ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }
-async function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; if(!confirm(ra('Sigur înlocuiești cardul acestui client? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'))) return; const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } } function readImageResized(file, maxSize, quality){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=()=>reject(new Error('read-error')); reader.onload=()=>{ const img=new Image(); img.onerror=()=>reject(new Error('image-error')); img.onload=()=>{ let w=img.width, h=img.height; const scale=Math.min(1, maxSize/Math.max(w,h)); w=Math.max(1,Math.round(w*scale)); h=Math.max(1,Math.round(h*scale)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const ctx=cv.getContext('2d'); if(!ctx){ reject(new Error('no-ctx')); return; } ctx.drawImage(img,0,0,w,h); resolve(cv.toDataURL('image/jpeg', quality)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); } async function uploadClientPhoto(id, file){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ const dataUri=await readImageResized(file, 320, 0.62); await colClients().doc(id).update({photoDataUri:dataUri}); await logMod('Fotografie client actualizată', c.name); openModal('clientDetail',{id}); showToast(ra('Fotografia a fost salvată.')); }catch(e){ showToast(ra('Eroare la încărcarea fotografiei.')); } } function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Sigur înlocuiești cardul acestui client? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'), async ()=>{ const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }); } function readImageResized(file, maxSize, quality){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=()=>reject(new Error('read-error')); reader.onload=()=>{ const img=new Image(); img.onerror=()=>reject(new Error('image-error')); img.onload=()=>{ let w=img.width, h=img.height; const scale=Math.min(1, maxSize/Math.max(w,h)); w=Math.max(1,Math.round(w*scale)); h=Math.max(1,Math.round(h*scale)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const ctx=cv.getContext('2d'); if(!ctx){ reject(new Error('no-ctx')); return; } ctx.drawImage(img,0,0,w,h); resolve(cv.toDataURL('image/jpeg', quality)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); } async function uploadClientPhoto(id, file){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ const dataUri=await readImageResized(file, 320, 0.62); await colClients().doc(id).update({photoDataUri:dataUri}); await logMod('Fotografie client actualizată', c.name); openModal('clientDetail',{id}); showToast(ra('Fotografia a fost salvată.')); }catch(e){ showToast(ra('Eroare la încărcarea fotografiei.')); } } function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function newCardToast(code){ return (state.lang==='ru'?'Новая карта создана: ':'Card nou generat: ')+code+(state.lang==='ru'?' · зарегистрирована пошлина 10 MDL.':' · taxă 10 MDL înregistrată.'); }
 function buildCardCanvas(c){
   const sub=c.subscription||{};
@@ -1424,14 +1425,15 @@ async function deleteType(id){
 }
 
 async function clearCollection(colRef){ const snap=await colRef.get(); const docs=snap.docs; for(let i=0;i<docs.length;i+=400){ const batch=db.batch(); docs.slice(i,i+400).forEach(d=>batch.delete(d.ref)); await batch.commit(); } return docs.length; }
-async function clearAllClients(){
+function clearAllClients(){
   if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate face asta.')); return; }
-  const confirmWord = state.lang==='ru' ? 'УДАЛИТЬ ВСЁ' : 'STERGE TOT';
-  if(!confirm(ra('Ștergi PERMANENT toți clienții (')+state.clients.length+ra(')? Abonamentele, codurile QR și fișele lor dispar ireversibil. Istoricul de plăți/acces rămâne neatins.'))) return;
-  const typed=prompt((state.lang==='ru'?'Для подтверждения напишите ':'Pentru confirmare, scrie ')+confirmWord+(state.lang==='ru'?' и нажмите OK:':' și apasă OK:'));
-  if(!typed || typed.trim().toUpperCase()!==confirmWord){ showToast(ra('Anulat — textul nu a coincis.')); return; }
-  try{ const n=await clearCollection(colClients()); await logMod('Toți clienții au fost șterși', n+' clienți'); showToast(ra('Toți clienții au fost șterși.')); }
-  catch(e){ showToast(ra('Eroare la ștergere.')); }
+  askConfirm(ra('Ștergi PERMANENT toți clienții (')+state.clients.length+ra(')? Abonamentele, codurile QR și fișele lor dispar ireversibil. Istoricul de plăți/acces rămâne neatins.'), ()=>{
+    const confirmWord = state.lang==='ru' ? 'УДАЛИТЬ ВСЁ' : 'STERGE TOT';
+    const typed=prompt((state.lang==='ru'?'Для подтверждения напишите ':'Pentru confirmare, scrie ')+confirmWord+(state.lang==='ru'?' и нажмите OK:':' și apasă OK:'));
+    if(!typed || typed.trim().toUpperCase()!==confirmWord){ showToast(ra('Anulat — textul nu a coincis.')); return; }
+    (async ()=>{ try{ const n=await clearCollection(colClients()); await logMod('Toți clienții au fost șterși', n+' clienți'); showToast(ra('Toți clienții au fost șterși.')); }
+    catch(e){ showToast(ra('Eroare la ștergere.')); } })();
+  }, {danger:true});
 }
 async function clearPayments(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colPay()); await logMod('Istoric încasări șters', n+' înregistrări'); showToast(ra('Istoricul încasărilor a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
 async function clearModLog(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colMod()); await logMod('Istoric modificări șters', n+' înregistrări'); showToast(ra('Istoricul modificărilor a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
@@ -1637,6 +1639,14 @@ function clientTabHistory(log){
 }
 
 /* ============ MODAL DISPATCH ============ */
+function askConfirm(message, onYes, opts){ opts=opts||{}; state.confirmDialog={message, onYes, danger:opts.danger, confirmLabel:opts.confirmLabel}; scheduleRender(); }
+function renderConfirmDialog(){
+  const cd=state.confirmDialog; if(!cd) return '';
+  return '<div class="overlay" data-confirm-overlay="1"><div class="modal" style="max-width:380px;">'
+   + '<div class="gate-title" style="font-size:17px;margin:0;">'+esc(cd.message)+'</div>'
+   + '<div class="grid2"><button class="btn btn-ghost" data-action="confirm-no">'+ra('Anulează')+'</button><button class="btn '+(cd.danger?'btn-danger-solid':'btn-primary')+'" data-action="confirm-yes">'+(cd.confirmLabel||ra('Confirmă'))+'</button></div>'
+   + '</div></div>';
+}
 function openModal(type, seed){ state.modal={type}; state.form=seed||{}; state.formErr=''; scheduleRender(); }
 function closeModal(){ state.modal=null; state.form={}; state.formErr=''; scheduleRender(); }
 function renderModal(){
@@ -1671,6 +1681,7 @@ function render(){
   else if(state.screen==='client' && state.clientSession){ html=renderClientPortal(); }
   else{ state.screen='landing'; html=renderLanding(); }
   if(state.toast) html += '<div class="toast">'+esc(state.toast)+'</div>';
+  if(state.confirmDialog) html += renderConfirmDialog();
   root.innerHTML=html;
   bindEvents(root);
   afterRenderHooks();
@@ -1688,7 +1699,7 @@ function afterRenderHooks(){
 function bindEvents(root){
   root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
-  root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
+  root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.hasAttribute('data-confirm-overlay')){ state.confirmDialog=null; scheduleRender(); } else if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const key=el.getAttribute('data-nav');
@@ -1728,7 +1739,7 @@ function onAction(el){
     case 'open-renew': openRenew(id); return; case 'open-edit-sub': openEditSub(id); return;
     case 'open-edit-client': openEditClient(id); return;
     case 'toggle-pause-client': togglePauseClient(id); return;
-    case 'delete-client': if(confirm(ra('Sigur ștergi acest client? Acțiunea nu poate fi anulată.'))) deleteClient(id); return;
+    case 'delete-client': askConfirm(ra('Sigur ștergi acest client? Acțiunea nu poate fi anulată.'), ()=>deleteClient(id), {danger:true}); return;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return; case 'enable-push': enablePushNotifications(id); return;
     case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': submitBuyRequest(); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
@@ -1741,11 +1752,11 @@ function onAction(el){
     case 'open-new-type': openNewType(); return;
     case 'open-edit-type': openEditType(id); return;
     case 'save-type': saveType(); return;
-    case 'delete-type': if(confirm(ra('Ștergi acest tip de abonament din catalog?'))) deleteType(id); return;
+    case 'delete-type': askConfirm(ra('Ștergi acest tip de abonament din catalog?'), ()=>deleteType(id), {danger:true}); return;
     case 'verify-scan': { const v=document.getElementById('scanInput'); verifyAccess(v?v.value:''); return; }
     case 'toggle-camera-reception': toggleCamera('scanInput'); return;
     case 'toggle-camera-client': toggleCamera('clientCode'); return;
-    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': if(confirm(ra('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.'))) clearPayments(); return; case 'clear-modlog': if(confirm(ra('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.'))) clearModLog(); return; case 'clear-accesslog': if(confirm(ra('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.'))) clearAccessLog(); return;
+    case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': askConfirm(ra('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.'), clearPayments, {danger:true}); return; case 'clear-modlog': askConfirm(ra('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.'), clearModLog, {danger:true}); return; case 'clear-accesslog': askConfirm(ra('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.'), clearAccessLog, {danger:true}); return;
     case 'save-settings-general': saveSettingsGeneral(); return;
     case 'save-settings-name': saveSettingsName(); return;
     case 'save-settings-news': saveSettingsNews(); return;
@@ -1759,6 +1770,8 @@ function onAction(el){
     case 'admin-forgot-password': adminForgotPassword(); return;
     case 'resolve-request': resolveRequest(id); return;
     case 'send-expiry-reminders': sendExpiryReminders(); return;
+    case 'confirm-yes': { const cd=state.confirmDialog; state.confirmDialog=null; if(cd&&cd.onYes) cd.onYes(); scheduleRender(); return; }
+    case 'confirm-no': state.confirmDialog=null; break;
   }
   scheduleRender();
 }
