@@ -532,7 +532,7 @@ const RO_RU = {
   'Salvează noutățile':'Сохранить новости', 'Parola contului tău':'Пароль вашей учётной записи', 'Cont curent: ':'Текущий аккаунт: ',
   'Parolă curentă':'Текущий пароль', 'Confirmă parola nouă':'Подтвердите новый пароль', 'Schimbă parola':'Изменить пароль',
   'Echipa sălii':'Команда зала',
-  'Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Rolul „Recepție" vede doar ecranul de scanare.':'Каждый человек ниже входит со своим email и паролем, который вы сейчас установите. Роль «Ресепшн» видит только экран сканирования.',
+  'Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Are acces la tot panoul, cu excepția Rapoartelor (doar proprietarul le vede).':'Каждый человек ниже входит со своим email и паролем, который вы сейчас установите. У него есть доступ ко всей панели, кроме Отчётов (их видит только владелец).',
   'E-mail coleg':'Email коллеги', 'Parolă inițială (minim 6 caractere)':'Начальный пароль (минимум 6 символов)', 'Rol':'Роль',
   'Recepție — doar scanare':'Ресепшн — только сканирование', 'Administrator':'Администратор', 'Proprietar — acces total':'Владелец — полный доступ',
   'Adaugă acces':'Добавить доступ', 'Retrage acces':'Отозвать доступ', 'Niciun coleg adăugat încă.':'Пока нет добавленных коллег.',
@@ -604,6 +604,10 @@ const RO_RU = {
   'Camera nu este disponibilă aici. Folosește codul manual.':'Камера здесь недоступна. Используйте код вручную.',
   'Scrie emailul contului tău mai sus, apoi apasă din nou „Am uitat parola".':'Введите email вашего аккаунта выше, затем снова нажмите «Забыли пароль».',
   'Dacă acest cont există, ți-am trimis un email cu link de resetare a parolei.':'Если этот аккаунт существует, мы отправили вам email со ссылкой для сброса пароля.',
+  'Intrări azi':'Входы сегодня', 'Încasări azi':'Доход сегодня', 'Trimite reamintire':'Отправить напоминание',
+  'Niciun client cu email de contactat.':'Нет клиентов с email для связи.',
+  'Caută după nume sau cod':'Поиск по имени или коду', 'De la':'С', 'Până la':'По',
+  'Nicio verificare pentru acest filtru.':'Нет проверок для этого фильтра.',
 };
 function themeToggleBtn(){ const dt=document.documentElement.getAttribute('data-theme'); const isDark = dt==='dark' || (dt!=='light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); return '<button class="modal-close" data-action="toggle-theme" title="Temă / Тема" style="flex:none;">'+icon(isDark?'sun':'moon','icon-sm')+'</button>'; }
 function langToggleBtn(){ return '<button class="modal-close" data-action="toggle-lang" title="RU / RO" style="flex:none;">'+icon('globe','icon-sm')+'</button>'; }
@@ -697,7 +701,7 @@ function subscribeAll(){
 function typeById(id){ return state.types.find(t=>t.id===id); }
 function typeDisplayName(t){ if(!t) return ''; return (state.lang==='ru' && t.nameRu) ? t.nameRu : t.name; }
 function subTypeDisplayName(c){ const sub=(c&&c.subscription)||{}; const t=typeById(sub.typeId); if(t) return typeDisplayName(t); return sub.typeName||''; }
-function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[67]\d{7}$/.test(digits); }
+function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[67]\d{7}$/.test(digits) || /^373[67]\d{7}$/.test(digits); }
 function pastelForClient(c){
   const sub=(c&&c.subscription)||{};
   if(sub.tier==='exclusiv') return EXCLUSIV_ACCENT;
@@ -958,12 +962,11 @@ const ADMIN_NAV=[
 ];
 function renderAdminShell(){
   const sec=state.adminSection;
-  const isReceptionRole = state.adminRole==='reception';
-  const navList = isReceptionRole? ADMIN_NAV.filter(n=>n.key==='reception') : (state.adminRole==='owner'? ADMIN_NAV : ADMIN_NAV.filter(n=>n.key!=='reports'));
+  const navList = state.adminRole==='owner'? ADMIN_NAV : ADMIN_NAV.filter(n=>n.key!=='reports');
   const pendingReqCount=(state.buyRequests||[]).filter(r=>r.status==='pending').length + state.clients.filter(c=>c.cardRequestPending).length + (state.modLog||[]).filter(l=>(l.operation==='Cerere antrenor personal'||l.operation==='Cerere card tipărit') && l.resolved!==true).length;
   const navHtml=navList.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+ra(n.label)+((n.key==='requests'&&pendingReqCount)? (' <span class="pill pill-danger" style="margin-left:auto;">'+pendingReqCount+'</span>') : '')+'</div>').join('');
   const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
-  const body = isReceptionRole? renderReception() : (sec==='reception'?renderReception() : sec==='requests'?renderRequests() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings());
+  const body = sec==='reception'?renderReception() : sec==='requests'?renderRequests() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings();
   return '<div class="admin-shell">'
    + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">'+ra('Club Management')+'</div></div></div>'
      + navHtml
@@ -984,14 +987,26 @@ function renderReception(){
   const validCount=state.clients.filter(c=>{ const s=subStatus(c); return s.tone==='success'||s.tone==='warning'; }).length;
   const expSoon=state.clients.filter(c=>{ const s=subStatus(c); return s.tone==='warning' && !c.paused; });
   expSoon.sort((a,b)=>((daysLeft(a.subscription&&a.subscription.validTo))||999)-((daysLeft(b.subscription&&b.subscription.validTo))||999));
+  const today=todayStr();
+  const todayEntries=state.log.filter(l=>l.result==='permis' && (l.timestamp||'').slice(0,10)===today).length;
+  const todayRevenue=state.payments.filter(p=>(p.date||'').slice(0,10)===today).reduce((s,p)=>s+Number(p.amount||0),0);
   const stat=(label,num,ic)=>'<div class="card stat-card"><div class="stat-top"><div class="stat-label">'+label+'</div><div class="stat-ic">'+icon(ic,'icon-sm')+'</div></div><div class="stat-num mono">'+num+'</div></div>';
   const expCards=expSoon.slice(0,12).map(c=>{ const dl=daysLeft(c.subscription.validTo); return '<div class="exp-card'+(dl<=1?' urgent':'')+'"><div class="exp-name">'+esc(c.name)+'</div><div class="exp-meta">'+daysLeftShort(dl)+' · '+fmtDate(c.subscription.validTo)+'</div></div>'; }).join('') || '<div class="empty-state small">'+ra('Niciun abonament nu expiră curând.')+'</div>';
+  const emailable=expSoon.filter(c=>c.email);
+  const reminderBtn = expSoon.length? ('<button class="btn btn-ghost btn-sm" data-action="send-expiry-reminders"'+(emailable.length?'':' disabled')+'>'+icon('send','icon-sm')+' '+ra('Trimite reamintire')+' ('+emailable.length+')</button>') : '';
   const recent=state.log.slice(0,7);
   const recentRows=recent.length? recent.map(logRowHtml).join('') : '<div class="empty-state small">'+ra('Nicio scanare încă.')+'</div>';
   return ''
-   + '<div class="stat-grid">'+stat(ra('Clienți înregistrați'),total,'users')+stat(ra('Abonamente valabile'),validCount,'shield')+stat(expInLabel((state.settings&&state.settings.warnDays)||5),expSoon.length,'bell')+'</div>'
-   + '<div class="card" style="padding:18px 20px;"><div class="section-title">'+ra('Abonamente care expiră curând')+'</div><div class="expiring-grid" style="margin-top:12px;">'+expCards+'</div></div>'
+   + '<div class="stat-grid">'+stat(ra('Clienți înregistrați'),total,'users')+stat(ra('Abonamente valabile'),validCount,'shield')+stat(expInLabel((state.settings&&state.settings.warnDays)||5),expSoon.length,'bell')+stat(ra('Intrări azi'),todayEntries,'history')+stat(ra('Încasări azi'),money(todayRevenue,(state.settings&&state.settings.currency)),'chart')+'</div>'
+   + '<div class="card" style="padding:18px 20px;"><div class="section-head"><div class="section-title">'+ra('Abonamente care expiră curând')+'</div>'+reminderBtn+'</div><div class="expiring-grid" style="margin-top:12px;">'+expCards+'</div></div>'
    + '<div class="two-col">'+scanCardHtml()+'<div class="card" style="padding:18px 20px;"><div class="section-title">'+ra('Ultimele scanări')+'</div><div style="margin-top:8px;">'+recentRows+'</div></div></div>';
+}
+async function sendExpiryReminders(){
+  const expSoon=state.clients.filter(c=>{ const s=subStatus(c); return s.tone==='warning' && !c.paused && c.email; });
+  if(!expSoon.length){ showToast(ra('Niciun client cu email de contactat.')); return; }
+  expSoon.forEach(c=>notifyClientByEmail(c));
+  await logMod('Reamintiri expirare trimise', expSoon.length+' clienți');
+  showToast((state.lang==='ru'? 'Отправлено напоминаний: ':'Reamintiri trimise: ')+expSoon.length);
 }
 function scanCardHtml(){
   const r=state.lastResult;
@@ -1099,7 +1114,7 @@ async function saveNewClient(){
     if(paid>0){ await colPay().add({clientId:ref.id, clientName:doc.name, amount:paid, currency:f.currency, method:f.method, date:new Date().toISOString(), note:'Abonament nou'}); }
     await logMod('Client nou înregistrat', doc.name+' · '+doc.subscription.typeName);
     showToast((state.lang==='ru'?'Клиент создан: ':'Client creat: ')+code);
-    notifyClientByEmail(Object.assign({id:ref.id}, doc));
+    if(paid>=Number(f.price||0)-0.5){ notifyClientByEmail(Object.assign({id:ref.id}, doc)); }
     openModal('clientDetail', {id:ref.id});
   }catch(e){ state.formErr=ra('A apărut o eroare. Încearcă din nou.'); scheduleRender(); }
 }
@@ -1301,11 +1316,20 @@ async function saveRenew(){
 
 /* ---- History ---- */
 function renderHistory(){
-  const rows=state.log.length? state.log.map(logTableRow).join('') : '';
+  const q=(state.historyQuery||'').toLowerCase().trim();
+  const from=state.historyFrom||'', to=state.historyTo||'';
+  let list=state.log;
+  if(q) list=list.filter(l=>(l.clientName||'').toLowerCase().includes(q) || (l.code||'').toLowerCase().includes(q));
+  if(from) list=list.filter(l=>(l.timestamp||'').slice(0,10)>=from);
+  if(to) list=list.filter(l=>(l.timestamp||'').slice(0,10)<=to);
+  const filtered = q||from||to;
+  const rows=list.length? list.map(logTableRow).join('') : '';
   const subtitle = state.lang==='ru'? ('Последние '+state.log.length+' '+ruChecks(state.log.length)+', результат актуален на момент сканирования') : ('Ultimele '+state.log.length+' verificări, cu rezultatul valabil la momentul scanării');
   return '<div class="section-head"><div class="section-title">'+ra('Istoricul accesului')+'<small>'+subtitle+'</small></div>'+(state.adminRole==='owner'&&state.log.length?('<button class="btn btn-danger btn-sm" data-action="clear-accesslog">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>'):'')+'</div>'
-   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>'+ra('Client')+'</th><th>'+ra('Data și ora')+'</th><th>'+ra('Rezultat')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-   + (state.log.length? '' : '<div class="empty-state">'+icon('history','icon-lg')+'<div>'+ra('Nicio scanare încă.')+'</div></div>')+'</div>';
+   + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="historyQuery" placeholder="'+ra('Caută după nume sau cod')+'" value="'+esc(state.historyQuery||'')+'"></div>'
+   + '<div class="grid2" style="margin-top:10px;">'+field(ra('De la'),'date','historyFrom',state.historyFrom)+field(ra('Până la'),'date','historyTo',state.historyTo)+'</div>'
+   + '<div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>'+ra('Client')+'</th><th>'+ra('Data și ora')+'</th><th>'+ra('Rezultat')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
+   + (list.length? '' : '<div class="empty-state">'+icon('history','icon-lg')+'<div>'+(filtered? ra('Nicio verificare pentru acest filtru.') : ra('Nicio scanare încă.'))+'</div></div>')+'</div>';
 }
 
 /* ---- Plans (catalog) ---- */
@@ -1460,7 +1484,7 @@ function renderSettings(){
   const d=state.settingsDraft;
   const dayChecks=DAY_LABELS.map((lab,i)=>'<label class="checkline"><input type="checkbox" data-bind="settingsDraft.openDays.'+i+'" '+((d.openDays&&d.openDays[i])?'checked':'')+'> '+dayLabel(i)+'</label>').join('');
   const team=(state.settings&&state.settings.team)||[];
-  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'); const roleLabel=r=>ra(r==='owner'?'Proprietar — acces total':(r==='admin'?'Administrator':'Recepție — doar scanare')); const teamRows=team.length? team.map((m,i)=>'<div class="team-row"><div><b style="font-size:13px;">'+esc(m.email)+'</b><div class="small faint">'+roleLabel(m.role)+'</div></div>'+(m.role==='owner'?'':'<button class="btn btn-ghost btn-sm" data-action="remove-team" data-idx="'+i+'">'+ra('Retrage acces')+'</button>')+'</div>').join('') : '<div class="small faint">'+ra('Niciun coleg adăugat încă.')+'</div>';
+  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'); const roleLabel=r=>ra(r==='owner'?'Proprietar — acces total':'Administrator'); const teamRows=team.length? team.map((m,i)=>'<div class="team-row"><div><b style="font-size:13px;">'+esc(m.email)+'</b><div class="small faint">'+roleLabel(m.role)+'</div></div>'+(m.role==='owner'?'':'<button class="btn btn-ghost btn-sm" data-action="remove-team" data-idx="'+i+'">'+ra('Retrage acces')+'</button>')+'</div>').join('') : '<div class="small faint">'+ra('Niciun coleg adăugat încă.')+'</div>';
   return '<div class="section-title">'+ra('Program, avertizări și scanare')+'</div>'
    + '<div class="card settings-block" style="padding:20px 22px;">'
      + '<div class="grid2">'+field(ra('Avertizare înainte de expirare (zile)'),'number','settingsDraft.warnDays',d.warnDays)+field(ra('Interval minim între intrări (minute)'),'number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
@@ -1482,10 +1506,10 @@ function renderSettings(){
      + '<div class="err-text">'+esc(state.pwErr||'')+'</div>'
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' '+ra('Schimbă parola')+'</button></div>'
    + (canManageTeam? ('<div class="section-title">'+ra('Echipa sălii')+'</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Rolul „Recepție" vede doar ecranul de scanare.')+'</div>'
+   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Are acces la tot panoul, cu excepția Rapoartelor (doar proprietarul le vede).')+'</div>'
      + field(ra('E-mail coleg'),'email','teamForm.email',(state.teamForm&&state.teamForm.email)||'','coleg@exemplu.md')
      + field(ra('Parolă inițială (minim 6 caractere)'),'password','teamForm.password',(state.teamForm&&state.teamForm.password)||'')
-     + selectField(ra('Rol'),'teamForm.role',(state.teamForm&&state.teamForm.role)||'reception',[['reception',ra('Recepție — doar scanare')],['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]])
+     + selectField(ra('Rol'),'teamForm.role',(state.teamForm&&state.teamForm.role)||'admin',[['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]])
      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă acces')+'</button>'
      + '<hr class="hairline">'+teamRows+'</div>') : '')
    + (state.adminRole==='owner'? (
@@ -1554,7 +1578,7 @@ async function addTeam(){
     else if(e && e.code==='auth/weak-password'){ showToast(ra('Parola trebuie să aibă minim 6 caractere.')); return; }
     else{ showToast(ra('Eroare la crearea contului.')); return; }
   }
-  const team=existing.slice(); team.push({email, role:f.role||'reception'});
+  const team=existing.slice(); team.push({email, role:f.role||'admin'});
   try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
   catch(e){ showToast(ra('Eroare la salvarea accesului.')); }
   scheduleRender();
@@ -1668,7 +1692,7 @@ function bindEvents(root){
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const key=el.getAttribute('data-nav');
-      if(state.adminRole==='reception' && key!=='reception') return; if(key==='reports' && state.adminRole!=='owner') return;
+      if(key==='reports' && state.adminRole!=='owner') return;
       if(key==='settings' && !state.settingsDraft) state.settingsDraft=draftFromSettings(state.settings);
       state.adminSection=key; state.modal=null; state.mobileNavOpen=false; scheduleRender();
     });
@@ -1734,6 +1758,7 @@ function onAction(el){
     case 'toggle-lang': { const next=(state.lang==='ru')?'ro':'ru'; state.lang=next; try{ localStorage.setItem('fp_lang', next); }catch(e){} break; }
     case 'admin-forgot-password': adminForgotPassword(); return;
     case 'resolve-request': resolveRequest(id); return;
+    case 'send-expiry-reminders': sendExpiryReminders(); return;
   }
   scheduleRender();
 }
