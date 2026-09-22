@@ -382,7 +382,7 @@ const I18N = {
     fullName:'Nume și prenume', fullNamePh:'Ex: Popescu Ion', phone:'Telefon', phonePh:'06X XXX XXX', emailOpt:'Email (opțional)',
     desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal (250 MDL / oră)', wantsPrinted:'Vreau și abonamentul în format tipărit',
     notesOpt:'Observații (opțional)', sendRequest:'Trimite cererea',
-    errEnterName:'Introdu numele tău.', errEnterPhone:'Introdu numărul de telefon.', errPhoneInvalid:'Numărul de telefon nu este valid (format: 0XX XXX XXX).', errChoosePlan:'Alege un abonament.',
+    errEnterName:'Introdu numele tău.', errEnterPhone:'Introdu numărul de telefon.', errPhoneInvalid:'Numărul de telefon nu este valid (format: 0XX XXX XXX).', errChoosePlan:'Alege un abonament.', errBirthDate:'Completează data nașterii.',
     tabSub:'Abonamentul meu', tabNews:'Noutăți & reguli', tabHistory:'Istoricul meu',
     noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția',
     fromLabel:'De la', toLabel:'Până la',
@@ -419,7 +419,7 @@ const I18N = {
     fullName:'Имя и фамилия', fullNamePh:'Напр.: Иван Попеску', phone:'Телефон', phonePh:'06X XXX XXX', emailOpt:'Email (необязательно)',
     desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера (250 MDL / час)', wantsPrinted:'Также хочу абонемент в печатном виде',
     notesOpt:'Примечания (необязательно)', sendRequest:'Отправить заявку',
-    errEnterName:'Введите ваше имя.', errEnterPhone:'Введите номер телефона.', errPhoneInvalid:'Номер телефона недействителен (формат: 0XX XXX XXX).', errChoosePlan:'Выберите абонемент.',
+    errEnterName:'Введите ваше имя.', errEnterPhone:'Введите номер телефона.', errPhoneInvalid:'Номер телефона недействителен (формат: 0XX XXX XXX).', errChoosePlan:'Выберите абонемент.', errBirthDate:'Укажите дату рождения.',
     tabSub:'Мой абонемент', tabNews:'Новости и правила', tabHistory:'Моя история',
     noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн',
     fromLabel:'С', toLabel:'По',
@@ -624,6 +624,7 @@ const RO_RU = {
   'Alege...':'Выберите...', 'Alege metoda de plată.':'Выберите способ оплаты.',
   'Ziua':'День', 'Luna':'Месяц', 'Anul':'Год', 'Data nașterii (opțional)':'Дата рождения (необязательно)', 'Data nașterii':'Дата рождения',
   'Distribuție pe vârstă':'Распределение по возрасту', 'Niciun client cu data nașterii completată.':'Нет клиентов с указанной датой рождения.',
+  'Completează data nașterii.':'Укажите дату рождения.',
 };
 function themeToggleBtn(){ const dt=document.documentElement.getAttribute('data-theme'); const isDark = dt==='dark' || (dt!=='light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); return '<button class="modal-close" data-action="toggle-theme" title="Temă / Тема" style="flex:none;">'+icon(isDark?'sun':'moon','icon-sm')+'</button>'; }
 function langToggleBtn(){ return '<button class="modal-close" data-action="toggle-lang" title="RU / RO" style="flex:none;">'+icon('globe','icon-sm')+'</button>'; }
@@ -831,7 +832,7 @@ function birthDateRowHtml(prefix, d, m, y){
   const monthOpts=[['',ra('Luna')]]; monthNames().forEach((name,i)=>monthOpts.push([String(i+1), name]));
   const curYear=new Date().getFullYear(); const yearOpts=[['',ra('Anul')]]; for(let yy=curYear-5;yy>=1920;yy--) yearOpts.push([String(yy),String(yy)]);
   const sel=(path,val,opts)=>{ const o=opts.map(([v,l])=>'<option value="'+esc(v)+'"'+(String(val||'')===String(v)?' selected':'')+'>'+esc(l)+'</option>').join(''); return '<select data-bind="'+path+'">'+o+'</select>'; };
-  return '<label class="field">'+ra('Data nașterii (opțional)')+'<div class="grid3-birth">'
+  return '<label class="field">'+ra('Data nașterii')+'<div class="grid3-birth">'
    + sel(prefix+'.birthDay', d, dayOpts) + sel(prefix+'.birthMonth', m, monthOpts) + sel(prefix+'.birthYear', y, yearOpts)
    + '</div></label>';
 }
@@ -975,6 +976,7 @@ async function submitBuyRequest(){
   if(!f.name||!f.name.trim()){ state.formErr=tr('errEnterName'); scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr=tr('errEnterPhone'); scheduleRender(); return; }
   if(!isValidMdPhone(f.phone)){ state.formErr=tr('errPhoneInvalid'); scheduleRender(); return; }
+  if(!f.birthDay||!f.birthMonth||!f.birthYear){ state.formErr=tr('errBirthDate'); scheduleRender(); return; }
   if(!f.typeId){ state.formErr=tr('errChoosePlan'); scheduleRender(); return; }
   const t=typeById(f.typeId);
   try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthDay,f.birthMonth,f.birthYear), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; try{ localStorage.setItem('fp_pending_phone', f.phone.trim()); }catch(e){} scheduleRender(); notifyOwnerByEmail({ name:f.name.trim(), phone:f.phone.trim(), typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, note:f.note||'' }); }
@@ -1133,6 +1135,7 @@ async function saveNewClient(){
   if(!f.name||!f.name.trim()){ state.formErr=ra('Introdu numele clientului.'); scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr=ra('Introdu numărul de telefon.'); scheduleRender(); return; }
   if(!isValidMdPhone(f.phone)){ state.formErr=ra('Numărul de telefon nu este valid (format: 0XX XXX XXX).'); scheduleRender(); return; }
+  if(!f.birthDay||!f.birthMonth||!f.birthYear){ state.formErr=ra('Completează data nașterii.'); scheduleRender(); return; }
   if(!f.typeId){ state.formErr=ra('Alege un abonament.'); scheduleRender(); return; }
   if(!f.method){ state.formErr=ra('Alege metoda de plată.'); scheduleRender(); return; }
   const t=typeById(f.typeId);
@@ -1212,6 +1215,7 @@ async function saveEditClient(){
   const f=state.form; if(!f.name||!f.name.trim()){ state.formErr=ra('Numele nu poate fi gol.'); scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr=ra('Introdu numărul de telefon.'); scheduleRender(); return; }
   if(!isValidMdPhone(f.phone)){ state.formErr=ra('Numărul de telefon nu este valid (format: 0XX XXX XXX).'); scheduleRender(); return; }
+  if(!f.birthDay||!f.birthMonth||!f.birthYear){ state.formErr=ra('Completează data nașterii.'); scheduleRender(); return; }
   try{ await colClients().doc(f.id).update({name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthDay,f.birthMonth,f.birthYear), notes:f.notes||''}); await logMod('Date client actualizate', f.name); openModal('clientDetail',{id:f.id}); showToast(ra('Date actualizate.')); }
   catch(e){ state.formErr=ra('Eroare la salvare.'); scheduleRender(); }
 }
@@ -1750,7 +1754,7 @@ function afterRenderHooks(){
 
 /* ============ EVENTS ============ */
 function bindEvents(root){
-  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
+  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('input[type="tel"]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=el.value.replace(/\D/g,'').slice(0,11); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
   root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.hasAttribute('data-confirm-overlay')){ state.confirmDialog=null; scheduleRender(); } else if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
   root.querySelectorAll('[data-nav]').forEach(el=>{
