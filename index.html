@@ -75,7 +75,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .gate-card label.field{margin-bottom:14px;}
 .checkline{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text);}
 .checkline input{width:16px;height:16px;padding:0;}
-.addon-check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text);background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;}
+.addon-check{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--text);background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;cursor:pointer;margin-bottom:14px;}
 .addon-check input{width:20px;height:20px;padding:0;flex:none;}
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-m);box-shadow:var(--shadow);}
 .pill{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:100px;font-size:12px;font-weight:700;letter-spacing:.01em;}
@@ -111,6 +111,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .gate-title{font-size:23px;font-weight:800;margin:2px 0 6px;}
 .gate-desc{color:var(--text-muted);font-size:14px;line-height:1.5;margin-bottom:22px;}
 .buy-plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:16px;margin-bottom:6px;}
+.gate-card .buy-plan-grid{margin-bottom:14px;}
 .buy-plan-card{position:relative;border-radius:14px;padding:12px 14px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:.12s ease;}
 .buy-plan-card:hover{transform:translateY(-2px);box-shadow:var(--shadow);}
 .buy-plan-card.selected{outline:2px solid var(--accent);outline-offset:-1px;}
@@ -367,7 +368,7 @@ const I18N = {
     buySentTitle:'Cerere trimisă!', buySentDesc:'Te contactăm în curând pentru a finaliza plata și a-ți activa abonamentul.', backToStart:'Înapoi la start',
     buyTitle:'Cumpără un abonament', buyDesc:'Alege abonamentul dorit — te contactăm pentru plată. Plata online directă va fi disponibilă în curând.',
     fullName:'Nume și prenume', fullNamePh:'Ex: Popescu Ion', phone:'Telefon', phonePh:'06X XXX XXX', emailOpt:'Email (opțional)',
-    desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal', wantsPrinted:'Vreau și abonamentul în format tipărit',
+    desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal (250 MDL / oră)', wantsPrinted:'Vreau și abonamentul în format tipărit',
     notesOpt:'Observații (opțional)', sendRequest:'Trimite cererea',
     errEnterName:'Introdu numele tău.', errEnterPhone:'Introdu numărul de telefon.', errPhoneInvalid:'Numărul de telefon nu este valid (format: 0XX XXX XXX).', errChoosePlan:'Alege un abonament.',
     tabSub:'Abonamentul meu', tabNews:'Noutăți & reguli', tabHistory:'Istoricul meu',
@@ -375,10 +376,10 @@ const I18N = {
     fromLabel:'De la', toLabel:'Până la',
     notifOn:'🔔 Notificări active', enableNotif:'Activează notificările',
     cardReqPending:'Cerere trimisă — se așteaptă aprobarea recepției.', lostCard:'Am pierdut cardul — solicită unul nou',
-    reqTrainer:'Solicită un antrenor personal', reqPrinted:'Solicită un card tipărit',
+    reqTrainer:'Solicită un antrenor personal (250 MDL/oră)', reqPrinted:'Solicită un card tipărit',
     subPrice:'Preț abonament', paidAmt:'Achitat', dueAmt:'Rest de achitat', phoneLabel:'Telefon',
     newsRules:'Noutăți & reguli', noHistoryYet:'Nicio intrare înregistrată încă.',
-    confirmTrainer:'Trimiți o cerere pentru un antrenor personal către recepție?',
+    confirmTrainer:'Trimiți o cerere pentru un antrenor personal (250 MDL/oră) către recepție?',
     confirmPrinted:'Trimiți o cerere pentru un card tipărit către recepție?',
     confirmNewCard:'Trimiți o cerere de card nou către recepție? Codul tău actual rămâne valabil până când cererea e aprobată. Reemiterea costă 10 MDL.',
     toastTrainerSent:'Cerere trimisă. Te contactăm în curând.', toastPrintedSent:'Cerere trimisă. Treci pe la recepție să ridici cardul.',
@@ -403,7 +404,7 @@ const I18N = {
     buySentTitle:'Заявка отправлена!', buySentDesc:'Мы скоро свяжемся с вами, чтобы завершить оплату и активировать абонемент.', backToStart:'Назад на главную',
     buyTitle:'Купить абонемент', buyDesc:'Выберите нужный абонемент — мы свяжемся с вами для оплаты. Прямая онлайн-оплата скоро будет доступна.',
     fullName:'Имя и фамилия', fullNamePh:'Напр.: Иван Попеску', phone:'Телефон', phonePh:'06X XXX XXX', emailOpt:'Email (необязательно)',
-    desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера', wantsPrinted:'Также хочу абонемент в печатном виде',
+    desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера (250 MDL / час)', wantsPrinted:'Также хочу абонемент в печатном виде',
     notesOpt:'Примечания (необязательно)', sendRequest:'Отправить заявку',
     errEnterName:'Введите ваше имя.', errEnterPhone:'Введите номер телефона.', errPhoneInvalid:'Номер телефона недействителен (формат: 0XX XXX XXX).', errChoosePlan:'Выберите абонемент.',
     tabSub:'Мой абонемент', tabNews:'Новости и правила', tabHistory:'Моя история',
@@ -411,10 +412,10 @@ const I18N = {
     fromLabel:'С', toLabel:'По',
     notifOn:'🔔 Уведомления включены', enableNotif:'Включить уведомления',
     cardReqPending:'Заявка отправлена — ожидается одобрение ресепшн.', lostCard:'Я потерял карту — запросить новую',
-    reqTrainer:'Запросить личного тренера', reqPrinted:'Запросить печатную карту',
+    reqTrainer:'Запросить личного тренера (250 MDL/час)', reqPrinted:'Запросить печатную карту',
     subPrice:'Цена абонемента', paidAmt:'Оплачено', dueAmt:'Осталось оплатить', phoneLabel:'Телефон',
     newsRules:'Новости и правила', noHistoryYet:'Пока нет записей.',
-    confirmTrainer:'Отправить заявку на личного тренера на ресепшн?',
+    confirmTrainer:'Отправить заявку на личного тренера (250 MDL/час) на ресепшн?',
     confirmPrinted:'Отправить заявку на печатную карту на ресепшн?',
     confirmNewCard:'Отправить заявку на новую карту на ресепшн? Ваш текущий код останется действительным до одобрения заявки. Перевыпуск стоит 10 MDL.',
     toastTrainerSent:'Заявка отправлена. Мы скоро свяжемся с вами.', toastPrintedSent:'Заявка отправлена. Зайдите на ресепшн, чтобы забрать карту.',
