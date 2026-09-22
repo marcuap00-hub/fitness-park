@@ -343,7 +343,7 @@ function todayStr(){ return new Date().toISOString().slice(0,10); }
 async function sha256(text){ const buf=await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text||'')); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
 function setPath(obj, path, value){ const parts=path.split('.'); let o=obj; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]; if(o==null) return; } o[parts[parts.length-1]]=value; }
 function daysLeft(validTo){ if(!validTo) return null; const today=new Date(); today.setHours(0,0,0,0); const vt=new Date(validTo+'T00:00:00'); return Math.round((vt-today)/86400000); }
-function payMethodLabel(m){ return {cash:'Numerar',card:'Card',transfer:'Transfer bancar'}[m]||m; }
+function payMethodLabel(m){ if(state.lang==='ru') return {cash:'Наличные',card:'Карта',transfer:'Банковский перевод'}[m]||m; return {cash:'Numerar',card:'Card',transfer:'Transfer bancar'}[m]||m; }
 
 /* ============ STATE & DB REFS ============ */
 const DAY_LABELS=['Duminică','Luni','Marți','Miercuri','Joi','Vineri','Sâmbătă'];
@@ -810,9 +810,10 @@ function modalWrap(title, subtitle, body, opts){
    + '<div class="modal-head"><div>'+eyebrowHtml+'<div class="gate-title" style="font-size:19px;margin:0;">'+esc(title)+'</div>'+(subtitle?'<div class="small faint mt4">'+esc(subtitle)+'</div>':'')+'</div><button class="modal-close" data-action="close-modal">'+icon('x','icon-sm')+'</button></div>'
    + body + '</div></div>';
 }
-function logRowHtml(l){ const tone=toneForResult(l.result); return '<div class="list-row"><div class="avatar">'+esc(initials(l.clientName))+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;">'+esc(l.clientName)+'</div><div class="small faint mono">'+fmtDateTime(l.timestamp)+'</div></div><span class="pill pill-'+tone+'">'+esc(l.message)+'</span></div>'; }
+function logMessage(l){ return state.lang==='ru'? resultLabel(l.result) : l.message; }
+function logRowHtml(l){ const tone=toneForResult(l.result); return '<div class="list-row"><div class="avatar">'+esc(initials(l.clientName))+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;">'+esc(l.clientName)+'</div><div class="small faint mono">'+fmtDateTime(l.timestamp)+'</div></div><span class="pill pill-'+tone+'">'+esc(logMessage(l))+'</span></div>'; }
 function logRowHtmlClient(l){ const tone=toneForResult(l.result); return '<div class="list-row"><div class="avatar">'+esc(initials(l.clientName))+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;">'+esc(l.clientName)+'</div><div class="small faint mono">'+fmtDateTime(l.timestamp)+'</div></div><span class="pill pill-'+tone+'">'+esc(resultLabel(l.result))+'</span></div>'; }
-function logTableRow(l){ const tone=toneForResult(l.result); return '<tr><td><div class="flex items-center gap8"><div class="avatar" style="width:28px;height:28px;font-size:11px;">'+esc(initials(l.clientName))+'</div>'+esc(l.clientName)+'</div></td><td class="mono small">'+fmtDateTime(l.timestamp)+'</td><td><span class="pill pill-'+tone+'">'+esc(l.message)+'</span></td></tr>'; }
+function logTableRow(l){ const tone=toneForResult(l.result); return '<tr><td><div class="flex items-center gap8"><div class="avatar" style="width:28px;height:28px;font-size:11px;">'+esc(initials(l.clientName))+'</div>'+esc(l.clientName)+'</div></td><td class="mono small">'+fmtDateTime(l.timestamp)+'</td><td><span class="pill pill-'+tone+'">'+esc(logMessage(l))+'</span></td></tr>'; }
 
 /* ============ GATE SCREENS ============ */
 function renderLoading(){
@@ -997,7 +998,7 @@ function scanCardHtml(){
   const zoneClass=!r?'':(r.result==='permis'?' ok':' bad');
   let zoneBody;
   if(state.cameraOn){ zoneBody='<video id="scanVideo" class="scan-video" autoplay playsinline muted></video><canvas id="scanCanvas" hidden></canvas><div class="small faint">'+ra('Îndreaptă camera spre codul QR')+'</div>'; }
-  else if(r){ zoneBody='<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div><div class="scan-title">'+esc(r.client?r.client.name:ra('Cod: ')+r.code)+'</div><div class="scan-sub">'+esc(r.message)+'</div>'; }
+  else if(r){ zoneBody='<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div><div class="scan-title">'+esc(r.client?r.client.name:ra('Cod: ')+r.code)+'</div><div class="scan-sub">'+esc(logMessage(r))+'</div>'; }
   else{ zoneBody='<div class="scan-ic-wrap">'+icon('qrcode','icon-lg')+'</div><div class="scan-title">'+ra('Pregătit de verificare')+'</div><div class="scan-sub">'+ra('Scanează cu cititorul QR, camera, sau scrie codul.')+'</div>'; }
   return '<div class="card scan-box"><div class="section-title" style="margin-bottom:14px;">'+ra('Verificare acces')+'</div>'
    + '<div class="scan-zone'+zoneClass+'">'+zoneBody+'</div>'
@@ -1014,7 +1015,7 @@ function renderRequests(){
   const pendingOps=allReqOps.filter(l=>l.resolved!==true).slice(0,30);
   const resolvedOps=allReqOps.filter(l=>l.resolved===true).slice(0,10);
 
-  const buyRows=pendingBuys.length? pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ '+ra('antrenor'):'')+(r.wantsPrinted?' · 🖨️ '+ra('tipărit'):'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">'+ra('🔒 Necesită aprobarea unui proprietar')+'</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">'+ra('Creează client')+'</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">'+ra('Respinge')+'</button></span></div>').join('') : '<div class="empty-state small">'+ra('Nicio cerere în așteptare.')+'</div>';
+  const buyRows=pendingBuys.length? pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(typeById(r.typeId)?typeDisplayName(typeById(r.typeId)):r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ '+ra('antrenor'):'')+(r.wantsPrinted?' · 🖨️ '+ra('tipărit'):'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">'+ra('🔒 Necesită aprobarea unui proprietar')+'</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">'+ra('Creează client')+'</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">'+ra('Respinge')+'</button></span></div>').join('') : '<div class="empty-state small">'+ra('Nicio cerere în așteptare.')+'</div>';
 
   const cardRows=cardPending.length? cardPending.map(c=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(c.name)+' · '+esc(c.phone)+' · '+ra('cod curent')+' '+esc(c.code)+'</span><span class="flex gap8"><button class="btn btn-primary btn-sm" data-action="approve-card-request" data-id="'+c.id+'">'+ra('Aprobă (10 MDL)')+'</button><button class="btn btn-ghost btn-sm" data-action="reject-card-request" data-id="'+c.id+'">'+ra('Respinge')+'</button><button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+ra('Vezi fișa')+'</button></span></div>').join('') : '<div class="empty-state small">'+ra('Nicio cerere în așteptare.')+'</div>';
 
@@ -1048,7 +1049,7 @@ function clientRowHtml(c){
   const st=subStatus(c);
   return '<div class="client-row" data-action="open-client-detail" data-id="'+c.id+'">'
    + clientAvatarHtml(c)
-   + '<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:13.5px;">'+esc(c.name)+'</div><div class="small faint">'+esc((c.subscription&&c.subscription.typeName)||ra('Fără abonament'))+' · <span class="mono">'+esc(c.code)+'</span></div></div>'
+   + '<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:13.5px;">'+esc(c.name)+'</div><div class="small faint">'+esc(subTypeDisplayName(c)||ra('Fără abonament'))+' · <span class="mono">'+esc(c.code)+'</span></div></div>'
    + '<div class="small faint" style="text-align:right;">'+((c.subscription&&c.subscription.validTo)?fmtDate(c.subscription.validTo):'—')+'</div>'
    + '<span class="pill pill-'+st.tone+'">'+esc(st.label)+'</span>'+icon('chevronRight','icon-sm')+'</div>';
 }
