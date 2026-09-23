@@ -230,10 +230,6 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .modal-wide{max-width:640px;}
 @media(min-width:900px){.modal-wide{max-width:840px;}}
 @media(min-width:1200px){.modal-wide{max-width:960px;}}
-.detail-grid{display:grid;grid-template-columns:1fr 260px;gap:20px;align-items:start;min-width:0;}
-@media(min-width:900px){.detail-grid{grid-template-columns:1fr 300px;}}
-.detail-grid>div{min-width:0;}
-@media(max-width:640px){.detail-grid{grid-template-columns:1fr;}}
 .cd-left{display:flex;flex-direction:column;gap:14px;min-width:0;}
 .cd-hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:18px;padding:26px 22px;border-radius:18px;color:#fff;background:radial-gradient(circle at 88% 18%,rgba(107,116,245,.45),transparent 48%),radial-gradient(circle at 6% 115%,rgba(201,162,75,.28),transparent 45%),linear-gradient(135deg,#10111A,#1F2136);box-shadow:var(--shadow);}
 .cd-hero-mark{position:absolute;right:-20px;bottom:-26px;width:150px;height:150px;opacity:.08;transform:rotate(-12deg);pointer-events:none;}
@@ -243,8 +239,8 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .cd-dot-success{background:#22C06B;} .cd-dot-warning{background:#F0A21F;} .cd-dot-danger{background:#E5484D;}
 .cd-name{font-family:var(--font-display);font-weight:800;font-size:24px;line-height:1.15;margin-bottom:8px;word-break:break-word;}
 .cd-photo-btn{flex:1;justify-content:center;border:1.5px dashed var(--text-faint);cursor:pointer;}
-.cd-quick{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.cd-quick .btn{flex-direction:column;gap:6px;padding:12px 8px;min-height:70px;white-space:normal;line-height:1.25;text-align:center;font-size:12.5px;}
+.cd-quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.cd-quick .btn{flex-direction:column;gap:6px;padding:12px 6px;min-height:66px;white-space:normal;line-height:1.2;text-align:center;font-size:12px;}
 .cd-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:16px;}
 .cd-card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;flex-wrap:wrap;}
 .cd-card-title{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:15px;}
@@ -263,7 +259,20 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .cd-plan-unlimited{background:linear-gradient(135deg,#FFD86B,#FF8FD6,#6BD8FF);color:#171307;}
 .cd-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border);font-size:13px;}
 .cd-card-head+.cd-row{border-top:none;}
-.cd-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
+.cd-extra{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));}
+.cd-grid{display:grid;gap:20px;align-items:start;grid-template-columns:minmax(0,1fr) 280px;}
+.cd-right{display:flex;flex-direction:column;gap:10px;min-width:0;}
+@media(min-width:900px){.cd-grid{grid-template-columns:minmax(0,1fr) 300px;}}
+@media(min-width:1280px){
+  .modal-wide.modal-detail{max-width:min(1200px,94vw);}
+  .cd-grid{grid-template-columns:minmax(0,1fr) 340px;gap:24px;}
+  .cd-tiles{grid-template-columns:repeat(3,1fr);}
+  .cd-tile-wide{grid-column:span 2;}
+  .cd-hero{padding:18px 22px;}
+  .cd-left{gap:12px;}
+  .cd-card{padding:14px;}
+}
+@media(max-width:640px){.cd-grid{grid-template-columns:1fr;}}
 @media(max-width:899px){.cd-sub{grid-template-columns:1fr;}}
 @media(max-width:420px){.cd-tiles{grid-template-columns:1fr;}.cd-hero{padding:20px 16px;gap:14px;}.cd-avatar{width:68px;height:68px;font-size:22px;}.cd-name{font-size:20px;}}
 .info-list{display:flex;flex-direction:column;gap:12px;}
@@ -619,6 +628,7 @@ const RO_RU = {
   'Email trimis clientului: ':'Письмо отправлено клиенту: ', 'Emailul către client nu a fost trimis':'Письмо клиенту не отправлено',
   'Informații personale':'Личные данные', 'Tip abonament':'Тип абонемента', 'Perioadă':'Период', 'Valoare':'Стоимость',
   'Adaugă poză de profil':'Добавить фото профиля', 'Șterge poza':'Удалить фото', 'Reînnoiește abonamentul':'Продлить абонемент', 'Rest de plată: ':'Осталось оплатить: ',
+  'Tipărește':'Печать', 'Descarcă':'Скачать', 'Trimite':'Отправить', 'Suspendă':'Приостановить', 'Reactivează':'Возобновить', 'Card pierdut':'Потеря карты', 'Șterge':'Удалить',
   'Nu am putut salva cardul.':'Не удалось сохранить карту.', 'Cardul s-a salvat. Îl găsești în galeria telefonului.':'Карта сохранена. Найдёте её в галерее телефона.',
   'Nu am putut deschide imprimanta.':'Не удалось открыть принтер.', 'Eroare la generarea cardului.':'Ошибка при создании карты.',
   'Trimiterea directă nu e susținută aici — se descarcă cardul.':'Прямая отправка здесь не поддерживается — карта скачивается.',
@@ -909,7 +919,7 @@ function ageFromBirthDate(iso){ if(!iso) return null; const b=new Date(iso+'T00:
 function modalWrap(title, subtitle, body, opts){
   opts = opts || {};
   const eyebrowHtml = opts.eyebrow ? '<div class="small faint" style="font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px;">'+esc(opts.eyebrow)+'</div>' : '';
-  return '<div class="overlay"><div class="modal'+(opts.wide?' modal-wide':'')+'">'
+  return '<div class="overlay"><div class="modal'+(opts.wide?' modal-wide':'')+(opts.cls?' '+opts.cls:'')+'">'
    + '<div class="modal-head"><div>'+eyebrowHtml+'<div class="gate-title" style="font-size:19px;margin:0;">'+esc(title)+'</div>'+(subtitle?'<div class="small faint mt4">'+esc(subtitle)+'</div>':'')+'</div><button class="modal-close" data-action="close-modal">'+icon('x','icon-sm')+'</button></div>'
    + body + '</div></div>';
 }
@@ -1229,8 +1239,8 @@ function modalClientDetail(){
   const c=state.clients.find(x=>x.id===state.form.id);
   if(!c) return modalWrap(ra('Client'),'', '<div class="empty-state">'+ra('Clientul nu a fost găsit.')+'</div>');
   const st=subStatus(c); const sub=c.subscription||{}; const due=(sub.totalDue||0)-(sub.totalPaid||0);
-  const myLog=state.log.filter(l=>l.clientId===c.id).slice(0,5);
-  const myPay=state.payments.filter(p=>p.clientId===c.id).slice(0,5);
+  const myLog=state.log.filter(l=>l.clientId===c.id).slice(0,3);
+  const myPay=state.payments.filter(p=>p.clientId===c.id).slice(0,3);
   const age=ageFromBirthDate(c.birthDate);
   const hasSub=!!sub.validTo;
   const dl=hasSub? daysLeft(sub.validTo) : null;
@@ -1268,26 +1278,25 @@ function modalClientDetail(){
    + '</div></div>';
   const payCard = myPay.length? ('<div class="cd-card">'+cardHead('coins', ra('Plățile clientului'))+myPay.map(p=>'<div class="cd-row"><span class="faint">'+fmtDateTime(p.date)+' · '+esc(payMethodLabel(p.method))+'</span><span class="mono">'+money(p.amount,p.currency)+'</span></div>').join('')+'</div>') : '';
   const logCard = myLog.length? ('<div class="cd-card">'+cardHead('history', ra('Ultimele intrări'))+myLog.map(l=>'<div class="cd-row"><span class="faint mono">'+fmtDateTime(l.timestamp)+'</span><span class="pill pill-'+toneForResult(l.result)+'">'+esc(logMessage(l))+'</span></div>').join('')+'</div>') : '';
-  const leftCol='<div class="cd-left">'+hero+photoRow+infoCard+subCard+payCard+logCard+'</div>';
+  const leftCol='<div class="cd-left">'+hero+photoRow+infoCard+subCard+((payCard||logCard)? '<div class="cd-extra">'+payCard+logCard+'</div>' : '')+'</div>';
 
-  const memberCard=''
+  const quick=(action,ic,label,title,cls)=>'<button class="btn '+(cls||'btn-ghost')+'" data-action="'+action+'" data-id="'+c.id+'" title="'+esc(title)+'">'+icon(ic,'icon-sm')+'<span>'+esc(label)+'</span></button>';
+  const rightCol='<div class="cd-right">'
    + renderMemberCard(c)
-   + '<div class="cd-actions">'
-     + '<button class="btn btn-primary btn-block" data-action="open-renew" data-id="'+c.id+'">'+icon('refresh','icon-sm')+' '+ra('Reînnoiește abonamentul')+'</button>'
-     + '<div class="cd-quick">'
-       + '<button class="btn btn-ghost" data-action="print-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+'<span>'+ra('Tipărește cardul')+'</span></button>'
-       + '<button class="btn btn-ghost" data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+'<span>'+ra('Descarcă pentru telefon')+'</span></button>'
-       + '<button class="btn btn-ghost" data-action="share-card" data-id="'+c.id+'">'+icon('send','icon-sm')+'<span>'+ra('Trimite cardul...')+'</span></button>'
-       + '<button class="btn btn-ghost" data-action="toggle-pause-client" data-id="'+c.id+'">'+icon(c.paused?'play':'pause','icon-sm')+'<span>'+(c.paused?ra('Reactivează accesul'):ra('Suspendă accesul'))+'</span></button>'
-     + '</div>'
-     + '<button class="btn btn-ghost btn-block" data-action="replace-lost-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' '+ra('Înlocuiește cardul pierdut')+'</button>'
-     + '<button class="btn btn-danger btn-block" data-action="delete-client" data-id="'+c.id+'">'+icon('trash','icon-sm')+' '+ra('Șterge clientul')+'</button>'
-     + '<div class="small faint center">'+ra('Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.')+'</div>'
+   + '<button class="btn btn-primary btn-block" data-action="open-renew" data-id="'+c.id+'">'+icon('refresh','icon-sm')+' '+ra('Reînnoiește abonamentul')+'</button>'
+   + '<div class="cd-quick">'
+     + quick('print-card','printer',ra('Tipărește'),ra('Tipărește cardul'))
+     + quick('download-card','download',ra('Descarcă'),ra('Descarcă pentru telefon'))
+     + quick('share-card','send',ra('Trimite'),ra('Trimite cardul...'))
+     + quick('toggle-pause-client', c.paused?'play':'pause', c.paused?ra('Reactivează'):ra('Suspendă'), c.paused?ra('Reactivează accesul'):ra('Suspendă accesul'))
+     + quick('replace-lost-card','qrcode',ra('Card pierdut'),ra('Înlocuiește cardul pierdut'))
+     + quick('delete-client','trash',ra('Șterge'),ra('Șterge clientul'),'btn-danger')
+   + '</div>'
    + '</div>';
   return modalWrap(ra('Fișă client'), '', ''
    + (c.cardRequestPending?('<div class="card" style="padding:12px 16px;background:var(--warning-bg);border-color:var(--warning);"><div class="flex items-center justify-between gap8" style="flex-wrap:wrap;"><div class="small" style="font-weight:700;color:var(--warning);">'+ra('Cerere card nou — clientul a semnalat cardul pierdut')+'</div><div class="flex gap8"><button class="btn btn-primary btn-sm" data-action="approve-card-request" data-id="'+c.id+'">'+ra('Aprobă')+'</button><button class="btn btn-ghost btn-sm" data-action="reject-card-request" data-id="'+c.id+'">'+ra('Respinge')+'</button></div></div></div>') : '')
-   + '<div class="detail-grid"><div>'+leftCol+'</div><div>'+memberCard+'</div></div>'
-  , {wide:true});
+   + '<div class="cd-grid">'+leftCol+rightCol+'</div>'
+  , {wide:true, cls:'modal-detail'});
 }
 function openEditClient(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; const bd=splitBirthDate(c.birthDate); openModal('editClient', {id, name:c.name, phone:c.phone||'', email:c.email||'', notes:c.notes||'', birthYear:bd.birthYear}); }
 function modalEditClient(){
