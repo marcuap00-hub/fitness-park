@@ -282,6 +282,50 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 @media(max-width:899px){.cd-sub{grid-template-columns:1fr;}}
 @media(max-width:560px){.cd-hero{flex-wrap:wrap;}.cd-hero-code{margin-left:0;width:100%;flex-direction:row;align-items:center;justify-content:space-between;padding:10px 14px;}.cd-hero-code-v{font-size:20px;}.cd-hero-code-h{display:none;}}
 @media(max-width:420px){.cd-tiles{grid-template-columns:1fr;}.cd-hero{padding:20px 16px;gap:14px;}.cd-avatar{width:68px;height:68px;font-size:22px;}.cd-name{font-size:20px;}}
+/* ---- requests page ---- */
+.rq-sec{--rq:#4C56E8;--rq-soft:rgba(76,86,232,.12);--rq-tint:rgba(76,86,232,.06);border:1px solid var(--border);border-radius:20px;padding:16px;background:linear-gradient(180deg,var(--rq-tint),transparent 85%),var(--surface);box-shadow:var(--shadow);}
+.rq-sec.rq-card{--rq:#E0782A;--rq-soft:rgba(224,120,42,.14);--rq-tint:rgba(224,120,42,.07);}
+.rq-sec.rq-ops{--rq:#7058DB;--rq-soft:rgba(112,88,219,.13);--rq-tint:rgba(112,88,219,.06);}
+.rq-sec.rq-done{--rq:#1F9D63;--rq-soft:rgba(31,157,99,.13);--rq-tint:rgba(31,157,99,.05);}
+.rq-head{display:flex;align-items:center;gap:14px;width:100%;padding:2px;background:none;border:none;text-align:left;color:var(--text);font:inherit;cursor:pointer;}
+.rq-ic{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--rq-soft);color:var(--rq);}
+.rq-title{display:block;font-family:var(--font-display);font-weight:700;font-size:17px;line-height:1.3;}
+.rq-count{margin-left:10px;vertical-align:2px;min-width:26px;height:24px;padding:0 8px;border-radius:999px;display:inline-flex;align-items:center;justify-content:center;background:var(--rq-soft);color:var(--rq);font-family:var(--font-body);font-size:12.5px;font-weight:700;}
+.rq-desc{margin-top:2px;font-size:13px;color:var(--text-muted);}
+.rq-chev{margin-left:auto;flex:none;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:transform .2s,background .15s;}
+.rq-head:hover .rq-chev{background:var(--surface-2);color:var(--text);}
+.rq-sec.collapsed .rq-chev{transform:rotate(180deg);}
+.rq-list{margin-top:14px;padding:2px 16px;border:1px solid var(--border);border-radius:14px;background:var(--surface);}
+.rq-row{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--border);}
+.rq-row:first-child{border-top:none;}
+.rq-av{flex:none;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface-2);color:var(--text-muted);}
+.rq-main{flex:1;min-width:0;font-size:14px;font-weight:500;line-height:1.45;}
+.rq-main .sep{margin:0 7px;color:var(--text-faint);}
+.rq-chip{display:inline-flex;align-items:center;gap:4px;margin-left:8px;padding:2px 8px;border-radius:999px;background:var(--rq-soft);color:var(--rq);font-size:11.5px;font-weight:600;white-space:nowrap;}
+.rq-time{flex:none;display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);white-space:nowrap;}
+.rq-actions{flex:none;display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+.rq-actions .btn{gap:7px;}
+.rq-reject .icon{color:var(--danger);}
+.rq-resolve{color:var(--accent);}
+.rq-empty{display:flex;align-items:center;justify-content:center;gap:14px;padding:20px 8px;}
+.rq-empty-t{font-weight:600;font-size:14px;}
+.rq-empty-d{margin-top:2px;font-size:12px;color:var(--text-muted);}
+.rq-sec.rq-done .rq-row{opacity:.75;}
+:root[data-theme="dark"] .rq-sec{--rq:#8B93FA;} :root[data-theme="dark"] .rq-sec.rq-card{--rq:#F2A262;} :root[data-theme="dark"] .rq-sec.rq-ops{--rq:#A792F5;} :root[data-theme="dark"] .rq-sec.rq-done{--rq:#4FD39A;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .rq-sec{--rq:#8B93FA;} :root:not([data-theme="light"]) .rq-sec.rq-card{--rq:#F2A262;} :root:not([data-theme="light"]) .rq-sec.rq-ops{--rq:#A792F5;} :root:not([data-theme="light"]) .rq-sec.rq-done{--rq:#4FD39A;} }
+@media(max-width:720px){
+  .rq-sec{padding:14px;}
+  .rq-head{gap:12px;}
+  .rq-ic{width:42px;height:42px;border-radius:12px;}
+  .rq-title{font-size:15.5px;}
+  .rq-count{margin-left:6px;}
+  .rq-list{padding:2px 12px;}
+  .rq-row{flex-wrap:wrap;gap:10px 12px;}
+  .rq-main{flex-basis:calc(100% - 54px);}
+  .rq-time{margin-left:52px;}
+  .rq-actions{width:100%;justify-content:stretch;}
+  .rq-actions .btn{flex:1;justify-content:center;}
+}
 .info-list{display:flex;flex-direction:column;gap:12px;}
 .info-row .info-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-faint);margin-bottom:2px;}
 .info-row .info-value{font-size:14px;}
@@ -410,6 +454,13 @@ const ICONS = {
   note:'<path d="M5 3.5h10l4 4v13H5Z"/><path d="M15 3.5v4h4M8.5 12h7M8.5 16h4.5"/>',
   crown:'<path d="M3.5 8.5 8 12l4-6.5 4 6.5 4.5-3.5-2 10h-13Z"/>',
   coins:'<ellipse cx="12" cy="6.5" rx="7" ry="3"/><path d="M5 6.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/><path d="M5 11.5v5c0 1.7 3.1 3 7 3s7-1.3 7-3v-5"/>',
+  cart:'<circle cx="9" cy="20" r="1.4"/><circle cx="17" cy="20" r="1.4"/><path d="M2.5 3.5h2.6l2.2 11.2a1.5 1.5 0 0 0 1.5 1.2h8.4a1.5 1.5 0 0 0 1.5-1.1L20.5 8H6"/>',
+  card:'<rect x="3" y="5.5" width="18" height="13" rx="2.2"/><path d="M3 10h18M7 15h3"/>',
+  dumbbell:'<rect x="2.5" y="9" width="3" height="6" rx="1"/><rect x="5.5" y="6.5" width="3.5" height="11" rx="1.2"/><rect x="15" y="6.5" width="3.5" height="11" rx="1.2"/><rect x="18.5" y="9" width="3" height="6" rx="1"/><path d="M9 12h6"/>',
+  user:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20.5c.8-4 3.8-6.5 7.5-6.5s6.7 2.5 7.5 6.5"/>',
+  userPlus:'<circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c.7-3.8 3.3-6 6.5-6s5.8 2.2 6.5 6"/><path d="M19 8v6M16 11h6"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  chevronUp:'<path d="m6 15 6-6 6 6"/>',
 };
 function icon(name, cls){ return '<svg class="icon '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||'')+'</svg>'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -565,6 +616,9 @@ const RO_RU = {
   'Trimiterea directă nu e susținută aici. Cardul se descarcă ca imagine, gata de tipărit sau distribuit.':'Прямая отправка здесь не поддерживается. Карта скачивается как изображение, готовое для печати или отправки.',
   'Înlocuiește cardul pierdut':'Заменить утерянную карту', 'Clientul nu a fost găsit.':'Клиент не найден.', 'Client':'Клиент',
   'Nume și prenume':'Имя и фамилия', 'Salvează':'Сохранить',
+  'Clienți care doresc să achiziționeze un abonament.':'Клиенты, которые хотят купить абонемент.', 'Clienți care au raportat pierderea cardului de acces.':'Клиенты, сообщившие о потере карты доступа.',
+  'Solicitări pentru antrenor personal sau card tipărit.':'Запросы на персонального тренера или печатную карту.', 'Ultimele cereri marcate ca rezolvate.':'Последние запросы, отмеченные как выполненные.',
+  'Când apar cereri noi, acestea vor fi afișate aici.':'Новые запросы появятся здесь.', 'Extinde':'Развернуть', 'Restrânge':'Свернуть', 'Necesită aprobarea unui proprietar':'Требуется одобрение владельца',
   'Cod membru':'Код участника', 'Copiază codul':'Скопировать код', 'Copiază':'Копировать', 'Cod copiat: ':'Код скопирован: ',
   'Introdu adresa de email a clientului.':'Введите email клиента.', 'Adresa de email nu este validă (ex: nume@gmail.com).':'Неверный адрес email (напр.: name@gmail.com).',
   'Datele se salvează în baza de date a sălii.':'Данные сохраняются в базе данных зала.', 'Alege abonamentul':'Выберите абонемент',
@@ -1153,22 +1207,54 @@ function renderRequests(){
   const pendingOps=allReqOps.filter(l=>l.resolved!==true).slice(0,30);
   const resolvedOps=allReqOps.filter(l=>l.resolved===true).slice(0,10);
 
-  const buyRows=pendingBuys.length? pendingBuys.map(r=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(r.name)+' · '+esc(r.phone)+' · '+esc(typeById(r.typeId)?typeDisplayName(typeById(r.typeId)):r.typeName)+' · '+money(r.price,r.currency)+(r.wantsTrainer?' · 🏋️ '+ra('antrenor'):'')+(r.wantsPrinted?' · 🖨️ '+ra('tipărit'):'')+'</span><span class="flex gap8">'+((typeById(r.typeId)&&typeById(r.typeId).tier==='exclusiv'&&state.adminRole!=='owner')? '<span class="small" style="opacity:.75;">'+ra('🔒 Necesită aprobarea unui proprietar')+'</span>' : ('<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">'+ra('Creează client')+'</button>'))+'<button class="btn btn-ghost btn-sm" data-action="reject-buy-request" data-id="'+r.id+'">'+ra('Respinge')+'</button></span></div>').join('') : '<div class="empty-state small">'+ra('Nicio cerere în așteptare.')+'</div>';
+  const sep='<span class="sep">·</span>';
+  const time=iso=> iso? '<span class="rq-time">'+icon('clock','icon-sm')+' '+esc(fmtDateTime(iso))+'</span>' : '';
+  const row=(avIcon, main, when, actions)=>'<div class="rq-row"><div class="rq-av">'+icon(avIcon,'icon-sm')+'</div><div class="rq-main">'+main+'</div>'+time(when)+(actions? '<div class="rq-actions">'+actions+'</div>' : '')+'</div>';
+  const empty=emptyIcon=>'<div class="rq-empty"><div class="rq-av">'+icon(emptyIcon,'icon-sm')+'</div><div><div class="rq-empty-t">'+esc(ra('Nicio cerere în așteptare.'))+'</div><div class="rq-empty-d">'+esc(ra('Când apar cereri noi, acestea vor fi afișate aici.'))+'</div></div></div>';
+  const section=(key, cls, ic, title, desc, count, body)=>{
+    const collapsed=isReqCollapsed(key);
+    return '<section class="rq-sec '+cls+(collapsed?' collapsed':'')+'">'
+     + '<button class="rq-head" data-action="toggle-req" data-id="'+key+'" aria-expanded="'+(!collapsed)+'" title="'+esc(collapsed? ra('Extinde') : ra('Restrânge'))+'">'
+       + '<span class="rq-ic">'+icon(ic)+'</span>'
+       + '<span style="min-width:0;"><span class="rq-title">'+esc(title)+'<span class="rq-count">'+count+'</span></span><span class="rq-desc" style="display:block;">'+esc(desc)+'</span></span>'
+       + '<span class="rq-chev">'+icon('chevronUp','icon-sm')+'</span>'
+     + '</button>'
+     + (collapsed? '' : '<div class="rq-list">'+body+'</div>')
+     + '</section>';
+  };
 
-  const cardRows=cardPending.length? cardPending.map(c=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+esc(c.name)+' · '+esc(c.phone)+' · '+ra('cod curent')+' '+esc(c.code)+'</span><span class="flex gap8"><button class="btn btn-primary btn-sm" data-action="approve-card-request" data-id="'+c.id+'">'+ra('Aprobă (10 MDL)')+'</button><button class="btn btn-ghost btn-sm" data-action="reject-card-request" data-id="'+c.id+'">'+ra('Respinge')+'</button><button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+ra('Vezi fișa')+'</button></span></div>').join('') : '<div class="empty-state small">'+ra('Nicio cerere în așteptare.')+'</div>';
+  const buyRows=pendingBuys.length? pendingBuys.map(r=>{
+    const t=typeById(r.typeId);
+    const needsOwner=t && t.tier==='exclusiv' && state.adminRole!=='owner';
+    const main=esc(r.name)+sep+esc(r.phone)+sep+esc(t? typeDisplayName(t) : r.typeName)+sep+money(r.price,r.currency)
+      + (r.wantsTrainer? '<span class="rq-chip">'+icon('dumbbell','icon-sm')+' '+esc(ra('antrenor'))+'</span>' : '')
+      + (r.wantsPrinted? '<span class="rq-chip">'+icon('printer','icon-sm')+' '+esc(ra('tipărit'))+'</span>' : '');
+    const actions=(needsOwner? '<span class="small faint">'+icon('lock','icon-sm')+' '+esc(ra('Necesită aprobarea unui proprietar'))+'</span>'
+        : '<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">'+icon('userPlus','icon-sm')+' '+esc(ra('Creează client'))+'</button>')
+      + '<button class="btn btn-ghost btn-sm rq-reject" data-action="reject-buy-request" data-id="'+r.id+'">'+icon('x','icon-sm')+' '+esc(ra('Respinge'))+'</button>';
+    return row('user', main, r.date, actions);
+  }).join('') : empty('cart');
 
-  const pendingOpsRows=pendingOps.length? pendingOps.map(l=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;"><span>'+(l.operation==='Cerere antrenor personal'?'🏋️':'🖨️')+' '+ra(l.operation)+' — '+esc(l.actor||'')+' <span class="mono faint">'+fmtDateTime(l.date)+'</span></span><button class="btn btn-ghost btn-sm" data-action="resolve-request" data-id="'+l.id+'">'+ra('Marchează rezolvat')+'</button></div>').join('') : '<div class="empty-state small">'+ra('Nicio cerere în așteptare.')+'</div>';
-  const resolvedOpsRows=resolvedOps.length? resolvedOps.map(l=>'<div class="flex justify-between items-center small" style="margin-top:8px;flex-wrap:wrap;gap:8px;opacity:.65;"><span>'+(l.operation==='Cerere antrenor personal'?'🏋️':'🖨️')+' '+ra(l.operation)+' — '+esc(l.actor||'')+'</span><span class="mono faint">'+fmtDateTime(l.date)+'</span></div>').join('') : '';
+  const cardRows=cardPending.length? cardPending.map(c=>row('card',
+      esc(c.name)+sep+esc(c.phone)+sep+esc(ra('cod curent'))+' <span class="mono">'+esc(c.code)+'</span>',
+      c.cardRequestAt,
+      '<button class="btn btn-primary btn-sm" data-action="approve-card-request" data-id="'+c.id+'">'+icon('check','icon-sm')+' '+esc(ra('Aprobă (10 MDL)'))+'</button>'
+      + '<button class="btn btn-ghost btn-sm rq-reject" data-action="reject-card-request" data-id="'+c.id+'">'+icon('x','icon-sm')+' '+esc(ra('Respinge'))+'</button>'
+      + '<button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+icon('user','icon-sm')+' '+esc(ra('Vezi fișa'))+'</button>')).join('') : empty('card');
+
+  const opIcon=l=> l.operation==='Cerere antrenor personal'? 'userPlus' : 'printer';
+  const pendingOpsRows=pendingOps.length? pendingOps.map(l=>row(opIcon(l), esc(ra(l.operation))+' — '+esc(l.actor||''), l.date,
+      '<button class="btn btn-ghost btn-sm rq-resolve" data-action="resolve-request" data-id="'+l.id+'">'+icon('check','icon-sm')+' '+esc(ra('Marchează rezolvat'))+'</button>')).join('') : empty('dumbbell');
+  const resolvedOpsRows=resolvedOps.map(l=>row(opIcon(l), esc(ra(l.operation))+' — '+esc(l.actor||''), l.date, '')).join('');
 
   return '<div class="section-sub">'+ra('Toate cererile clienților, într-un singur loc')+'</div>'
-   + '<div class="section-title">'+ra('Cereri de cumpărare abonament')+' ('+pendingBuys.length+')</div>'
-   + '<div class="card" style="padding:10px 18px 6px;margin-bottom:14px;">'+buyRows+'</div>'
-   + '<div class="section-title">'+ra('Cereri card pierdut')+' ('+cardPending.length+')</div>'
-   + '<div class="card" style="padding:10px 18px 6px;margin-bottom:14px;">'+cardRows+'</div>'
-   + '<div class="section-title">'+ra('Cereri antrenor personal / card tipărit')+' ('+pendingOps.length+')</div>'
-   + '<div class="card" style="padding:10px 18px 6px;'+(resolvedOpsRows?'margin-bottom:14px;':'')+'">'+pendingOpsRows+'</div>'
-   + (resolvedOpsRows? ('<div class="section-title">'+ra('Rezolvate recent')+'</div><div class="card" style="padding:10px 18px 6px;">'+resolvedOpsRows+'</div>') : '');
+   + section('buy', 'rq-buy', 'cart', ra('Cereri de cumpărare abonament'), ra('Clienți care doresc să achiziționeze un abonament.'), pendingBuys.length, buyRows)
+   + section('card', 'rq-card', 'card', ra('Cereri card pierdut'), ra('Clienți care au raportat pierderea cardului de acces.'), cardPending.length, cardRows)
+   + section('ops', 'rq-ops', 'dumbbell', ra('Cereri antrenor personal / card tipărit'), ra('Solicitări pentru antrenor personal sau card tipărit.'), pendingOps.length, pendingOpsRows)
+   + (resolvedOps.length? section('done', 'rq-done', 'check', ra('Rezolvate recent'), ra('Ultimele cereri marcate ca rezolvate.'), resolvedOps.length, resolvedOpsRows) : '');
 }
+// Sections start open; the "recently resolved" list starts collapsed.
+function isReqCollapsed(key){ const m=state.reqCollapsed||{}; return (key in m)? m[key] : key==='done'; }
 
 /* ---- Clients ---- */
 function renderClients(){
@@ -1940,6 +2026,7 @@ function onAction(el){
     case 'toggle-pause-client': togglePauseClient(id); return;
     case 'delete-client': askConfirm(ra('Sigur ștergi acest client? Acțiunea nu poate fi anulată.'), ()=>deleteClient(id), {danger:true}); return;
     case 'copy-code': copyClientCode(id); return;
+    case 'toggle-req': state.reqCollapsed=Object.assign({}, state.reqCollapsed, {[id]:!isReqCollapsed(id)}); break;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return;
     case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': runOnce(submitBuyRequest); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
