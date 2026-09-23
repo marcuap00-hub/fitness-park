@@ -65,6 +65,7 @@ a{color:inherit;}
 .btn-soft:hover{filter:brightness(0.97);}
 .btn-gold{background:var(--gold);color:var(--gold-ink);}
 .btn-exclusiv{background:#C7C2E8;color:#211F2E;}
+.btn-unlimited{background:linear-gradient(90deg,#FFD86B,#FF8FD6,#6BD8FF);color:#171307;font-weight:700;}
 .btn-danger{background:var(--danger-bg);color:var(--danger);}
 .btn-danger-solid{background:var(--danger);color:#fff;}
 .btn-sm{padding:7px 12px;font-size:13px;border-radius:8px;}
@@ -122,6 +123,11 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .buy-plan-card.gold .plan-eyebrow{color:var(--gold);}
 .buy-plan-card.exclusiv{background:linear-gradient(155deg,#211F2E,#302C46);border-color:transparent;color:#E7E4F3;}
 .buy-plan-card.exclusiv .plan-eyebrow{color:#C7C2E8;}
+.buy-plan-card.unlimited,.plan-card.unlimited{background:linear-gradient(120deg,#1B1035,#0F2A4A,#12203B,#2A1B4A,#1B1035);background-size:300% 300%;animation:unlimitedShimmer 7s ease infinite;border-color:transparent;color:#F3F1FF;box-shadow:0 0 0 1px rgba(255,255,255,.07),0 20px 50px -18px rgba(120,140,255,.45);}
+.buy-plan-card.unlimited .plan-eyebrow,.plan-card.unlimited .plan-eyebrow{background:linear-gradient(90deg,#FFD86B,#FF8FD6,#6BD8FF,#FFD86B);background-size:300% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:unlimitedText 5s linear infinite;font-weight:800;}
+.buy-plan-card.unlimited .plan-price span,.plan-card.unlimited .plan-meta,.plan-card.unlimited .plan-price span{color:#C6C2E8;}
+@keyframes unlimitedShimmer{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes unlimitedText{0%{background-position:0% 50%}100%{background-position:300% 50%}}
 .buy-plan-card .plan-name{font-size:13.5px;margin:2px 0;}
 .buy-plan-card .plan-price{font-size:18px;}
 .buy-plan-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;}
@@ -511,7 +517,8 @@ const RO_RU = {
   'Abonamentele sălii tale':'Абонементы вашего зала', 'Gestionează oferta și regulile fiecărui tip':'Управляйте предложением и правилами каждого типа',
   'Tip nou':'Новый тип', 'Niciun tip de abonament încă.':'Пока нет типов абонемента.', 'Niciun tip de abonament disponibil.':'Нет доступных типов абонемента.',
   'intrări nelimitate':'неограниченные посещения', 'Adaugă client':'Добавить клиента',
-  'Abonament Gold':'Абонемент Gold', 'Abonament Exclusiv':'Абонемент Exclusiv', 'Abonament Fitness':'Абонемент Fitness', ' · retras':' · снят с продажи',
+  'Abonament Gold':'Абонемент Gold', 'Abonament Exclusiv':'Абонемент Exclusiv', 'Abonament Fitness':'Абонемент Fitness', 'Abonament Nelimitat':'Абонемент Безлимит', ' · retras':' · снят с продажи',
+  '∞ Nelimitat (fără dată de expirare)':'∞ Безлимит (без даты истечения)', 'fără expirare':'без истечения',
   'Editează tipul':'Изменить тип', 'Tip de abonament nou':'Новый тип абонемента', 'Denumire':'Название',
   'Denumire în rusă (opțional — pentru clienții care văd saitul în rusă)':'Название на русском (необязательно — для клиентов, видящих сайт на русском)',
   'Preț':'Цена', 'Monedă':'Валюта', 'Durată (zile)':'Длительность (дней)', 'Limită intrări (gol = nelimitat)':'Лимит посещений (пусто = неограниченно)',
@@ -1357,7 +1364,8 @@ function renderHistory(){
 /* ---- Plans (catalog) ---- */
 const TIER_RANK={fitness:0, gold:1, exclusiv:2};
 function renderPlans(){
-  const cards=state.types.slice().sort((a,b)=>{ const r=(TIER_RANK[a.tier]||0)-(TIER_RANK[b.tier]||0); return r!==0? r : (a.price||0)-(b.price||0); }).map(planCardHtml).join('') || '<div class="empty-state">'+ra('Niciun tip de abonament încă.')+'</div>';
+  const visibleTypes=state.types.filter(t=>t.tier!=='exclusiv' || state.adminRole==='owner');
+  const cards=visibleTypes.slice().sort((a,b)=>{ const r=(TIER_RANK[a.tier]||0)-(TIER_RANK[b.tier]||0); return r!==0? r : (a.price||0)-(b.price||0); }).map(planCardHtml).join('') || '<div class="empty-state">'+ra('Niciun tip de abonament încă.')+'</div>';
   return '<div class="section-head"><div class="section-title">'+ra('Abonamentele sălii tale')+'<small>'+ra('Gestionează oferta și regulile fiecărui tip')+'</small></div>'+(state.adminRole==='owner'?('<button class="btn btn-ghost" data-action="open-new-type">'+icon('plus','icon-sm')+' '+ra('Tip nou')+'</button>'):'')+'</div>'
    + '<div class="plan-grid">'+cards+'</div>';
 }
@@ -1366,13 +1374,13 @@ const EXCLUSIV_ACCENT='#C7C2E8';
 function typePickerHtml(types, selectedId){
   const sorted=types.slice().sort((a,b)=>(a.price||0)-(b.price||0));
   const cards=sorted.map((t,idx)=>{
-    const gold=t.tier==='gold'; const exclusiv=t.tier==='exclusiv'; const premium=gold||exclusiv;
+    const gold=t.tier==='gold'; const exclusiv=t.tier==='exclusiv'; const premium=gold||exclusiv||t.unlimited;
     const pastel=premium? null : PLAN_PASTELS[idx % PLAN_PASTELS.length];
     const selected=selectedId===t.id;
     const styleBits=[]; if(pastel) styleBits.push('border-top:5px solid '+pastel);
-    return '<div class="buy-plan-card'+(gold?' gold':(exclusiv?' exclusiv':''))+(selected?' selected':'')+'" style="'+styleBits.join(';')+'" data-action="pick-plan-type" data-id="'+t.id+'">'
+    return '<div class="buy-plan-card'+(gold?' gold':(exclusiv?' exclusiv':''))+(t.unlimited?' unlimited':'')+(selected?' selected':'')+'" style="'+styleBits.join(';')+'" data-action="pick-plan-type" data-id="'+t.id+'">'
      + (selected? '<div class="buy-plan-check">'+icon('check','icon-sm')+'</div>' : '')
-     + '<div class="plan-eyebrow">'+(gold?'Gold':(exclusiv?'Exclusiv':'Fitness'))+'</div>'
+     + '<div class="plan-eyebrow">'+(t.unlimited?(state.lang==='ru'?'∞ Безлимит':'∞ Nelimitat'):(gold?'Gold':(exclusiv?'Exclusiv':'Fitness')))+'</div>'
      + '<div class="plan-name">'+esc(typeDisplayName(t))+'</div>'
      + '<div class="plan-price">'+t.price+' <span>'+esc(t.currency)+'</span></div>'
      + '</div>';
@@ -1380,6 +1388,7 @@ function typePickerHtml(types, selectedId){
   return cards || '<div class="small muted">'+ra('Niciun tip de abonament disponibil.')+'</div>';
 }
 function durLabelText(t){
+  if(t.unlimited) return state.lang==='ru' ? '∞ Бессрочно' : '∞ Nelimitat';
   if(state.lang==='ru'){
     return (t.durationDays%30===0 && t.durationDays>=30) ? (t.durationDays/30)+' '+ruMonths(t.durationDays/30) : t.durationDays+' '+ruDays(t.durationDays);
   }
@@ -1393,23 +1402,24 @@ function planCardHtml(t, idx){
   const gold=t.tier==='gold';
   const exclusiv=t.tier==='exclusiv';
   const locked = exclusiv && state.adminRole!=='owner';
-  const premium = gold||exclusiv;
+  const premium = gold||exclusiv||t.unlimited;
   const pastel = premium? null : PLAN_PASTELS[idx % PLAN_PASTELS.length];
   const durLabel = durLabelText(t);
   const hours = (t.accessFrom&&t.accessTo)? (' ('+t.accessFrom+'-'+t.accessTo+')') : '';
   const styleBits=[]; if(t.active===false) styleBits.push('opacity:.55'); if(pastel) styleBits.push('border-top:5px solid '+pastel);
   const styleAttr = styleBits.length? (' style="'+styleBits.join(';')+';"') : '';
-  return '<div class="plan-card'+(gold?' gold':(exclusiv?' exclusiv':''))+'"'+styleAttr+'>'
-   + '<div class="plan-eyebrow">'+ra(gold?'Abonament Gold':(exclusiv?'Abonament Exclusiv':'Abonament Fitness'))+(t.active===false?ra(' · retras'):'')+'</div>'
+  const eyebrowText = t.unlimited? ra('Abonament Nelimitat') : ra(gold?'Abonament Gold':(exclusiv?'Abonament Exclusiv':'Abonament Fitness'));
+  return '<div class="plan-card'+(gold?' gold':(exclusiv?' exclusiv':''))+(t.unlimited?' unlimited':'')+'"'+styleAttr+'>'
+   + '<div class="plan-eyebrow">'+eyebrowText+(t.active===false?ra(' · retras'):'')+'</div>'
    + '<div class="plan-name">'+esc(typeDisplayName(t))+'</div>'
    + '<div class="plan-price">'+t.price+' <span>'+esc(t.currency)+'</span></div>'
    + '<div class="plan-meta">'+durLabel+hours+' · '+entryLimitText(t)+'</div>'
    + '<div class="flex gap8" style="margin-top:6px;align-items:center;">'
-     + (locked? '<div class="small" style="flex:1;text-align:center;opacity:.85;">'+ra('🔒 Necesită aprobarea unui proprietar')+'</div>' : '<button class="btn '+(gold?'btn-gold':(exclusiv?'btn-exclusiv':'btn-soft'))+' btn-sm" style="flex:1;" data-action="open-new-client" data-type="'+t.id+'">'+icon('plus','icon-sm')+' '+ra('Adaugă client')+'</button>')
+     + (locked? '<div class="small" style="flex:1;text-align:center;opacity:.85;">'+ra('🔒 Necesită aprobarea unui proprietar')+'</div>' : '<button class="btn '+(t.unlimited?'btn-unlimited':(gold?'btn-gold':(exclusiv?'btn-exclusiv':'btn-soft')))+' btn-sm" style="flex:1;" data-action="open-new-client" data-type="'+t.id+'">'+icon('plus','icon-sm')+' '+ra('Adaugă client')+'</button>')
      + (state.adminRole==='owner'? ('<button class="btn btn-ghost btn-sm" data-action="open-edit-type" data-id="'+t.id+'"'+(premium?' style="background:rgba(255,255,255,.1);color:#EDE2C4;border-color:rgba(255,255,255,.25);"':'')+'>'+icon('edit','icon-sm')+'</button>') : '')
    + '</div></div>';
 }
-function openNewType(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate gestiona tipurile de abonament.')); return; } openModal('editType', {id:null, name:'', nameRu:'', price:0, currency:(state.settings&&state.settings.currency)||'MDL', durationDays:30, entryLimit:'', accessFrom:'', accessTo:'', tier:'fitness', active:true}); }
+function openNewType(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate gestiona tipurile de abonament.')); return; } openModal('editType', {id:null, name:'', nameRu:'', price:0, currency:(state.settings&&state.settings.currency)||'MDL', durationDays:30, entryLimit:'', accessFrom:'', accessTo:'', tier:'fitness', active:true, unlimited:false}); }
 function openEditType(id){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate gestiona tipurile de abonament.')); return; } const t=typeById(id); if(!t) return; openModal('editType', Object.assign({}, t, {id})); }
 function modalEditType(){
   const f=state.form;
@@ -1417,7 +1427,8 @@ function modalEditType(){
    + field(ra('Denumire'),'text','form.name',f.name,'Ex: 1 lună - nelimitat')
    + field(ra('Denumire în rusă (opțional — pentru clienții care văd saitul în rusă)'),'text','form.nameRu',f.nameRu,'ex: 1 месяц - безлимит')
    + '<div class="grid2">'+field(ra('Preț'),'number','form.price',f.price)+selectField(ra('Monedă'),'form.currency',f.currency,['MDL','EUR','USD'])+'</div>'
-   + '<div class="grid2">'+field(ra('Durată (zile)'),'number','form.durationDays',f.durationDays)+field(ra('Limită intrări (gol = nelimitat)'),'number','form.entryLimit',f.entryLimit)+'</div>'
+   + '<label class="checkline"><input type="checkbox" data-bind="form.unlimited" '+(f.unlimited?'checked':'')+'> '+ra('∞ Nelimitat (fără dată de expirare)')+'</label>'
+   + '<div class="grid2">'+(f.unlimited? ('<label class="field">'+ra('Durată (zile)')+'<div class="small" style="padding:10px 0;color:var(--text-faint);">∞ '+ra('fără expirare')+'</div></label>') : field(ra('Durată (zile)'),'number','form.durationDays',f.durationDays))+field(ra('Limită intrări (gol = nelimitat)'),'number','form.entryLimit',f.entryLimit)+'</div>'
    + '<div class="grid2">'+field(ra('Acces de la (opțional)'),'time','form.accessFrom',f.accessFrom)+field(ra('Acces până la (opțional)'),'time','form.accessTo',f.accessTo)+'</div>'
    + selectField(ra('Nivel'),'form.tier',f.tier,[['fitness','Fitness'],['gold','Gold'],['exclusiv','Exclusiv']])
    + '<label class="checkline"><input type="checkbox" data-bind="form.active" '+(f.active!==false?'checked':'')+'> '+ra('Activ (vizibil în ofertă)')+'</label>'
@@ -1430,7 +1441,7 @@ async function saveType(){
   if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate gestiona tipurile de abonament.')); return; }
   const f=state.form;
   if(!f.name||!f.name.trim()){ state.formErr=ra('Introdu o denumire.'); scheduleRender(); return; }
-  const body={ name:f.name.trim(), nameRu:(f.nameRu||'').trim()||null, price:Number(f.price||0), currency:f.currency||'MDL', durationDays:Number(f.durationDays||30),
+  const body={ name:f.name.trim(), nameRu:(f.nameRu||'').trim()||null, price:Number(f.price||0), currency:f.currency||'MDL', durationDays: f.unlimited? 36500 : Number(f.durationDays||30), unlimited:!!f.unlimited,
     entryLimit:(f.entryLimit===''||f.entryLimit==null)?null:Number(f.entryLimit), accessFrom:f.accessFrom||null, accessTo:f.accessTo||null,
     tier:f.tier||'fitness', active:f.active!==false, order: (f.order!=null? f.order : state.types.length) };
   try{
