@@ -243,21 +243,20 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
   .member-card,.member-card *{visibility:visible;}
   .member-card{
     position:fixed;top:1cm;left:50%;transform:translateX(-50%);
-    width:85mm;height:55mm;box-sizing:border-box;background:#fff!important;
-    border-width:1.2px!important;border-radius:3mm!important;padding:4mm!important;
-    display:grid!important;grid-template-columns:30mm 1fr;grid-template-rows:auto auto 1fr auto;
-    grid-template-areas:"qr brand" "qr name" "qr plan" "qr code";
-    column-gap:4mm;row-gap:1mm;align-items:start;justify-items:start;text-align:left!important;
+    width:55mm;height:85mm;box-sizing:border-box;background:#fff!important;
+    border-width:1.4px!important;border-radius:4mm!important;padding:6mm 4mm 5mm!important;
+    display:flex!important;flex-direction:column;align-items:center;justify-content:flex-start;
+    text-align:center!important;gap:2mm;
   }
   .member-card,.member-card .mc-name,.member-card .mc-code{color:#171A24!important;}
-  .member-card .mc-brand{grid-area:brand;color:#171A24!important;font-size:7px!important;}
-  .member-card .mc-plan{grid-area:plan;color:#555!important;font-size:7px!important;line-height:1.3;}
-  .member-card .mc-code{grid-area:code;border-color:#171A24!important;background:#fff!important;font-size:11px!important;padding:1.2mm 2.5mm!important;align-self:end;}
-  .member-card .mc-name{grid-area:name;font-size:12px!important;line-height:1.2;}
-  .member-card .qr-wrap{grid-area:qr;padding:0!important;align-self:center;}
-  .member-card .qr-wrap canvas,.member-card .qr-wrap img{width:30mm!important;height:30mm!important;}
+  .member-card .mc-brand{color:#171A24!important;font-size:8px!important;justify-content:center;}
+  .member-card .mc-name{font-size:14px!important;line-height:1.2;margin-top:1mm;}
+  .member-card .qr-wrap{padding:0!important;margin:3mm 0 2mm;}
+  .member-card .qr-wrap canvas,.member-card .qr-wrap img{width:36mm!important;height:36mm!important;}
+  .member-card .mc-plan{color:#555!important;font-size:8.5px!important;line-height:1.4;}
+  .member-card .mc-code{border-color:#171A24!important;background:#fff!important;font-size:13px!important;padding:1.6mm 4mm!important;margin-top:auto;}
   .member-card .mc-eyebrow,.member-card .mc-footer{display:none!important;}
-  .member-card.unlimited{border-color:#C9A24B!important;border-width:1.8px!important;background:linear-gradient(155deg,#FCF6E4,#fff)!important;}
+  .member-card.unlimited{border-color:#C9A24B!important;border-width:1.8px!important;background:linear-gradient(180deg,#FCF6E4,#fff)!important;}
 }
 .member-card .qr-wrap{padding:10px;} .member-card .mc-brand{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);} .member-card .mc-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;} .member-card .mc-name{font-family:var(--font-display);font-weight:700;font-size:15px;} .member-card .mc-plan{font-size:12px;color:var(--text-muted);line-height:1.5;} .member-card .mc-code{color:var(--gold);border-color:var(--gold);}
 .member-card .mc-footer{font-size:10.5px;color:var(--text-faint);margin-top:4px;}
@@ -1281,7 +1280,7 @@ function buildCardCanvas(c){
   ctx.fillStyle='#fff'; ctx.strokeStyle='#E3E5F0'; ctx.lineWidth=1; roundRectPath(ctx,qrX-14,qrY-14,qrSize+28,qrSize+28,14); ctx.fill(); ctx.stroke();
   if(qrSrc){ try{ ctx.drawImage(qrSrc, qrX, qrY, qrSize, qrSize); }catch(e){} }
   ctx.fillStyle='#171A24'; ctx.font='600 18px "Public Sans", sans-serif'; ctx.fillText(subTypeDisplayName(c)||'—', W/2, qrY+qrSize+55);
-  ctx.fillStyle='#666C82'; ctx.font='400 14px "Public Sans", sans-serif'; ctx.fillText(fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo), W/2, qrY+qrSize+80);
+  ctx.fillStyle='#666C82'; ctx.font='400 14px "Public Sans", sans-serif'; ctx.fillText(sub.unlimited? ('∞ '+(state.lang==='ru'?'Безлимит':'Nelimitat')) : (fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)), W/2, qrY+qrSize+80);
   ctx.fillStyle='#8A8EA3'; ctx.font='700 12px "Public Sans", sans-serif'; ctx.fillText(state.lang==='ru'?'КОД УЧАСТНИКА · РУЧНАЯ ПРОВЕРКА':'COD MEMBRU · VERIFICARE MANUALĂ', W/2, qrY+qrSize+120);
   ctx.fillStyle='#171A24'; ctx.font='700 24px "JetBrains Mono", monospace'; ctx.fillText(c.code, W/2, qrY+qrSize+154);
   ctx.fillStyle='#9599AC'; ctx.font='400 13px "Public Sans", sans-serif'; ctx.fillText(tr('presentQr'), W/2, H-40);
