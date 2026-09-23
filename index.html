@@ -474,7 +474,6 @@ const RO_RU = {
   'Intră în panou':'Вход в панель',
   'Introdu emailul și parola contului tău, pentru acces la recepție și administrare.':'Введите email и пароль своей учётной записи для доступа к ресепшн и администрированию.',
   'Email':'Email', 'Parolă':'Пароль', 'Am uitat parola':'Забыли пароль',
-  'Prima intrare cu acest email — creează parola':'Первый вход с этим email — создать пароль',
   'Prima configurare':'Первая настройка',
   'Creează contul tău de administrator — emailul și parola pe care le vei folosi de fiecare dată când intri la recepție.':'Создайте учётную запись администратора — email и пароль, которые вы будете использовать при каждом входе.',
   'Parolă nouă (minim 6 caractere)':'Новый пароль (минимум 6 символов)', 'Confirmă parola':'Подтвердите пароль',
@@ -620,9 +619,6 @@ const RO_RU = {
   'Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.':'Точно удалить всю историю доступа? Действие нельзя отменить.',
   'Introdu email și parolă.':'Введите email и пароль.', 'Email sau parolă greșită.':'Неверный email или пароль.',
   'Acest cont nu (mai) are acces la panou.':'Этот аккаунт больше не имеет доступа к панели.',
-  'Acest email nu are acces. Cere administratorului să te adauge în Echipă.':'У этого email нет доступа. Попросите администратора добавить вас в команду.',
-  'Acest cont există deja — folosește „Intră în panou" cu parola ta.':'Этот аккаунт уже существует — используйте «Вход в панель» со своим паролем.',
-  'Cont creat. Ai acces la panou.':'Аккаунт создан. У вас есть доступ к панели.',
   'Introdu un email valid.':'Введите действительный email.', 'Există deja un cont cu acest email.':'Уже есть аккаунт с этим email.',
   'Eroare la salvare. Încearcă din nou.':'Ошибка при сохранении. Попробуйте снова.', 'Panoul de administrare e gata.':'Панель администрирования готова.',
   'Camera nu este disponibilă aici. Folosește codul manual.':'Камера здесь недоступна. Используйте код вручную.',
@@ -918,8 +914,7 @@ function adminLoginForm(){
    + '<label class="field">'+ra('Parolă')+'<input id="adminPass" type="password" autocomplete="current-password" placeholder="••••••••" data-enter="admin-login-submit"></label>'
    + '<button type="button" class="back-link" data-action="admin-forgot-password" style="margin:-8px 0 2px;">'+ra('Am uitat parola')+'</button>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
-   + '<button class="btn btn-primary btn-block" data-action="admin-login-submit">'+icon('lock','icon-sm')+' '+ra('Intră în panou')+'</button>'
-   + '<button class="btn btn-ghost btn-block mt4" data-action="admin-claim-submit">'+icon('shield','icon-sm')+' '+ra('Prima intrare cu acest email — creează parola')+'</button>';
+   + '<button class="btn btn-primary btn-block" data-action="admin-login-submit">'+icon('lock','icon-sm')+' '+ra('Intră în panou')+'</button>';
 }
 function adminSetupForm(){
   return '<div class="gate-title">'+ra('Prima configurare')+'</div>'
@@ -1818,7 +1813,6 @@ function onAction(el){
     case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); break;
     case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); break;
     case 'admin-login-submit': adminLoginSubmit(); return;
-    case 'admin-claim-submit': adminClaimSubmit(); return;
     case 'admin-setup-submit': adminSetupSubmit(); return;
     case 'client-login-submit': clientLoginSubmit(); return;
     case 'admin-lock': state.adminUnlocked=false; state.adminRole=null; state.screen='admin-gate'; state.modal=null; lockAdminSession(); break;
@@ -1890,27 +1884,6 @@ async function adminForgotPassword(){
   state.formErr='';
   try{ await firebase.auth().sendPasswordResetEmail(email); }catch(e){}
   showToast(ra('Dacă acest cont există, ți-am trimis un email cu link de resetare a parolei.'));
-}
-async function adminClaimSubmit(){
-  const ve=document.getElementById('adminEmail'), vp=document.getElementById('adminPass');
-  const email=(ve?ve.value:'').trim().toLowerCase(); const pass=vp?vp.value:'';
-  if(!email||!pass){ state.formErr=ra('Introdu email și parolă.'); scheduleRender(); return; }
-  const team=(state.settings&&state.settings.team)||[];
-  const member=team.find(m=>(m.email||'').toLowerCase()===email);
-  if(!member){ state.formErr=ra('Acest email nu are acces. Cere administratorului să te adauge în Echipă.'); scheduleRender(); return; }
-  if(pass.length<6){ state.formErr=ra('Parola trebuie să aibă minim 6 caractere.'); scheduleRender(); return; }
-  try{ await firebase.auth().createUserWithEmailAndPassword(email, pass); }
-  catch(e){
-    if(e && e.code==='auth/email-already-in-use'){ state.formErr=ra('Acest cont există deja — folosește „Intră în panou" cu parola ta.'); }
-    else if(e && e.code==='auth/weak-password'){ state.formErr=ra('Parola trebuie să aibă minim 6 caractere.'); }
-    else{ state.formErr=ra('Eroare la crearea contului.'); }
-    scheduleRender(); return;
-  }
-  state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr='';
-  state.adminSection='reception';
-  subscribeStaff();
-  showToast(ra('Cont creat. Ai acces la panou.'));
-  scheduleRender();
 }
 async function adminSetupSubmit(){
   const ve=document.getElementById('setupEmail'), v1=document.getElementById('setupPass1'), v2=document.getElementById('setupPass2');
