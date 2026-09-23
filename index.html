@@ -140,8 +140,8 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .back-link{display:inline-flex;align-items:center;gap:6px;color:var(--text-muted);font-size:13px;font-weight:600;background:none;border:none;cursor:pointer;padding:0;margin-bottom:16px;}
 .back-link:hover{color:var(--text);}
 /* ---- admin layout ---- */
-.admin-shell{display:flex;min-height:100%;}
-.sidebar{width:240px;flex:none;background:var(--sidebar-bg);color:var(--sidebar-text);display:flex;flex-direction:column;padding:20px 14px;gap:4px;border-right:1px solid var(--border);}
+.admin-shell{display:flex;min-height:100vh;}
+.sidebar{position:sticky;top:0;height:100vh;overflow-y:auto;width:240px;flex:none;background:var(--sidebar-bg);color:var(--sidebar-text);display:flex;flex-direction:column;padding:20px 14px;gap:4px;border-right:1px solid var(--border);}
 .sidebar .brand{padding:2px 8px 20px;margin:0;}
 .sidebar .brand-name{color:var(--sidebar-active);}
 .nav-item{display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--sidebar-text);transition:.12s;}
@@ -156,6 +156,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 28px;border-bottom:1px solid var(--border);background:var(--surface);position:sticky;top:0;z-index:20;}
 .topbar-eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--text-faint);font-weight:700;}
 .topbar-title{font-size:21px;font-weight:800;font-family:var(--font-display);}
+@media(max-width:480px){.topbar-title{font-size:18px;line-height:1.2;}.lock-txt{display:none;}}
 .content{padding:24px 28px 60px;max-width:1180px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:22px;}
 .mobile-nav{display:none;}
 .mobile-nav-backdrop{display:none;}
@@ -170,13 +171,83 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
   .topbar{padding:14px 16px;}
   .content{padding:16px 14px 50px;}
 }
-.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
-@media(max-width:720px){.stat-grid{grid-template-columns:1fr;}}
-.stat-card{padding:18px 20px;display:flex;flex-direction:column;gap:8px;}
-.stat-top{display:flex;align-items:center;justify-content:space-between;}
-.stat-label{font-size:12px;color:var(--text-muted);font-weight:600;}
+.stat-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;}
+@media(max-width:1180px){.stat-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:720px){.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}.stat-grid>.stat-card:last-child{grid-column:1/-1;}}
+.stat-card{padding:18px 16px;display:flex;align-items:flex-start;gap:14px;border-radius:18px;min-width:0;}
+.stat-body{min-width:0;display:flex;flex-direction:column;gap:6px;}
+.stat-label{font-size:13px;color:var(--text-muted);font-weight:600;line-height:1.3;}
+.stat-numrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
 .stat-num{font-size:30px;font-weight:800;font-family:var(--font-display);}
-.stat-ic{width:32px;height:32px;border-radius:9px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;}
+.stat-card .stat-num{font-size:26px;line-height:1.1;white-space:nowrap;}
+.stat-ic{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--t-soft,var(--accent-soft));color:var(--t,var(--accent));}
+.pill-xs{padding:2px 8px;font-size:11px;white-space:nowrap;}
+.tone-blue{--t:#4C56E8;--t-soft:rgba(76,86,232,.12);} .tone-sky{--t:#2F7FE0;--t-soft:rgba(47,127,224,.13);} .tone-orange{--t:#E0782A;--t-soft:rgba(224,120,42,.14);} .tone-green{--t:#1F9D63;--t-soft:rgba(31,157,99,.13);} .tone-purple{--t:#7058DB;--t-soft:rgba(112,88,219,.13);}
+:root[data-theme="dark"] .tone-blue{--t:#8B93FA;} :root[data-theme="dark"] .tone-sky{--t:#6FB0FF;} :root[data-theme="dark"] .tone-orange{--t:#F2A262;} :root[data-theme="dark"] .tone-green{--t:#4FD39A;} :root[data-theme="dark"] .tone-purple{--t:#A792F5;}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tone-blue{--t:#8B93FA;} :root:not([data-theme="light"]) .tone-sky{--t:#6FB0FF;} :root:not([data-theme="light"]) .tone-orange{--t:#F2A262;} :root:not([data-theme="light"]) .tone-green{--t:#4FD39A;} :root:not([data-theme="light"]) .tone-purple{--t:#A792F5;} }
+@media(max-width:420px){.stat-card{padding:14px 12px;gap:10px;}.stat-ic{width:40px;height:40px;border-radius:12px;}.stat-card .stat-num{font-size:22px;}}
+/* ---- page cards (clients, history) ---- */
+.pg-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
+.pg-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.pg-ic{flex:none;width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);}
+.pg-ic .icon{width:26px;height:26px;}
+.pg-title{font-family:var(--font-display);font-weight:800;font-size:19px;line-height:1.25;}
+.pg-sub{font-size:13.5px;color:var(--text-muted);margin-top:3px;}
+.pg-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;}
+.pg-filters{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;padding:14px;border-radius:16px;background:var(--surface-2);}
+.pg-filters.hist{grid-template-columns:repeat(3,minmax(0,1fr)) auto;}
+.pg-filters .full{grid-column:1/-1;}
+.pg-search{position:relative;}
+.pg-search>.icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-faint);pointer-events:none;}
+.pg-search input{padding:13px 42px 13px 44px;border-radius:12px;background:var(--surface);}
+.pg-search-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:none;background:none;border-radius:8px;color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pg-search-x:hover{background:var(--surface-2);color:var(--text);}
+.fsel{position:relative;min-width:0;}
+.fsel>.icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;}
+.fsel-l{position:absolute;left:44px;top:8px;font-size:11px;font-weight:600;color:var(--text-muted);pointer-events:none;}
+.fsel-chev{position:absolute;right:12px;top:50%;transform:translateY(-50%) rotate(180deg);color:var(--text-muted);pointer-events:none;display:flex;}
+.fsel select{appearance:none;-webkit-appearance:none;padding:25px 36px 8px 44px;border-radius:12px;background:var(--surface);font-weight:600;font-size:14px;cursor:pointer;text-overflow:ellipsis;}
+.fsel input[type="date"]{padding:25px 12px 8px 44px;border-radius:12px;background:var(--surface);font-weight:600;}
+.pg-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--text-muted);}
+.pg-foot b{color:var(--text);}
+.pager{display:flex;gap:6px;}
+.pager button{min-width:38px;height:38px;padding:0 10px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pager button.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.pager button:disabled{opacity:.4;cursor:default;}
+.pill-dot::before{content:'';width:7px;height:7px;border-radius:50%;background:currentColor;flex:none;}
+@media(max-width:760px){.pg-card{padding:14px;border-radius:16px;}.pg-filters,.pg-filters.hist{grid-template-columns:1fr 1fr;padding:10px;gap:10px;}.pg-filters .pg-search{grid-column:1/-1;}.pg-actions{margin-left:0;width:100%;}.pg-actions .btn{flex:1;justify-content:center;}.pg-ic{width:46px;height:46px;border-radius:14px;}.pg-title{font-size:17px;}}
+/* client rows */
+.crow-list{display:flex;flex-direction:column;gap:8px;}
+.crow{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--border);border-radius:14px;background:var(--surface);cursor:pointer;transition:border-color .12s,box-shadow .12s;}
+.crow:hover{border-color:var(--accent);box-shadow:var(--shadow);}
+.crow .avatar,.crow>img{width:42px!important;height:42px!important;border-radius:50%!important;font-size:14px;}
+.crow-main{flex:1;min-width:0;}
+.crow-name{font-weight:700;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.crow-sub{font-size:12.5px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.crow-sub .dot{margin:0 6px;color:var(--text-faint);}
+.crow-mdate{display:none;}
+.crow-date{flex:none;font-size:14px;color:var(--text-muted);white-space:nowrap;min-width:96px;text-align:right;}
+.crow-div{flex:none;width:1px;height:28px;background:var(--border);}
+.crow .pill{flex:none;min-width:96px;justify-content:center;}
+.crow-go{flex:none;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);}
+.crow:hover .crow-go{color:var(--accent);border-color:var(--accent);}
+@media(max-width:640px){.crow{gap:10px;padding:10px;}.crow-date,.crow-div{display:none;}.crow-mdate{display:inline;}.crow .pill{min-width:0;}.crow-go{display:none;}}
+/* history table */
+.hwrap{border:1px solid var(--border);border-radius:14px;overflow-x:auto;}
+.htable{width:100%;border-collapse:collapse;font-size:13.5px;}
+.htable th{background:var(--surface-2);padding:12px 14px;white-space:nowrap;}
+.htable td{padding:10px 14px;}
+.htable tr td:first-child,.htable tr th:first-child{padding-left:16px;}
+.htable tr td:last-child,.htable tr th:last-child{padding-right:12px;}
+.htable tr:hover td{background:var(--surface-2);}
+.hclient{display:flex;align-items:center;gap:12px;min-width:200px;}
+.hclient .avatar{width:38px;height:38px;border-radius:50%;font-size:13px;}
+.hname{font-weight:700;}
+.hsub,.htime{font-size:12.5px;color:var(--text-muted);}
+.hdate{white-space:nowrap;}
+.hmore{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
+.hmore:hover{color:var(--accent);border-color:var(--accent);}
+.av-t1{background:rgba(31,157,99,.14);color:#1F9D63;} .av-t2{background:rgba(224,120,42,.15);color:#C9651C;} .av-t3{background:rgba(112,88,219,.14);color:#7058DB;} .av-t4{background:rgba(47,127,224,.14);color:#2F7FE0;} .av-t5{background:rgba(214,64,120,.13);color:#C63B6E;}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .section-title{font-size:16px;font-weight:800;font-family:var(--font-display);}
 .section-title small{display:block;font-size:12px;color:var(--text-muted);font-weight:500;margin-top:2px;font-family:var(--font-body);}
@@ -205,9 +276,6 @@ td{padding:12px;border-top:1px solid var(--border);vertical-align:middle;}
 tr td:first-child,tr th:first-child{padding-left:0;}
 tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .search-row{display:flex;gap:10px;}
-.client-row{display:flex;align-items:center;gap:12px;padding:13px 4px;border-bottom:1px solid var(--border);cursor:pointer;transition:.1s;}
-.client-row:hover{background:var(--surface-2);}
-.client-row:last-child{border-bottom:none;}
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
 .plan-card{border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--surface);}
 .plan-card.gold{background:linear-gradient(155deg,var(--gold-card),var(--gold-card-2));border-color:transparent;color:#EDE2C4;}
@@ -461,6 +529,10 @@ const ICONS = {
   userPlus:'<circle cx="10" cy="8" r="3.4"/><path d="M3.5 20c.7-3.8 3.3-6 6.5-6s5.8 2.2 6.5 6"/><path d="M19 8v6M16 11h6"/>',
   clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   chevronUp:'<path d="m6 15 6-6 6 6"/>',
+  logIn:'<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="m9.5 16 4-4-4-4"/><path d="M13.5 12H3.5"/>',
+  more:'<circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/>',
+  filter:'<path d="M4 5h16l-6.2 7.4V19l-3.6-1.8v-4.8Z"/>',
+  sort:'<path d="M7 4v16M3.5 16.5 7 20l3.5-3.5"/><path d="M17 20V4M13.5 7.5 17 4l3.5 3.5"/>',
 };
 function icon(name, cls){ return '<svg class="icon '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||'')+'</svg>'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
@@ -619,6 +691,14 @@ const RO_RU = {
   'Clienți care doresc să achiziționeze un abonament.':'Клиенты, которые хотят купить абонемент.', 'Clienți care au raportat pierderea cardului de acces.':'Клиенты, сообщившие о потере карты доступа.',
   'Solicitări pentru antrenor personal sau card tipărit.':'Запросы на персонального тренера или печатную карту.', 'Ultimele cereri marcate ca rezolvate.':'Последние запросы, отмеченные как выполненные.',
   'Când apar cereri noi, acestea vor fi afișate aici.':'Новые запросы появятся здесь.', 'Extinde':'Развернуть', 'Restrânge':'Свернуть', 'Necesită aprobarea unui proprietar':'Требуется одобрение владельца',
+  'luna aceasta':'в этом месяце', 'din total':'от всех', 'azi':'сегодня', 'ieri':'вчера',
+  'Gestionează rapid clienții și abonamentele acestora.':'Быстрое управление клиентами и их абонементами.', 'Șterge căutarea':'Очистить поиск',
+  'Rezultatul afișat este cel valabil la momentul scanării.':'Показан результат на момент сканирования.', 'Exportă':'Экспорт',
+  'Caută după nume, telefon sau cod':'Поиск по имени, телефону или коду', 'Perioadă':'Период', 'Interval orar':'Время суток', 'Rezultat':'Результат',
+  'Toate':'Все', 'Astăzi':'Сегодня', 'Ieri':'Вчера', 'Ultimele 7 zile':'Последние 7 дней', 'Luna aceasta':'Этот месяц', 'Alege datele…':'Выбрать даты…',
+  'Toată ziua':'Весь день', 'Dimineața (06–12)':'Утро (06–12)', 'După-amiaza (12–18)':'День (12–18)', 'Seara (18–24)':'Вечер (18–24)', 'Noaptea (00–06)':'Ночь (00–06)',
+  'Acces permis':'Доступ разрешён', 'Acces refuzat':'Доступ запрещён', 'Resetează':'Сбросить', 'Observații':'Примечания', 'Vezi fișa clientului':'Открыть карточку клиента',
+  'Pagina anterioară':'Предыдущая страница', 'Pagina următoare':'Следующая страница',
   'Cod membru':'Код участника', 'Copiază codul':'Скопировать код', 'Copiază':'Копировать', 'Cod copiat: ':'Код скопирован: ',
   'Introdu adresa de email a clientului.':'Введите email клиента.', 'Adresa de email nu este validă (ex: nume@gmail.com).':'Неверный адрес email (напр.: name@gmail.com).',
   'Datele se salvează în baza de date a sălii.':'Данные сохраняются в базе данных зала.', 'Alege abonamentul':'Выберите абонемент',
@@ -1001,7 +1081,6 @@ function modalWrap(title, subtitle, body, opts){
 function logMessage(l){ return state.lang==='ru'? resultLabel(l.result) : l.message; }
 function logRowHtml(l){ const tone=toneForResult(l.result); return '<div class="list-row"><div class="avatar">'+esc(initials(l.clientName))+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;">'+esc(l.clientName)+'</div><div class="small faint mono">'+fmtDateTime(l.timestamp)+'</div></div><span class="pill pill-'+tone+'">'+esc(logMessage(l))+'</span></div>'; }
 function logRowHtmlClient(l){ const tone=toneForResult(l.result); return '<div class="list-row"><div class="avatar">'+esc(initials(l.clientName))+'</div><div style="flex:1;min-width:0;"><div style="font-weight:600;font-size:13.5px;">'+esc(l.clientName)+'</div><div class="small faint mono">'+fmtDateTime(l.timestamp)+'</div></div><span class="pill pill-'+tone+'">'+esc(resultLabel(l.result))+'</span></div>'; }
-function logTableRow(l){ const tone=toneForResult(l.result); return '<tr><td><div class="flex items-center gap8"><div class="avatar" style="width:28px;height:28px;font-size:11px;">'+esc(initials(l.clientName))+'</div>'+esc(l.clientName)+'</div></td><td class="mono small">'+fmtDateTime(l.timestamp)+'</td><td><span class="pill pill-'+tone+'">'+esc(logMessage(l))+'</span></td></tr>'; }
 
 /* ============ GATE SCREENS ============ */
 function renderLoading(){
@@ -1148,7 +1227,7 @@ function renderAdminShell(){
      + navHtml
    + '</div>'
    + '<div class="main">'
-     + '<div class="topbar"><div class="flex items-center gap8"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div><div class="topbar-eyebrow">'+ra('Administrare sală')+'</div><div class="topbar-title">'+ra(meta.label)+'</div></div></div><div class="flex gap8 items-center">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="admin-lock">'+icon('lock','icon-sm')+' '+ra('Blochează')+'</button></div></div>'
+     + '<div class="topbar"><div class="flex items-center gap8" style="min-width:0;"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div style="min-width:0;"><div class="topbar-eyebrow">'+ra('Administrare sală')+'</div><div class="topbar-title">'+ra(meta.label)+'</div></div></div><div class="flex gap8 items-center" style="flex:none;">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="admin-lock" title="'+esc(ra('Blochează'))+'">'+icon('lock','icon-sm')+'<span class="lock-txt"> '+ra('Blochează')+'</span></button></div></div>'
      + (state.mobileNavOpen? ('<div class="mobile-nav-backdrop"></div><div class="mobile-nav">'+navHtml+'</div>') : '')
      + '<div class="content">'+body+'</div>'
    + '</div>'
@@ -1166,14 +1245,27 @@ function renderReception(){
   const today=todayStr();
   const todayEntries=state.log.filter(l=>l.result==='permis' && localDay(l.timestamp)===today).length;
   const todayRevenue=state.payments.filter(p=>localDay(p.date)===today).reduce((s,p)=>s+Number(p.amount||0),0);
-  const stat=(label,num,ic)=>'<div class="card stat-card"><div class="stat-top"><div class="stat-label">'+label+'</div><div class="stat-ic">'+icon(ic,'icon-sm')+'</div></div><div class="stat-num mono">'+num+'</div></div>';
+  const yesterday=addDays(today,-1);
+  const yesterdayEntries=state.log.filter(l=>l.result==='permis' && localDay(l.timestamp)===yesterday).length;
+  const yesterdayRevenue=state.payments.filter(p=>localDay(p.date)===yesterday).reduce((s,p)=>s+Number(p.amount||0),0);
+  const newThisMonth=state.clients.filter(c=>localDay(c.createdAt).slice(0,7)===today.slice(0,7)).length;
+  const pctValid=total? Math.round(validCount*100/total) : 0;
+  const expToday=expSoon.filter(c=>dlOf(c)===0).length;
+  const currency=(state.settings&&state.settings.currency);
+  const stat=(label,num,ic,tone,pill,pillTone)=>'<div class="card stat-card tone-'+tone+'"><div class="stat-ic">'+icon(ic)+'</div><div class="stat-body"><div class="stat-label">'+label+'</div><div class="stat-numrow"><span class="stat-num">'+num+'</span>'+(pill? '<span class="pill pill-xs pill-'+pillTone+'">'+esc(pill)+'</span>' : '')+'</div></div></div>';
   const expCards=expSoon.slice(0,12).map(c=>{ const dl=daysLeft(c.subscription.validTo); return '<div class="exp-card'+(dl<=1?' urgent':'')+'"><div class="exp-name">'+esc(c.name)+'</div><div class="exp-meta">'+daysLeftShort(dl)+' · '+fmtDate(c.subscription.validTo)+'</div></div>'; }).join('') || '<div class="empty-state small">'+ra('Niciun abonament nu expiră curând.')+'</div>';
   const emailable=expSoon.filter(c=>c.email);
   const reminderBtn = expSoon.length? ('<button class="btn btn-ghost btn-sm" data-action="send-expiry-reminders"'+(emailable.length?'':' disabled')+'>'+icon('send','icon-sm')+' '+ra('Trimite reamintire')+' ('+emailable.length+')</button>') : '';
   const recent=state.log.slice(0,7);
   const recentRows=recent.length? recent.map(logRowHtml).join('') : '<div class="empty-state small">'+ra('Nicio scanare încă.')+'</div>';
   return ''
-   + '<div class="stat-grid">'+stat(ra('Clienți înregistrați'),total,'users')+stat(ra('Abonamente valabile'),validCount,'shield')+stat(expInLabel((state.settings&&state.settings.warnDays)||5),expSoon.length,'bell')+stat(ra('Intrări azi'),todayEntries,'history')+stat(ra('Încasări azi'),money(todayRevenue,(state.settings&&state.settings.currency)),'chart')+'</div>'
+   + '<div class="stat-grid">'
+     + stat(ra('Clienți înregistrați'), total, 'users', 'blue', '+'+newThisMonth+' '+ra('luna aceasta'), newThisMonth? 'success' : 'muted')
+     + stat(ra('Abonamente valabile'), validCount, 'shield', 'sky', pctValid+'% '+ra('din total'), 'success')
+     + stat(expInLabel((state.settings&&state.settings.warnDays)||5), expSoon.length, 'clock', 'orange', ra('azi')+': '+expToday, expToday? 'warning' : 'muted')
+     + stat(ra('Intrări azi'), todayEntries, 'logIn', 'green', ra('ieri')+': '+yesterdayEntries, 'muted')
+     + stat(ra('Încasări azi'), money(todayRevenue,currency), 'chart', 'purple', ra('ieri')+': '+money(yesterdayRevenue,currency), 'muted')
+   + '</div>'
    + '<div class="card" style="padding:18px 20px;"><div class="section-head"><div class="section-title">'+ra('Abonamente care expiră curând')+'</div>'+reminderBtn+'</div><div class="expiring-grid" style="margin-top:12px;">'+expCards+'</div></div>'
    + '<div class="two-col">'+scanCardHtml()+'<div class="card" style="padding:18px 20px;"><div class="section-title">'+ra('Ultimele scanări')+'</div><div style="margin-top:8px;">'+recentRows+'</div></div></div>';
 }
@@ -1264,19 +1356,35 @@ function renderClients(){
   const qDigits=q.replace(/\D/g,'');
   if(q) list=list.filter(c=>(c.name||'').toLowerCase().includes(q) || (qDigits && (c.phone||'').replace(/\D/g,'').includes(qDigits)) || (c.code||'').toLowerCase().includes(q));
   list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
-  const rows=list.length? list.map(clientRowHtml).join('') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
-  return '<div class="section-head"><div class="section-sub">'+state.clients.length+' '+ra('clienți înregistrați')+'</div><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' '+ra('Client nou')+'</button></div>'
-   + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="clientQuery" placeholder="'+ra('Caută după nume, telefon sau cod')+'" value="'+esc(state.clientQuery||'')+'"></div>'
-   + '<div class="grid2" style="margin-top:10px;">'+selectField(ra('Sortează după'),'clientSort',sortBy,[['name',ra('Nume (A-Z)')],['created',ra('Data creării abonamentului')],['expiry',ra('Data expirării')]])+selectField(ra('Ordine'),'clientSortDir',sortDir,[['asc',ra('Crescător')],['desc',ra('Descrescător')]])+'</div>'
-   + '<div style="margin-top:6px;">'+rows+'</div></div>';
+  const rows=list.length? '<div class="crow-list">'+list.map(clientRowHtml).join('')+'</div>' : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
+  return '<div class="pg-card">'
+   + '<div class="pg-head"><div class="pg-ic">'+icon('users')+'</div>'
+     + '<div style="min-width:0;"><div class="pg-title">'+state.clients.length+' '+ra('clienți înregistrați')+'</div><div class="pg-sub">'+ra('Gestionează rapid clienții și abonamentele acestora.')+'</div></div>'
+     + '<div class="pg-actions"><button class="btn btn-primary" data-action="open-new-client">'+icon('plus','icon-sm')+' '+ra('Client nou')+'</button></div></div>'
+   + '<div class="pg-filters">'
+     + searchBox('clientQuery', ra('Caută după nume, telefon sau cod'), 'clear-client-query')
+     + filterSelect('sort', ra('Sortează după'), 'clientSort', sortBy, [['name',ra('Nume (A-Z)')],['created',ra('Data creării abonamentului')],['expiry',ra('Data expirării')]])
+     + filterSelect('sort', ra('Ordine'), 'clientSortDir', sortDir, [['asc',ra('Crescător')],['desc',ra('Descrescător')]])
+   + '</div>'
+   + rows + '</div>';
+}
+function searchBox(path, placeholder, clearAction){
+  const v=state[path]||'';
+  return '<div class="pg-search">'+icon('search','icon-sm')+'<input data-bind="'+path+'" placeholder="'+esc(placeholder)+'" value="'+esc(v)+'">'+(v? '<button class="pg-search-x" data-action="'+clearAction+'" title="'+esc(ra('Șterge căutarea'))+'">'+icon('x','icon-sm')+'</button>' : '')+'</div>';
+}
+function filterSelect(ic, label, path, value, options){
+  const opts=options.map(o=>'<option value="'+esc(o[0])+'"'+(String(value)===String(o[0])?' selected':'')+'>'+esc(o[1])+'</option>').join('');
+  return '<label class="fsel">'+icon(ic,'icon-sm')+'<span class="fsel-l">'+esc(label)+'</span><select data-bind="'+path+'" aria-label="'+esc(label)+'">'+opts+'</select><span class="fsel-chev">'+icon('chevronUp','icon-sm')+'</span></label>';
 }
 function clientRowHtml(c){
-  const st=subStatus(c);
-  return '<div class="client-row" data-action="open-client-detail" data-id="'+c.id+'">'
+  const st=subStatus(c); const sub=c.subscription||{};
+  const until=sub.unlimited? '∞' : sub.validTo? fmtDate(sub.validTo) : '—';
+  return '<div class="crow" data-action="open-client-detail" data-id="'+c.id+'">'
    + clientAvatarHtml(c)
-   + '<div style="flex:1;min-width:0;"><div style="font-weight:700;font-size:13.5px;">'+esc(c.name)+'</div><div class="small faint">'+esc(subTypeDisplayName(c)||ra('Fără abonament'))+' · <span class="mono">'+esc(c.code)+'</span></div></div>'
-   + '<div class="small faint" style="text-align:right;">'+((c.subscription&&c.subscription.unlimited)? '∞' : (c.subscription&&c.subscription.validTo)? fmtDate(c.subscription.validTo) : '—')+'</div>'
-   + '<span class="pill pill-'+st.tone+'">'+esc(st.label)+'</span>'+icon('chevronRight','icon-sm')+'</div>';
+   + '<div class="crow-main"><div class="crow-name">'+esc(c.name)+'</div><div class="crow-sub">'+esc(subTypeDisplayName(c)||ra('Fără abonament'))+'<span class="dot">•</span><span class="mono">'+esc(c.code)+'</span><span class="crow-mdate"><span class="dot">•</span>'+until+'</span></div></div>'
+   + '<div class="crow-date">'+until+'</div><div class="crow-div"></div>'
+   + '<span class="pill pill-dot pill-'+st.tone+'">'+esc(st.label)+'</span>'
+   + '<span class="crow-go">'+icon('chevronRight','icon-sm')+'</span></div>';
 }
 function subFormError(f, t){
   if(!f.validFrom) return ra('Alege data de început.');
@@ -1572,23 +1680,83 @@ async function saveRenew(){
 }
 
 /* ---- History ---- */
+const HISTORY_PAGE_SIZE=25;
+function historyFiltersActive(){ return !!((state.historyQuery||'').trim() || (state.historyPeriod||'all')!=='all' || (state.historyTime||'all')!=='all' || (state.historyResult||'all')!=='all'); }
+function filteredHistory(){
+  const q=(state.historyQuery||'').toLowerCase().trim(); const qDigits=q.replace(/\D/g,'');
+  const period=state.historyPeriod||'all', time=state.historyTime||'all', res=state.historyResult||'all';
+  const today=todayStr();
+  let from='', to='';
+  if(period==='today'){ from=to=today; }
+  else if(period==='yesterday'){ from=to=addDays(today,-1); }
+  else if(period==='7d'){ from=addDays(today,-6); to=today; }
+  else if(period==='month'){ from=today.slice(0,8)+'01'; to=today; }
+  else if(period==='custom'){ from=state.historyFrom||''; to=state.historyTo||''; }
+  const hourRange={morning:[6,12], afternoon:[12,18], evening:[18,24], night:[0,6]}[time];
+  const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
+  return state.log.filter(l=>{
+    if(q){ const c=byId[l.clientId]; const hit=(l.clientName||'').toLowerCase().includes(q) || (l.code||'').toLowerCase().includes(q) || (qDigits && c && (c.phone||'').replace(/\D/g,'').includes(qDigits)); if(!hit) return false; }
+    const day=localDay(l.timestamp);
+    if(from && day<from) return false;
+    if(to && day>to) return false;
+    if(hourRange){ const h=new Date(l.timestamp).getHours(); if(!(h>=hourRange[0] && h<hourRange[1])) return false; }
+    if(res==='ok' && l.result!=='permis') return false;
+    if(res==='denied' && l.result==='permis') return false;
+    return true;
+  });
+}
+function avatarToneClass(name){ let h=0; const s=String(name||''); for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))>>>0; const n=h%6; return n? ' av-t'+n : ''; }
+function historyRowHtml(l, byId){
+  const c=byId[l.clientId];
+  const d=new Date(l.timestamp); const loc=state.lang==='ru'?'ru-RU':'ro-RO';
+  const dateTxt=isNaN(d)? '—' : d.toLocaleDateString(loc,{day:'2-digit',month:'2-digit',year:'numeric'});
+  const timeTxt=isNaN(d)? '' : d.toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'});
+  const tone=toneForResult(l.result);
+  const resIc=tone==='success'? 'check' : tone==='danger'? 'x' : 'clock';
+  const label=resultLabel(l.result);
+  const note=(l.result!=='permis' && state.lang!=='ru' && l.message && l.message!==label)? esc(l.message) : '—';
+  const sub=[c&&c.phone? esc(c.phone) : '', l.code? esc(l.code) : ''].filter(Boolean).join(' · ');
+  return '<tr>'
+   + '<td><div class="hclient"><div class="avatar'+avatarToneClass(l.clientName)+'">'+esc(initials(l.clientName))+'</div><div style="min-width:0;"><div class="hname">'+esc(l.clientName||'—')+'</div>'+(sub? '<div class="hsub mono">'+sub+'</div>' : '')+'</div></div></td>'
+   + '<td class="hdate"><div>'+dateTxt+'</div><div class="htime">'+timeTxt+'</div></td>'
+   + '<td><span class="pill pill-'+tone+'">'+icon(resIc,'icon-sm')+' '+esc(label)+'</span></td>'
+   + '<td class="small faint">'+note+'</td>'
+   + '<td>'+(c? '<button class="hmore" data-action="open-client-detail" data-id="'+c.id+'" title="'+esc(ra('Vezi fișa clientului'))+'">'+icon('more','icon-sm')+'</button>' : '')+'</td>'
+   + '</tr>';
+}
 function renderHistory(){
-  const q=(state.historyQuery||'').toLowerCase().trim();
-  const from=state.historyFrom||'', to=state.historyTo||'';
-  let list=state.log;
-  if(q) list=list.filter(l=>(l.clientName||'').toLowerCase().includes(q) || (l.code||'').toLowerCase().includes(q));
-  if(from) list=list.filter(l=>localDay(l.timestamp)>=from);
-  if(to) list=list.filter(l=>localDay(l.timestamp)<=to);
-  const filtered = q||from||to;
-  const shown=list.slice(0,200);
-  const rows=shown.length? shown.map(logTableRow).join('') : '';
-  const subtitle = state.lang==='ru'? ('Последние '+state.log.length+' '+ruChecks(state.log.length)+', результат актуален на момент сканирования') : ('Ultimele '+state.log.length+' verificări, cu rezultatul valabil la momentul scanării');
-  const truncNote = list.length>200? ('<div class="small faint center" style="margin-top:8px;">'+(state.lang==='ru'? ('Показаны первые 200 из '+list.length+' — уточните поиск, чтобы увидеть остальные.') : ('Se arată primele 200 din '+list.length+' — precizează căutarea ca să vezi și restul.'))+'</div>') : '';
-  return '<div class="section-head"><div class="section-sub">'+subtitle+'</div>'+(state.adminRole==='owner'&&state.log.length?('<button class="btn btn-danger btn-sm" data-action="clear-accesslog">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>'):'')+'</div>'
-   + '<div class="card" style="padding:16px 18px;"><div class="search-row"><input data-bind="historyQuery" placeholder="'+ra('Caută după nume sau cod')+'" value="'+esc(state.historyQuery||'')+'"></div>'
-   + '<div class="grid2" style="margin-top:10px;">'+field(ra('De la'),'date','historyFrom',state.historyFrom)+field(ra('Până la'),'date','historyTo',state.historyTo)+'</div>'
-   + '<div class="table-wrap" style="margin-top:10px;"><table><thead><tr><th>'+ra('Client')+'</th><th>'+ra('Data și ora')+'</th><th>'+ra('Rezultat')+'</th></tr></thead><tbody>'+rows+'</tbody></table></div>'
-   + (list.length? truncNote : '<div class="empty-state">'+icon('history','icon-lg')+'<div>'+(filtered? ra('Nicio verificare pentru acest filtru.') : ra('Nicio scanare încă.'))+'</div></div>')+'</div>';
+  const list=filteredHistory();
+  const pages=Math.max(1, Math.ceil(list.length/HISTORY_PAGE_SIZE));
+  const page=Math.min(Math.max(1, Number(state.historyPage)||1), pages);
+  const shown=list.slice((page-1)*HISTORY_PAGE_SIZE, page*HISTORY_PAGE_SIZE);
+  const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
+  const n=state.log.length;
+  const title=state.lang==='ru'? (n+' '+ruChecks(n)+' доступа') : (n+' '+(n===1?'verificare de acces':'verificări de acces'));
+  const period=state.historyPeriod||'all';
+  const pageBtns=[]; const startP=Math.max(1, Math.min(page-2, pages-4)); for(let p=startP; p<=Math.min(pages, startP+4); p++) pageBtns.push('<button class="'+(p===page?'on':'')+'" data-action="hist-page" data-id="'+p+'">'+p+'</button>');
+  const shownLabel=state.lang==='ru'? ('Показано <b>'+shown.length+'</b> из <b>'+list.length+'</b>') : ('Afișate <b>'+shown.length+'</b> din <b>'+list.length+'</b> înregistrări');
+  return '<div class="pg-card">'
+   + '<div class="pg-head"><div class="pg-ic">'+icon('history')+'</div>'
+     + '<div style="min-width:0;"><div class="pg-title">'+title+'</div><div class="pg-sub">'+ra('Rezultatul afișat este cel valabil la momentul scanării.')+'</div></div>'
+     + '<div class="pg-actions">'
+       + (list.length? '<button class="btn btn-soft" data-action="export-csv" data-kind="accesslog">'+icon('download','icon-sm')+' '+ra('Exportă')+'</button>' : '')
+       + (state.adminRole==='owner'&&n? '<button class="btn btn-danger" data-action="clear-accesslog">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>' : '')
+     + '</div></div>'
+   + '<div class="pg-filters hist">'
+     + '<div class="full">'+searchBox('historyQuery', ra('Caută după nume, telefon sau cod'), 'clear-history-query')+'</div>'
+     + filterSelect('calendar', ra('Perioadă'), 'historyPeriod', period, [['all',ra('Toate')],['today',ra('Astăzi')],['yesterday',ra('Ieri')],['7d',ra('Ultimele 7 zile')],['month',ra('Luna aceasta')],['custom',ra('Alege datele…')]])
+     + filterSelect('clock', ra('Interval orar'), 'historyTime', state.historyTime||'all', [['all',ra('Toată ziua')],['morning',ra('Dimineața (06–12)')],['afternoon',ra('După-amiaza (12–18)')],['evening',ra('Seara (18–24)')],['night',ra('Noaptea (00–06)')]])
+     + filterSelect('filter', ra('Rezultat'), 'historyResult', state.historyResult||'all', [['all',ra('Toate')],['ok',ra('Acces permis')],['denied',ra('Acces refuzat')]])
+     + '<button class="btn btn-ghost" data-action="hist-reset"'+(historyFiltersActive()?'':' disabled')+' style="height:100%;min-height:50px;">'+icon('refresh','icon-sm')+' '+ra('Resetează')+'</button>'
+     + (period==='custom'? ('<div class="full grid2">'
+         + '<label class="fsel">'+icon('calendar','icon-sm')+'<span class="fsel-l">'+esc(ra('De la'))+'</span><input type="date" data-bind="historyFrom" value="'+esc(state.historyFrom||'')+'"></label>'
+         + '<label class="fsel">'+icon('calendar','icon-sm')+'<span class="fsel-l">'+esc(ra('Până la'))+'</span><input type="date" data-bind="historyTo" value="'+esc(state.historyTo||'')+'"></label></div>') : '')
+   + '</div>'
+   + (list.length
+      ? ('<div class="hwrap"><table class="htable"><thead><tr><th>'+ra('Client')+'</th><th>'+ra('Data și ora')+'</th><th>'+ra('Rezultat')+'</th><th>'+ra('Observații')+'</th><th></th></tr></thead><tbody>'+shown.map(l=>historyRowHtml(l, byId)).join('')+'</tbody></table></div>'
+        + '<div class="pg-foot"><div>'+shownLabel+'</div><div class="pager"><button data-action="hist-page" data-id="'+(page-1)+'"'+(page<=1?' disabled':'')+' title="'+esc(ra('Pagina anterioară'))+'">'+icon('arrowLeft','icon-sm')+'</button>'+pageBtns.join('')+'<button data-action="hist-page" data-id="'+(page+1)+'"'+(page>=pages?' disabled':'')+' title="'+esc(ra('Pagina următoare'))+'"><span style="display:flex;transform:rotate(180deg);">'+icon('arrowLeft','icon-sm')+'</span></button></div></div>')
+      : '<div class="empty-state">'+icon('history','icon-lg')+'<div>'+(historyFiltersActive()? ra('Nicio verificare pentru acest filtru.') : ra('Nicio scanare încă.'))+'</div></div>')
+   + '</div>';
 }
 
 /* ---- Plans (catalog) ---- */
@@ -1743,6 +1911,9 @@ async function exportCSV(kind){
     let all=state.payments;
     try{ const snap=await colPay().orderBy('date','desc').get(); all=snap.docs.map(d=>d.data()); }catch(e){}
     all.forEach(p=>rows.push([fmtDateTime(p.date), p.clientName, p.amount, p.currency, payMethodLabel(p.method), p.note||''])); }
+  else if(kind==='accesslog'){ filename='istoric-acces.csv'; rows=[['Data','Ora','Client','Telefon','Cod','Rezultat','Observații']];
+    const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
+    filteredHistory().forEach(l=>{ const d=new Date(l.timestamp); const c=byId[l.clientId]; rows.push([localDay(l.timestamp), isNaN(d)?'':d.toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}), l.clientName||'', (c&&c.phone)||'', l.code||'', resultLabel(l.result), l.message||'']); }); }
   const csv=rows.map(r=>r.map(v=>{ v=String(v==null?'':v); return /[",;\n]/.test(v)? ('"'+v.replace(/"/g,'""')+'"') : v; }).join(',')).join('\r\n');
   const ok=browserSave(filename, new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'}));
   showToast(ok? ra('Fișier salvat.') : ra('Exportul a eșuat.'));
@@ -1996,6 +2167,7 @@ function bindEvents(root){
     el.addEventListener(ev, ()=>{
       const val = el.type==='checkbox'? el.checked : el.value;
       setPath(state, path, val);
+      if(/^history(Query|Period|Time|Result|From|To)$/.test(path)) state.historyPage=1;
       if(path==='form.typeId'){ if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); }
       scheduleRender();
     });
@@ -2027,6 +2199,10 @@ function onAction(el){
     case 'delete-client': askConfirm(ra('Sigur ștergi acest client? Acțiunea nu poate fi anulată.'), ()=>deleteClient(id), {danger:true}); return;
     case 'copy-code': copyClientCode(id); return;
     case 'toggle-req': state.reqCollapsed=Object.assign({}, state.reqCollapsed, {[id]:!isReqCollapsed(id)}); break;
+    case 'clear-client-query': state.clientQuery=''; break;
+    case 'clear-history-query': state.historyQuery=''; state.historyPage=1; break;
+    case 'hist-reset': state.historyQuery=''; state.historyPeriod='all'; state.historyTime='all'; state.historyResult='all'; state.historyFrom=''; state.historyTo=''; state.historyPage=1; break;
+    case 'hist-page': state.historyPage=Math.max(1, Number(id)||1); break;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return;
     case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': runOnce(submitBuyRequest); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
