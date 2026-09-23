@@ -728,10 +728,24 @@ function subscribeAll(){
     }catch(e){}
     scheduleRender();
   }, ()=>{});
-  colLog().orderBy('timestamp','desc').limit(1500).onSnapshot(snap=>{ state.log=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
-  colPay().orderBy('date','desc').limit(60).onSnapshot(snap=>{ state.payments=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
-  colMod().orderBy('date','desc').limit(80).onSnapshot(snap=>{ state.modLog=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
-  colBuyReq().orderBy('date','desc').limit(50).onSnapshot(snap=>{ state.buyRequests=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); }, ()=>{});
+}
+let staffUnsubs=[];
+async function subscribeStaff(){
+  unsubscribeStaff();
+  // Firestore picks up the new login token asynchronously; wait until a staff-only read succeeds, otherwise the listeners would start as anonymous and die with permission-denied.
+  for(let i=0;i<8;i++){ try{ await colPay().limit(1).get(); break; }catch(e){ await new Promise(r=>setTimeout(r,500)); } }
+  if(!state.adminUnlocked) return;
+  const toList=snap=>snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+  staffUnsubs=[
+    colLog().orderBy('timestamp','desc').limit(1500).onSnapshot(snap=>{ state.log=toList(snap); scheduleRender(); }, ()=>{}),
+    colPay().orderBy('date','desc').limit(60).onSnapshot(snap=>{ state.payments=toList(snap); scheduleRender(); }, ()=>{}),
+    colMod().orderBy('date','desc').limit(80).onSnapshot(snap=>{ state.modLog=toList(snap); scheduleRender(); }, ()=>{}),
+    colBuyReq().orderBy('date','desc').limit(50).onSnapshot(snap=>{ state.buyRequests=toList(snap); scheduleRender(); }, ()=>{}),
+  ];
+}
+function unsubscribeStaff(){
+  staffUnsubs.forEach(u=>{ try{ u(); }catch(e){} });
+  staffUnsubs=[]; state.log=[]; state.payments=[]; state.modLog=[]; state.buyRequests=[];
 }
 
 /* ============ DOMAIN HELPERS ============ */
@@ -1866,6 +1880,7 @@ async function adminLoginSubmit(){
     scheduleRender(); return;
   }
   state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
+  subscribeStaff();
   scheduleRender();
 }
 async function adminForgotPassword(){
@@ -1893,6 +1908,7 @@ async function adminClaimSubmit(){
   }
   state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr='';
   state.adminSection='reception';
+  subscribeStaff();
   showToast(ra('Cont creat. Ai acces la panou.'));
   scheduleRender();
 }
@@ -1906,6 +1922,7 @@ async function adminSetupSubmit(){
     await firebase.auth().createUserWithEmailAndPassword(email, p1);
     await saveSettingsDoc({team:[{email, role:'owner'}]});
     state.adminUnlocked=true; state.adminRole='owner'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
+    subscribeStaff();
     showToast(ra('Panoul de administrare e gata.'));
   }catch(e){
     if(e && e.code==='auth/email-already-in-use'){ state.formErr=ra('Există deja un cont cu acest email.'); }
@@ -1914,7 +1931,7 @@ async function adminSetupSubmit(){
   }
   scheduleRender();
 }
-function lockAdminSession(){ try{ firebase.auth().signOut().then(()=>firebase.auth().signInAnonymously()).catch(()=>{}); }catch(e){} }
+function lockAdminSession(){ unsubscribeStaff(); try{ firebase.auth().signOut().then(()=>firebase.auth().signInAnonymously()).catch(()=>{}); }catch(e){} }
 function clientLoginSubmit(){
   const v=document.getElementById('clientCode'); const code=normalizeMemberCode(v?v.value:'');
   if(!code){ state.formErr=tr('errEnterCode'); scheduleRender(); return; }
