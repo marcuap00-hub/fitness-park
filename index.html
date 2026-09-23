@@ -648,6 +648,11 @@ function browserSave(filename, data){
   }catch(e){ return false; }
 }
 const refSettings=()=>db.doc('settings/config');
+function saveSettingsDoc(overrides){
+  const merged=Object.assign({}, state.settings||DEFAULT_SETTINGS, overrides);
+  merged.teamEmails=(merged.team||[]).map(m=>(m.email||'').trim().toLowerCase()).filter(Boolean);
+  return refSettings().set(merged);
+}
 const colTypes=()=>db.collection('subscriptionTypes');
 const colClients=()=>db.collection('clients');
 const colLog=()=>db.collection('accessLog');
@@ -1547,17 +1552,17 @@ function renderSettings(){
 }
 async function saveSettingsGeneral(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, { warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, saturdayDifferent:!!d.saturdayDifferent, saturdayOpenHour:d.saturdayOpenHour, saturdayCloseHour:d.saturdayCloseHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) })); await logMod('Reguli program actualizate',''); showToast(ra('Salvat.')); }
+  try{ await saveSettingsDoc({ warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, saturdayDifferent:!!d.saturdayDifferent, saturdayOpenHour:d.saturdayOpenHour, saturdayCloseHour:d.saturdayCloseHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) }); await logMod('Reguli program actualizate',''); showToast(ra('Salvat.')); }
   catch(e){ showToast(ra('Eroare la salvare.')); }
 }
 async function saveSettingsName(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {gymName:d.gymName||'Fitness Park'})); await logMod('Denumire sală actualizată', d.gymName); showToast(ra('Salvat.')); }
+  try{ await saveSettingsDoc({gymName:d.gymName||'Fitness Park'}); await logMod('Denumire sală actualizată', d.gymName); showToast(ra('Salvat.')); }
   catch(e){ showToast(ra('Eroare.')); }
 }
 async function saveSettingsNews(){
   const d=state.settingsDraft;
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {newsText:d.newsText||''})); await logMod('Noutăți pentru clienți actualizate',''); showToast(ra('Salvat.')); }
+  try{ await saveSettingsDoc({newsText:d.newsText||''}); await logMod('Noutăți pentru clienți actualizate',''); showToast(ra('Salvat.')); }
   catch(e){ showToast(ra('Eroare.')); }
 }
 async function changePassword(){
@@ -1604,13 +1609,13 @@ async function addTeam(){
     else{ showToast(ra('Eroare la crearea contului.')); return; }
   }
   const team=existing.slice(); team.push({email, role:f.role||'admin'});
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
+  try{ await saveSettingsDoc({team}); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
   catch(e){ showToast(ra('Eroare la salvarea accesului.')); }
   scheduleRender();
 }
 async function removeTeam(idx){
   const team=((state.settings&&state.settings.team)||[]).slice(); const hasOwner=team.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast(ra('Doar proprietarul poate gestiona echipa.')); return; } if(team[idx] && team[idx].role==='owner'){ showToast(ra('Accesul proprietarului nu poate fi retras.')); return; } const rm=team.splice(idx,1);
-  try{ await refSettings().set(Object.assign({}, state.settings||DEFAULT_SETTINGS, {team})); await logMod('Acces echipă retras', rm[0]?rm[0].email:''); showToast(ra('Acces retras.')); }
+  try{ await saveSettingsDoc({team}); await logMod('Acces echipă retras', rm[0]?rm[0].email:''); showToast(ra('Acces retras.')); }
   catch(e){ showToast(ra('Eroare.')); }
 }
 
@@ -1859,7 +1864,7 @@ async function adminSetupSubmit(){
   if(p1!==p2){ state.formErr=ra('Parolele nu coincid.'); scheduleRender(); return; }
   try{
     await firebase.auth().createUserWithEmailAndPassword(email, p1);
-    await refSettings().set(Object.assign({}, DEFAULT_SETTINGS, state.settings||{}, {team:[{email, role:'owner'}]}));
+    await saveSettingsDoc({team:[{email, role:'owner'}]});
     state.adminUnlocked=true; state.adminRole='owner'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
     showToast(ra('Panoul de administrare e gata.'));
   }catch(e){
