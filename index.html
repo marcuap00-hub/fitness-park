@@ -257,9 +257,15 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
   .member-card .qr-wrap{grid-area:qr;padding:0!important;align-self:center;}
   .member-card .qr-wrap canvas,.member-card .qr-wrap img{width:30mm!important;height:30mm!important;}
   .member-card .mc-eyebrow,.member-card .mc-footer{display:none!important;}
+  .member-card.unlimited{border-color:#C9A24B!important;border-width:1.8px!important;background:linear-gradient(155deg,#FCF6E4,#fff)!important;}
 }
 .member-card .qr-wrap{padding:10px;} .member-card .mc-brand{display:flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);} .member-card .mc-eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text-faint);margin-top:4px;} .member-card .mc-name{font-family:var(--font-display);font-weight:700;font-size:15px;} .member-card .mc-plan{font-size:12px;color:var(--text-muted);line-height:1.5;} .member-card .mc-code{color:var(--gold);border-color:var(--gold);}
 .member-card .mc-footer{font-size:10.5px;color:var(--text-faint);margin-top:4px;}
+.member-card.unlimited{background:linear-gradient(155deg,#1B1035,#12203B);border-color:transparent;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 16px 40px -16px rgba(120,140,255,.5);}
+.member-card.unlimited .mc-brand,.member-card.unlimited .mc-name{color:#F3F1FF;}
+.member-card.unlimited .mc-eyebrow{background:linear-gradient(90deg,#FFD86B,#FF8FD6,#6BD8FF,#FFD86B);background-size:300% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:unlimitedText 5s linear infinite;}
+.member-card.unlimited .mc-plan{color:#C6C2E8;}
+.member-card.unlimited .mc-code{color:#FFD86B;border-color:#FFD86B;}
 .bars{display:flex;align-items:flex-end;gap:3px;height:90px;}
 .bar{flex:1;background:var(--accent-soft);border-radius:3px 3px 0 0;min-height:2px;position:relative;}
 .bar.hi{background:var(--accent);}
@@ -734,6 +740,7 @@ function subTypeDisplayName(c){ const sub=(c&&c.subscription)||{}; const t=typeB
 function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[67]\d{7}$/.test(digits) || /^373[67]\d{7}$/.test(digits); }
 function pastelForClient(c){
   const sub=(c&&c.subscription)||{};
+  if(sub.unlimited) return null;
   if(sub.tier==='exclusiv') return EXCLUSIV_ACCENT;
   if(sub.tier==='gold') return null;
   const sorted=state.types.slice().sort((a,b)=>(a.price||0)-(b.price||0));
@@ -744,15 +751,17 @@ function renderMemberCard(c){
   const sub=c.subscription||{};
   const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
   const cardAccent=pastelForClient(c);
+  const isUnlimited=!!sub.unlimited;
   const mcBrandStyle=cardAccent? (' style="color:'+cardAccent+';"') : '';
   const mcCodeStyle=cardAccent? (' style="color:'+cardAccent+';border-color:'+cardAccent+';"') : '';
   const memberCardStyle=cardAccent? (' style="border-color:'+cardAccent+';"') : '';
-  return '<div class="member-card"'+memberCardStyle+'>'
+  const planLine = esc(subTypeDisplayName(c)||'—')+'<br>'+(isUnlimited? ('∞ '+(state.lang==='ru'?'Безлимит':'Nelimitat')) : (fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)));
+  return '<div class="member-card'+(isUnlimited?' unlimited':'')+'"'+memberCardStyle+'>'
    + '<div class="mc-brand"'+mcBrandStyle+'>'+icon('shield','icon-sm')+' '+esc(gymName)+'</div>'
-   + '<div class="mc-eyebrow">'+tr('memberCardLabel')+'</div>'
+   + '<div class="mc-eyebrow">'+(isUnlimited? '∞ VIP' : tr('memberCardLabel'))+'</div>'
    + '<div class="mc-name">'+esc(c.name)+'</div>'
    + '<div class="qr-wrap"><div data-qr="'+esc(c.code)+'"></div></div>'
-   + '<div class="mc-plan">'+esc(subTypeDisplayName(c)||'—')+'<br>'+fmtDate(sub.validFrom)+' — '+fmtDate(sub.validTo)+'</div>'
+   + '<div class="mc-plan">'+planLine+'</div>'
    + '<div class="mc-eyebrow">'+tr('memberCodeVerify')+'</div>'
    + '<div class="code-chip mc-code"'+mcCodeStyle+'>'+esc(c.code)+'</div>'
    + '<div class="mc-footer">'+tr('presentQr')+'</div>'
