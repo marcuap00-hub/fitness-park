@@ -279,6 +279,8 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .sub-card.tone-danger{background:linear-gradient(150deg,#C0362F,#7E1F1B);}
 .sub-card.tone-muted{background:linear-gradient(150deg,#3A3E52,#22243380);}
 .sub-card.tone-gold{background:linear-gradient(150deg,var(--gold-card),var(--gold-card-2));}
+.sub-card.tone-unlimited{background:linear-gradient(120deg,#1B1035,#0F2A4A,#12203B,#2A1B4A,#1B1035);background-size:300% 300%;animation:unlimitedShimmer 7s ease infinite;box-shadow:var(--shadow-lg),0 0 40px -10px rgba(120,140,255,.55);}
+.sub-card.tone-unlimited .sub-days{background:linear-gradient(90deg,#FFD86B,#FF8FD6,#6BD8FF,#FFD86B);background-size:300% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:unlimitedText 5s linear infinite;}
 .sub-top{display:flex;justify-content:space-between;align-items:flex-start;}
 .sub-days{font-family:var(--font-display);font-weight:800;font-size:40px;line-height:1;margin-top:10px;}
 .sub-days span{font-size:13px;font-weight:600;opacity:.8;display:block;margin-top:4px;}
@@ -391,7 +393,7 @@ const I18N = {
     notesOpt:'Observații (opțional)', sendRequest:'Trimite cererea',
     errEnterName:'Introdu numele tău.', errEnterPhone:'Introdu numărul de telefon.', errPhoneInvalid:'Numărul de telefon nu este valid (format: 0XX XXX XXX).', errChoosePlan:'Alege un abonament.', errBirthDate:'Completează data nașterii.',
     tabSub:'Abonamentul meu', tabNews:'Noutăți & reguli', tabHistory:'Istoricul meu',
-    noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția',
+    noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția', unlimitedLabel:'Nelimitat',
     fromLabel:'De la', toLabel:'Până la',
     cardReqPending:'Cerere trimisă — se așteaptă aprobarea recepției.', lostCard:'Am pierdut cardul — solicită unul nou',
     cardReqApproved:'✓ Cererea a fost aprobată — cardul tău a fost înlocuit.', cardReqRejected:'Cererea a fost respinsă. Contactează recepția.', reqResolved:'✓ Ultima cerere a fost rezolvată.',
@@ -425,7 +427,7 @@ const I18N = {
     notesOpt:'Примечания (необязательно)', sendRequest:'Отправить заявку',
     errEnterName:'Введите ваше имя.', errEnterPhone:'Введите номер телефона.', errPhoneInvalid:'Номер телефона недействителен (формат: 0XX XXX XXX).', errChoosePlan:'Выберите абонемент.', errBirthDate:'Укажите дату рождения.',
     tabSub:'Мой абонемент', tabNews:'Новости и правила', tabHistory:'Моя история',
-    noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн',
+    noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн', unlimitedLabel:'Безлимит',
     fromLabel:'С', toLabel:'По',
     cardReqPending:'Заявка отправлена — ожидается одобрение ресепшн.', lostCard:'Я потерял карту — запросить новую',
     cardReqApproved:'✓ Заявка одобрена — ваша карта заменена.', cardReqRejected:'Заявка отклонена. Свяжитесь с ресепшн.', reqResolved:'✓ Последняя заявка обработана.',
@@ -1144,7 +1146,7 @@ async function saveNewClient(){
   const code=generateUniqueCode();
   const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
   const doc={ name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthYear), code, createdAt:new Date().toISOString(), notes:f.notes||'', paused:false, lastEntryAt:null,
-    subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null,
+    subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', unlimited:t?!!t.unlimited:false, accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null,
       validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method } };
   try{
     const ref=await colClients().add(doc);
@@ -1333,7 +1335,7 @@ async function saveRenew(){
   if(((t&&t.tier==='exclusiv')||curSub.tier==='exclusiv') && state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate atribui abonamente Exclusiv.')); return; }
   if(!f.method){ state.formErr=ra('Alege metoda de plată.'); scheduleRender(); return; }
   const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
-  const newSub={ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method };
+  const newSub={ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', unlimited:t?!!t.unlimited:false, accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null, validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method };
   try{
     await colClients().doc(f.id).update({ subscription:newSub, paused:false });
     if(paid>0){ await colPay().add({clientId:c.id, clientName:c.name, amount:paid, currency:f.currency, method:f.method, date:new Date().toISOString(), note:'Reînnoire abonament'}); }
@@ -1638,7 +1640,7 @@ function renderClientPortal(){
   if(!c) return renderClientGate();
   const st=subStatus(c); const sub=c.subscription||{};
   const dl=sub.validTo? daysLeft(sub.validTo) : null;
-  const tone = st.tone==='success'?'success' : st.tone==='warning'?'warning' : st.tone==='danger'?'danger' : (sub.tier==='gold'?'gold':'muted');
+  const tone = (sub.unlimited && st.tone==='success') ? 'unlimited' : (st.tone==='success'?'success' : st.tone==='warning'?'warning' : st.tone==='danger'?'danger' : (sub.tier==='gold'?'gold':'muted'));
   const tab=state.clientTab||'sub';
   const myLog=state.log.filter(l=>l.clientId===c.id).slice(0,20);
   return '<div class="client-shell"><div class="client-top"><div class="client-header-row">'
@@ -1647,8 +1649,8 @@ function renderClientPortal(){
    + '</div></div>'
    + '<div class="client-body">'
      + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div><div class="small" style="opacity:.85;">'+esc(subTypeDisplayName(c)||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
-       + (dl!==null? ('<div class="sub-days">'+(dl<0?0:dl)+'<span>'+(dl<0?tr('subExpired'):tr('daysLeft'))+'</span></div>') : '<div class="sub-days" style="font-size:20px;">'+tr('noSubShort')+'<span>'+tr('contactReception')+'</span></div>')
-       + '<div class="sub-range"><span>'+tr('fromLabel')+' '+fmtDate(sub.validFrom)+'</span><span>'+tr('toLabel')+' '+fmtDate(sub.validTo)+'</span></div></div>'
+       + (tone==='unlimited'? ('<div class="sub-days">∞<span>'+tr('unlimitedLabel')+'</span></div>') : dl!==null? ('<div class="sub-days">'+(dl<0?0:dl)+'<span>'+(dl<0?tr('subExpired'):tr('daysLeft'))+'</span></div>') : '<div class="sub-days" style="font-size:20px;">'+tr('noSubShort')+'<span>'+tr('contactReception')+'</span></div>')
+       + '<div class="sub-range"><span>'+tr('fromLabel')+' '+fmtDate(sub.validFrom)+'</span><span>'+(tone==='unlimited'? '∞' : (tr('toLabel')+' '+fmtDate(sub.validTo)))+'</span></div></div>'
      + '<div class="client-tabs">'
        + '<div class="client-tab'+(tab==='sub'?' active':'')+'" data-action="client-tab" data-tab="sub">'+tr('tabSub')+'</div>'
        + '<div class="client-tab'+(tab==='news'?' active':'')+'" data-action="client-tab" data-tab="news">'+tr('tabNews')+'</div>'
