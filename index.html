@@ -247,6 +247,104 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .hdate{white-space:nowrap;}
 .hmore{width:34px;height:34px;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
 .hmore:hover{color:var(--accent);border-color:var(--accent);}
+.pg-card.compact{gap:14px;}
+.pg-card.compact .pg-ic{width:46px;height:46px;border-radius:14px;}
+.pg-card.compact .pg-ic .icon{width:22px;height:22px;}
+.pg-card.compact .pg-title{font-size:16.5px;}
+.pg-card.compact .pg-sub{font-size:12.5px;}
+/* reports */
+.rp-periods{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.rp-chip{display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:11px;border:1px solid var(--border);background:var(--surface);color:var(--text);font:inherit;font-size:13.5px;font-weight:600;cursor:pointer;box-shadow:var(--shadow);}
+.rp-chip:hover{border-color:var(--accent);}
+.rp-chip.on{background:var(--accent);border-color:var(--accent);color:#fff;}
+.rp-range{margin-left:auto;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:11px;border:1px solid var(--border);background:var(--surface);font-size:13.5px;font-weight:600;white-space:nowrap;}
+.rp-custom{display:grid;grid-template-columns:repeat(2,minmax(0,220px));gap:10px;}
+.rp-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;}
+.rp-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start;}
+.rp-col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+@media(max-width:1100px){.rp-grid{grid-template-columns:1fr;}.rp-kpis{grid-template-columns:repeat(2,minmax(0,1fr));}.rp-range{margin-left:0;}}
+@media(max-width:480px){.rp-kpis{grid-template-columns:1fr;}.rp-custom{grid-template-columns:1fr 1fr;}}
+.rp-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;}
+.rp-title{font-family:var(--font-display);font-weight:700;font-size:16px;}
+.rp-sub{font-size:12.5px;color:var(--text-muted);margin-top:2px;}
+.rp-link{background:none;border:none;color:var(--accent);font:inherit;font-weight:700;font-size:13px;cursor:pointer;padding:4px 0;}
+.rp-mini-sel{width:auto;padding:8px 30px 8px 12px;font-size:13px;font-weight:600;border-radius:10px;}
+.trend{display:inline-flex;align-items:center;gap:3px;}
+.trend .icon{width:12px;height:12px;}
+.rc{display:flex;gap:8px;}
+.rc-y{position:relative;width:26px;flex:none;height:180px;}
+.rc-y span{position:absolute;right:0;transform:translateY(50%);font-size:11px;color:var(--text-faint);}
+.rc-plot{position:relative;flex:1;min-width:0;}
+.rc-grid{position:absolute;left:0;right:0;top:0;height:180px;pointer-events:none;}
+.rc-grid i{position:absolute;left:0;right:0;border-top:1px dashed var(--border);}
+.rc-cols{position:relative;display:flex;gap:3px;}
+.rc-col{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;}
+.rc-barwrap{height:180px;width:100%;display:flex;align-items:flex-end;justify-content:center;}
+.rc-bar{width:min(18px,72%);min-height:2px;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--accent),rgba(76,86,232,.55));transition:filter .12s;}
+.rc-bar.zero{background:var(--border);}
+.rc-col:hover .rc-bar{filter:brightness(1.15);}
+.rc-lab{height:18px;margin-top:6px;font-size:11px;color:var(--text-faint);white-space:nowrap;}
+.donut-wrap{display:flex;align-items:center;gap:28px;flex-wrap:wrap;justify-content:center;padding:4px 0;}
+.donut{position:relative;width:170px;height:170px;border-radius:50%;flex:none;}
+.donut::after{content:'';position:absolute;inset:30px;border-radius:50%;background:var(--surface);}
+.donut-c{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut-c b{font-family:var(--font-display);font-size:30px;line-height:1;}
+.donut-c span{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.legend{flex:1;min-width:210px;display:flex;flex-direction:column;gap:10px;}
+.legend-row{display:grid;grid-template-columns:12px 1fr 36px 44px;gap:10px;align-items:center;font-size:13.5px;}
+.legend-row b{text-align:right;} .legend-row span:last-child{text-align:right;color:var(--text-muted);}
+.legend-dot{width:10px;height:10px;border-radius:50%;}
+.pill-purple{background:rgba(112,88,219,.13);color:#7058DB;}
+.ex-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
+.ex-tile{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--border);border-radius:14px;background:var(--surface);cursor:pointer;text-align:left;font:inherit;color:var(--text);transition:border-color .12s,box-shadow .12s;}
+.ex-tile:hover{border-color:var(--accent);box-shadow:var(--shadow);}
+.ex-ic{flex:none;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--t-soft);color:var(--t);}
+.ex-t{font-weight:700;font-size:13.5px;} .ex-d{font-size:12px;color:var(--text-muted);margin-top:1px;}
+.backup{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--info-bg);flex-wrap:wrap;}
+.backup .ex-ic{background:var(--surface);color:var(--info);}
+.backup .btn{margin-left:auto;}
+.mini-table{width:100%;font-size:13px;}
+.mini-table th{background:var(--surface-2);padding:9px 12px;}
+.mini-table td{padding:9px 12px;}
+.mini-table tr td:first-child,.mini-table tr th:first-child{padding-left:12px;}
+.mini-table tr td:last-child,.mini-table tr th:last-child{padding-right:12px;text-align:left;}
+/* settings: weekly schedule */
+.sch-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;}
+@media(min-width:1400px){.sch-grid{grid-template-columns:repeat(7,minmax(0,1fr));}}
+@media(max-width:1000px){.sch-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:640px){.sch-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:380px){.sch-grid{grid-template-columns:1fr;}}
+.sch-day{display:flex;flex-direction:column;gap:8px;padding:10px;border:1px solid var(--border);border-radius:14px;background:var(--surface);min-width:0;}
+.sch-day.off{background:var(--surface-2);}
+.sch-day.off .sch-iv{opacity:.45;}
+.sch-head{display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;}
+.switch{position:relative;flex:none;width:38px;height:22px;}
+.switch input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;opacity:0;cursor:pointer;z-index:1;}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--border);transition:background .15s;}
+.switch span::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .15s;}
+.switch input:checked+span{background:var(--accent);}
+.switch input:checked+span::after{transform:translateX(16px);}
+.switch input:focus-visible+span{box-shadow:0 0 0 3px var(--accent-soft);}
+.sch-iv{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 22px;gap:3px;align-items:center;}
+.sch-iv.single{grid-template-columns:minmax(0,1fr) minmax(0,1fr);}
+.tsel{appearance:none;-webkit-appearance:none;padding:8px 2px;font-size:12.5px;font-weight:600;text-align:center;text-align-last:center;border-radius:9px;font-variant-numeric:tabular-nums;cursor:pointer;min-width:0;}
+.sch-off-note{padding:8px 4px;text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);}
+.sch-del{width:22px;height:32px;padding:0;border:none;background:none;color:var(--danger);cursor:pointer;border-radius:8px;display:flex;align-items:center;justify-content:center;}
+.sch-del:hover{background:var(--danger-bg);}
+.sch-add{display:flex;align-items:center;justify-content:center;gap:4px;padding:8px 4px;border:none;border-radius:9px;background:var(--accent-soft);color:var(--accent);font:inherit;font-size:12px;font-weight:600;white-space:nowrap;cursor:pointer;}
+.sch-add:disabled,.sch-del:disabled{cursor:default;}
+.set-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+@media(max-width:640px){.set-grid{grid-template-columns:1fr;}}
+.logo-box{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.logo-prev{width:56px;height:56px;border-radius:14px;border:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:center;overflow:hidden;flex:none;}
+.logo-prev img{width:100%;height:100%;object-fit:contain;}
+.role-pill-owner{background:rgba(201,162,75,.16);color:#9A7420;}
+.role-pill-admin{background:var(--accent-soft);color:var(--accent);}
+.icon-btn{width:32px;height:32px;border-radius:9px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;}
+.icon-btn:hover{color:var(--accent);border-color:var(--accent);}
+.icon-btn.danger{color:var(--danger);}
+.icon-btn.danger:hover{background:var(--danger-bg);border-color:var(--danger);}
+.hint{font-size:12px;color:var(--text-muted);}
 .av-t1{background:rgba(31,157,99,.14);color:#1F9D63;} .av-t2{background:rgba(224,120,42,.15);color:#C9651C;} .av-t3{background:rgba(112,88,219,.14);color:#7058DB;} .av-t4{background:rgba(47,127,224,.14);color:#2F7FE0;} .av-t5{background:rgba(214,64,120,.13);color:#C63B6E;}
 .section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;}
 .section-title{font-size:16px;font-weight:800;font-family:var(--font-display);}
@@ -530,6 +628,9 @@ const ICONS = {
   clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
   chevronUp:'<path d="m6 15 6-6 6 6"/>',
   logIn:'<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="m9.5 16 4-4-4-4"/><path d="M13.5 12H3.5"/>',
+  arrowUp:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+  arrowDown:'<path d="M12 5v14M6 13l6 6 6-6"/>',
+  upload:'<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4.5 20h15"/>',
   more:'<circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/>',
   filter:'<path d="M4 5h16l-6.2 7.4V19l-3.6-1.8v-4.8Z"/>',
   sort:'<path d="M7 4v16M3.5 16.5 7 20l3.5-3.5"/><path d="M17 20V4M13.5 7.5 17 4l3.5 3.5"/>',
@@ -585,7 +686,7 @@ const I18N = {
     cardReqApproved:'✓ Cererea a fost aprobată — cardul tău a fost înlocuit.', cardReqRejected:'Cererea a fost respinsă. Contactează recepția.', reqResolved:'✓ Ultima cerere a fost rezolvată.',
     reqTrainer:'Solicită un antrenor personal (250 MDL/oră)', reqPrinted:'Solicită un card tipărit',
     subPrice:'Preț abonament', paidAmt:'Achitat', dueAmt:'Rest de achitat', entriesLeft:'Intrări rămase', phoneLabel:'Telefon',
-    newsRules:'Noutăți & reguli', noHistoryYet:'Nicio intrare înregistrată încă.',
+    newsRules:'Noutăți & reguli', openingHours:'Programul sălii', closedDay:'Închis', noHistoryYet:'Nicio intrare înregistrată încă.',
     confirmTrainer:'Trimiți o cerere pentru un antrenor personal (250 MDL/oră) către recepție?',
     confirmPrinted:'Trimiți o cerere pentru un card tipărit către recepție?',
     confirmNewCard:'Trimiți o cerere de card nou către recepție? Codul tău actual rămâne valabil până când cererea e aprobată. Reemiterea costă 10 MDL.',
@@ -619,7 +720,7 @@ const I18N = {
     cardReqApproved:'✓ Заявка одобрена — ваша карта заменена.', cardReqRejected:'Заявка отклонена. Свяжитесь с ресепшн.', reqResolved:'✓ Последняя заявка обработана.',
     reqTrainer:'Запросить личного тренера (250 MDL/час)', reqPrinted:'Запросить печатную карту',
     subPrice:'Цена абонемента', paidAmt:'Оплачено', dueAmt:'Осталось оплатить', entriesLeft:'Осталось посещений', phoneLabel:'Телефон',
-    newsRules:'Новости и правила', noHistoryYet:'Пока нет записей.',
+    newsRules:'Новости и правила', openingHours:'Часы работы', closedDay:'Закрыто', noHistoryYet:'Пока нет записей.',
     confirmTrainer:'Отправить заявку на личного тренера (250 MDL/час) на ресепшн?',
     confirmPrinted:'Отправить заявку на печатную карту на ресепшн?',
     confirmNewCard:'Отправить заявку на новую карту на ресепшн? Ваш текущий код останется действительным до одобрения заявки. Перевыпуск стоит 10 MDL.',
@@ -699,6 +800,36 @@ const RO_RU = {
   'Toată ziua':'Весь день', 'Dimineața (06–12)':'Утро (06–12)', 'După-amiaza (12–18)':'День (12–18)', 'Seara (18–24)':'Вечер (18–24)', 'Noaptea (00–06)':'Ночь (00–06)',
   'Acces permis':'Доступ разрешён', 'Acces refuzat':'Доступ запрещён', 'Resetează':'Сбросить', 'Observații':'Примечания', 'Vezi fișa clientului':'Открыть карточку клиента',
   'Pagina anterioară':'Предыдущая страница', 'Pagina următoare':'Следующая страница',
+  'Ultimele 31 de zile':'Последние 31 день', 'Luna trecută':'Прошлый месяц', 'Personalizat':'Свой период', 'Clienți activi':'Активные клиенты', 'noi':'новых', 'nou':'новое',
+  'Abonamente vândute':'Продано абонементов', 'Total intrări':'Всего посещений', 'Încasări totale':'Всего поступлений', 'Față de perioada anterioară':'По сравнению с прошлым периодом',
+  'Intrări în sală':'Посещения зала', 'Pe ore ale zilei — când e cea mai mare aglomerație':'По часам — когда больше всего людей', 'Numărul de intrări permise, pe zile':'Число разрешённых входов по дням',
+  'Grupare':'Группировка', 'Pe zile':'По дням', 'Pe ore':'По часам', 'Nicio intrare în această perioadă.':'Нет посещений за этот период.',
+  'Încasări în perioadă':'Поступления за период', 'plăți':'платежей', 'Arată mai puține':'Показать меньше', 'Vezi toate':'Показать все', 'Șterge istoricul încasărilor':'Удалить историю поступлений',
+  'Nicio încasare în această perioadă.':'Нет поступлений за этот период.', 'Distribuție clienți pe vârstă':'Клиенты по возрасту', 'clienți':'клиентов',
+  'Export & copie de siguranță':'Экспорт и резервная копия', 'Descarcă datele în format CSV (se deschide în Excel)':'Скачайте данные в CSV (открывается в Excel)', 'Exportă CSV':'Экспорт CSV',
+  'Clienți':'Клиенты', 'Abonamente':'Абонементы', 'Încasări':'Поступления', 'Raport perioadă':'Отчёт за период', 'Copie de siguranță':'Резервная копия',
+  'Toate datele sălii într-un singur fișier (JSON)':'Все данные зала в одном файле (JSON)', 'Descarcă backup':'Скачать копию', 'Se pregătește copia de siguranță…':'Готовим резервную копию…',
+  'Copia de siguranță a fost descărcată.':'Резервная копия скачана.',
+  'Program de lucru al sălii':'Часы работы зала', 'Pentru fiecare zi alegi dacă e deschis și în ce intervale. În afara lor, scanarea refuză accesul.':'Для каждого дня выберите, открыт ли зал и в какие часы. Вне этих часов вход запрещён.',
+  'Aplică intervalele de luni tuturor zilelor deschise':'Применить часы понедельника ко всем открытым дням', 'Copiază programul de luni':'Копировать понедельник', 'Salvează programul':'Сохранить расписание',
+  'Închis':'Закрыто', 'Șterge intervalul':'Удалить интервал', 'Adaugă interval':'Добавить интервал', 'Luni este închis — setează întâi programul de luni.':'Понедельник закрыт — сначала задайте часы понедельника.',
+  'Programul de luni a fost copiat la toate zilele deschise. Apasă „Salvează programul".':'Часы понедельника скопированы во все открытые дни. Нажмите «Сохранить расписание».',
+  'adaugă un interval sau marchează ziua ca închisă.':'добавьте интервал или отметьте день как закрытый.', 'ora de început trebuie să fie înaintea orei de închidere.':'время начала должно быть раньше времени закрытия.',
+  'intervalele se suprapun.':'интервалы пересекаются.', 'Programul a fost salvat.':'Расписание сохранено.',
+  'Reguli de acces':'Правила доступа', 'Avertizări, pauza dintre scanări și zilele libere.':'Предупреждения, пауза между сканами и выходные дни.',
+  'Avertizarea trebuie să fie între 0 și 60 de zile.':'Предупреждение должно быть от 0 до 60 дней.', 'Intervalul minim trebuie să fie între 0 și 600 de minute.':'Минимальный интервал должен быть от 0 до 600 минут.',
+  'Dată greșită: ':'Неверная дата: ', 'folosește formatul AAAA-LL-ZZ.':'используйте формат ГГГГ-ММ-ДД.',
+  'Identitatea sălii':'Данные зала', 'Apare pe ecranul de start, în panou și în contul clienților.':'Показывается на стартовом экране, в панели и в кабинете клиента.',
+  'Logo (opțional)':'Логотип (необязательно)', 'Încarcă logo':'Загрузить логотип', 'Logo implicit':'Стандартный логотип', 'Adresă':'Адрес', 'Salvează identitatea':'Сохранить данные',
+  'Numele sălii nu poate fi gol.':'Название зала не может быть пустым.', 'Alege o imagine (PNG sau JPG).':'Выберите изображение (PNG или JPG).', 'Imaginea e prea mare (maxim 2 MB).':'Изображение слишком большое (макс. 2 МБ).', 'Nu am putut citi imaginea.':'Не удалось прочитать изображение.',
+  'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов.',
+  'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
+  'Modifică membrul echipei':'Изменить сотрудника', 'Colegul va intra în panou cu acest email și parola de mai jos.':'Коллега будет входить с этим email и паролем ниже.', 'Trebuie să rămână cel puțin un proprietar.':'Должен остаться хотя бы один владелец.',
+  'Mesaje pentru clienți':'Сообщения клиентам', 'Textele din emailurile automate și noutățile din contul clientului.':'Тексты автоматических писем и новости в кабинете клиента.',
+  'Email la activarea abonamentului':'Письмо при активации абонемента', 'Email când abonamentul expiră curând':'Письмо, когда абонемент скоро истекает',
+  'Poți folosi: {nume}, {abonament}, {data} (data expirării). Detaliile abonamentului și butonul cu codul QR se adaugă automat sub text.':'Можно использовать: {nume}, {abonament}, {data} (дата окончания). Детали абонемента и кнопка с QR-кодом добавляются автоматически.',
+  'Noutăți & reguli (apar în contul fiecărui client)':'Новости и правила (видны в кабинете каждого клиента)', 'Salvează mesajele':'Сохранить сообщения',
+  'Parola contului tău':'Пароль вашего аккаунта', 'Zonă BETA — testare':'Зона BETA — тестирование', 'Doar pentru perioada de testare, cu date de test.':'Только на время тестирования, с тестовыми данными.',
   'Cod membru':'Код участника', 'Copiază codul':'Скопировать код', 'Copiază':'Копировать', 'Cod copiat: ':'Код скопирован: ',
   'Introdu adresa de email a clientului.':'Введите email клиента.', 'Adresa de email nu este validă (ex: nume@gmail.com).':'Неверный адрес email (напр.: name@gmail.com).',
   'Datele se salvează în baza de date a sălii.':'Данные сохраняются в базе данных зала.', 'Alege abonamentul':'Выберите абонемент',
@@ -1001,7 +1132,25 @@ function inTimeWindow(date, fromStr, toStr){
   const mins=date.getHours()*60+date.getMinutes(); const f=fh*60+fm, t=th*60+tm;
   if(f<=t) return mins>=f && mins<=t; return mins>=f || mins<=t;
 }
-function gymScheduleFor(date, s){ s=s||DEFAULT_SETTINGS; const day=date.getDay(); const openDays=s.openDays||DEFAULT_SETTINGS.openDays; const closedToday = (openDays && openDays[day]===false) || (s.closedDates||[]).includes(todayStr()); const isSaturday = day===6; const from = (isSaturday && s.saturdayDifferent) ? (s.saturdayOpenHour||DEFAULT_SETTINGS.saturdayOpenHour) : (s.openHour||DEFAULT_SETTINGS.openHour); const to = (isSaturday && s.saturdayDifferent) ? (s.saturdayCloseHour||DEFAULT_SETTINGS.saturdayCloseHour) : (s.closeHour||DEFAULT_SETTINGS.closeHour); return {closedToday, from, to}; } function generateUniqueCode(){
+// Weekly schedule, indexed like Date.getDay() (0 = Sunday). Older settings only had one opening
+// interval (plus an optional Saturday one), so those are converted on the fly.
+function defaultWeekSchedule(s){
+  s=s||DEFAULT_SETTINGS; const openDays=s.openDays||DEFAULT_SETTINGS.openDays;
+  return [0,1,2,3,4,5,6].map(day=>{
+    const sat=day===6 && s.saturdayDifferent;
+    const from=sat? (s.saturdayOpenHour||DEFAULT_SETTINGS.saturdayOpenHour) : (s.openHour||DEFAULT_SETTINGS.openHour);
+    const to=sat? (s.saturdayCloseHour||DEFAULT_SETTINGS.saturdayCloseHour) : (s.closeHour||DEFAULT_SETTINGS.closeHour);
+    return {open: openDays[day]!==false, intervals:[{from, to}]};
+  });
+}
+function weekScheduleOf(s){ const w=s&&s.weekSchedule; return (Array.isArray(w) && w.length===7)? w : defaultWeekSchedule(s); }
+function gymScheduleFor(date, s){
+  s=s||DEFAULT_SETTINGS;
+  const day=weekScheduleOf(s)[date.getDay()]||{}; const intervals=(day.intervals||[]).filter(iv=>iv&&iv.from&&iv.to);
+  const closedToday=!day.open || !intervals.length || (s.closedDates||[]).includes(localISO(date));
+  return {closedToday, intervals};
+}
+function generateUniqueCode(){
   for(let i=0;i<25;i++){ const n=Math.floor(1000+Math.random()*9000); const code='GYM-'+n; if(!state.clients.some(c=>c.code===code)) return code; }
   return 'GYM-'+String(Date.now()).slice(-4);
 }
@@ -1019,7 +1168,7 @@ function formatGymCode(v){ v=(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(
   const now=new Date();
   const gs=gymScheduleFor(now, state.settings); let result='permis', message='Acces permis';
   if(!client){ result='necunoscut'; message='Cod QR necunoscut'; }
-  else if(client.paused){ result='suspendat'; message='Acces suspendat'; } else if(gs.closedToday){ result='inchis'; message='Sala este închisă în această zi.'; } else if(!inTimeWindow(now, gs.from, gs.to)){ result='orar_sala'; message='Sala este deschisă între '+gs.from+' și '+gs.to+'.'; }
+  else if(client.paused){ result='suspendat'; message='Acces suspendat'; } else if(gs.closedToday){ result='inchis'; message='Sala este închisă în această zi.'; } else if(!gs.intervals.some(iv=>inTimeWindow(now, iv.from, iv.to))){ result='orar_sala'; message='Sala este deschisă azi: '+gs.intervals.map(iv=>iv.from+'–'+iv.to).join(', ')+'.'; }
   else{
     const sub=client.subscription||{};
     if(sub.validFrom && sub.validFrom>todayStr()){ result='neinceput'; message='Abonamentul începe pe '+fmtDate(sub.validFrom); }
@@ -1056,7 +1205,7 @@ function formatGymCode(v){ v=(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(
 }
 
 /* ============ SMALL UI BUILDERS ============ */
-function brandBlock(name){ return '<div class="brand"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="'+esc(name)+'"><div><div class="brand-name">'+esc(name)+'</div><div class="brand-sub">'+tr('clubManagement')+'</div></div><div class="flex gap8" style="margin-left:auto;">'+langToggleBtn()+themeToggleBtn()+'</div></div>'; }
+function brandBlock(name){ return '<div class="brand"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="'+esc(name)+'"><div><div class="brand-name">'+esc(name)+'</div><div class="brand-sub">'+tr('clubManagement')+'</div></div><div class="flex gap8" style="margin-left:auto;">'+langToggleBtn()+themeToggleBtn()+'</div></div>'; }
 function backLink(){ return '<button class="back-link" data-action="back-landing">'+icon('arrowLeft','icon-sm')+' '+tr('back')+'</button>'; }
 function choiceBtn(action, ic, title, desc){ return '<button class="choice-btn" data-action="'+action+'"><div class="choice-ic">'+icon(ic)+'</div><div><div class="choice-txt-t">'+title+'</div><div class="choice-txt-d">'+desc+'</div></div><div class="faint">'+icon('chevronRight','icon-sm')+'</div></button>'; }
 function field(label,type,path,value,placeholder){ let inputType=type, extraAttrs=''; if(type==='number'){ inputType='text'; extraAttrs=' inputmode="decimal" data-numeric="1"'; } else if(type==='email'){ inputType='text'; extraAttrs=' inputmode="email" autocomplete="email"'; } return '<label class="field">'+esc(label)+'<input type="'+inputType+'"'+extraAttrs+' data-bind="'+path+'" value="'+esc(value==null?'':value)+'" placeholder="'+esc(placeholder||'')+'"></label>'; }
@@ -1223,7 +1372,7 @@ function renderAdminShell(){
   const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
   const body = sec==='reception'?renderReception() : sec==='requests'?renderRequests() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings();
   return '<div class="admin-shell">'
-   + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">'+ra('Club Management')+'</div></div></div>'
+   + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">'+ra('Club Management')+'</div></div></div>'
      + navHtml
    + '</div>'
    + '<div class="main">'
@@ -1872,34 +2021,144 @@ async function clearPayments(){ if(state.adminRole!=='owner'){ showToast(ra('Doa
 async function clearModLog(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colMod()); await logMod('Istoric modificări șters', n+' înregistrări'); showToast(ra('Istoricul modificărilor a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
 async function clearAccessLog(){ if(state.adminRole!=='owner'){ showToast(ra('Doar proprietarul poate șterge istoricul.')); return; } try{ const n=await clearCollection(colLog()); await logMod('Istoric acces șters', n+' înregistrări'); showToast(ra('Istoricul accesului a fost șters.')); }catch(e){ showToast(ra('Eroare la ștergere.')); } }
 /* ---- Reports ---- */
+/* ---- Reports ---- */
+function reportRange(){
+  const p=state.reportPeriod||'31d'; const today=todayStr();
+  if(p==='7d') return {from:addDays(today,-6), to:today};
+  if(p==='month') return {from:today.slice(0,8)+'01', to:today};
+  if(p==='lastmonth'){ const d=new Date(today.slice(0,8)+'01T00:00:00'); d.setMonth(d.getMonth()-1); const end=new Date(d.getFullYear(), d.getMonth()+1, 0); return {from:localISO(d), to:localISO(end)}; }
+  if(p==='custom'){ const a=state.reportFrom||addDays(today,-30), b=state.reportTo||today; return a<=b? {from:a,to:b} : {from:b,to:a}; }
+  return {from:addDays(today,-30), to:today};
+}
+function daysInRange(from, to){ const out=[]; let d=from; while(d<=to && out.length<400){ out.push(d); d=addDays(d,1); } return out; }
+// Only the last 60 payments are streamed live, so the report loads the selected period (plus the
+// previous one, for the trend) on demand.
+function ensureReportPayments(from, to){
+  const key=from+'|'+to;
+  if(state.reportPayKey===key || !db) return;
+  state.reportPayKey=key; state.reportPayments=null;
+  const a=new Date(from+'T00:00:00').toISOString(), b=new Date(addDays(to,1)+'T00:00:00').toISOString();
+  colPay().where('date','>=',a).where('date','<',b).orderBy('date','desc').limit(3000).get()
+    .then(snap=>{ if(state.reportPayKey!==key) return; state.reportPayments=snap.docs.map(d=>Object.assign({id:d.id}, d.data())); scheduleRender(); })
+    .catch(()=>{ if(state.reportPayKey===key){ state.reportPayments=state.payments.slice(); scheduleRender(); } });
+}
+function trendPill(cur, prev, prevLabel){
+  const title=' title="'+esc(ra('Față de perioada anterioară')+' ('+prevLabel+')')+'"';
+  if(!prev) return cur? '<span class="pill pill-xs pill-success trend"'+title+'>'+icon('arrowUp')+' '+esc(ra('nou'))+'</span>' : '<span class="pill pill-xs pill-muted"'+title+'>—</span>';
+  const pct=Math.round((cur-prev)*100/prev);
+  if(pct===0) return '<span class="pill pill-xs pill-muted"'+title+'>0%</span>';
+  return '<span class="pill pill-xs '+(pct>0?'pill-success':'pill-danger')+' trend"'+title+'>'+icon(pct>0?'arrowUp':'arrowDown')+' '+(pct>0?'+':'−')+Math.abs(pct)+'%</span>';
+}
+function niceAxis(max){ const steps=[1,2,5,10,20,25,50,100,200,250,500,1000,2000,5000]; const step=steps.find(s=>max/s<=5)||Math.ceil(max/5); const top=Math.max(step*4, step*Math.ceil(max/step)); const ticks=[]; for(let v=0; v<=top; v+=step) ticks.push(v); return {top, ticks}; }
+function barChartHtml(values, labels, titles){
+  const ax=niceAxis(Math.max(1,...values));
+  const every=Math.max(1, Math.ceil(values.length/11));
+  return '<div class="rc"><div class="rc-y">'+ax.ticks.map(v=>'<span style="bottom:'+(v/ax.top*100)+'%;">'+v+'</span>').join('')+'</div>'
+   + '<div class="rc-plot"><div class="rc-grid">'+ax.ticks.map(v=>'<i style="bottom:'+(v/ax.top*100)+'%;"></i>').join('')+'</div>'
+   + '<div class="rc-cols">'+values.map((v,i)=>'<div class="rc-col" title="'+esc(titles[i])+'"><div class="rc-barwrap"><div class="rc-bar'+(v?'':' zero')+'" style="height:'+(v/ax.top*100)+'%;"></div></div><div class="rc-lab">'+(i%every===0? esc(labels[i]) : '')+'</div></div>').join('')+'</div></div></div>';
+}
 function renderReports(){
-  const days=[]; const now=new Date();
-  for(let i=30;i>=0;i--){ const d=new Date(now); d.setDate(d.getDate()-i); days.push(localISO(d)); }
-  const counts=days.map(d=> state.log.filter(l=>l.result==='permis' && localDay(l.timestamp)===d).length);
-  const max=Math.max(1,...counts);
-  const totalVisits=counts.reduce((a,b)=>a+b,0);
-  const bars=counts.map(c=>'<div class="bar'+(c>0?' hi':'')+'" style="height:'+Math.max(3,Math.round(c/max*90))+'px;" title="'+c+'"></div>').join('');
-  const paySum=state.payments.reduce((s,p)=>s+Number(p.amount||0),0);
-  const payRows=state.payments.slice(0,10).map(p=>'<tr><td class="mono small">'+fmtDateTime(p.date)+'</td><td>'+esc(p.clientName)+'</td><td class="mono">'+money(p.amount,p.currency)+'</td><td><span class="pill pill-muted">'+esc(payMethodLabel(p.method))+'</span></td></tr>').join('');
-  const ageBrackets=[[0,17,'0-17'],[18,25,'18-25'],[26,35,'26-35'],[36,45,'36-45'],[46,60,'46-60'],[61,999,'60+']];
+  const period=state.reportPeriod||'31d';
+  const {from, to}=reportRange();
+  const len=daysInRange(from,to).length;
+  const prevTo=addDays(from,-1), prevFrom=addDays(from,-len);
+  ensureReportPayments(prevFrom, to);
+  const allPay=(state.reportPayments||state.payments);
+  const inRange=(iso,a,b)=>{ const d=localDay(iso); return d>=a && d<=b; };
+  const pays=allPay.filter(p=>inRange(p.date,from,to)).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const prevPays=allPay.filter(p=>inRange(p.date,prevFrom,prevTo));
+  const isSale=p=>p.note==='Abonament nou' || p.note==='Reînnoire abonament';
+  const entries=state.log.filter(l=>l.result==='permis' && inRange(l.timestamp,from,to));
+  const prevEntries=state.log.filter(l=>l.result==='permis' && inRange(l.timestamp,prevFrom,prevTo)).length;
+  const revenue=pays.reduce((s,p)=>s+Number(p.amount||0),0), prevRevenue=prevPays.reduce((s,p)=>s+Number(p.amount||0),0);
+  const sold=pays.filter(isSale).length, prevSold=prevPays.filter(isSale).length;
+  const activeClients=state.clients.filter(c=>{ const s=subStatus(c); return !c.paused && (s.tone==='success'||s.tone==='warning'); }).length;
+  const newClients=state.clients.filter(c=>c.createdAt && inRange(c.createdAt,from,to)).length;
+  const currency=(state.settings&&state.settings.currency);
+  const prevLabel=fmtDate(prevFrom)+' – '+fmtDate(prevTo);
+  const kpi=(label,num,ic,tone,pill)=>'<div class="card stat-card tone-'+tone+'"><div class="stat-ic">'+icon(ic)+'</div><div class="stat-body"><div class="stat-label">'+esc(label)+'</div><div class="stat-numrow"><span class="stat-num">'+num+'</span>'+pill+'</div></div></div>';
+  const chip=(key,ic,label)=>'<button class="rp-chip'+(period===key?' on':'')+'" data-action="report-period" data-id="'+key+'">'+icon(ic,'icon-sm')+' '+esc(label)+'</button>';
+
+  // Entries chart: per day (grouped by week for long ranges) or by hour of day.
+  const mode=state.reportChart||'days';
+  let values, labels, titles;
+  if(mode==='hours'){
+    values=Array(24).fill(0); entries.forEach(l=>{ const h=new Date(l.timestamp).getHours(); if(h>=0&&h<24) values[h]++; });
+    labels=values.map((_,h)=>String(h).padStart(2,'0')); titles=values.map((v,h)=>String(h).padStart(2,'0')+':00–'+String(h).padStart(2,'0')+':59 · '+v);
+  } else {
+    const days=daysInRange(from,to); const perDay={}; entries.forEach(l=>{ const d=localDay(l.timestamp); perDay[d]=(perDay[d]||0)+1; });
+    const short=d=>d.slice(8,10)+'.'+d.slice(5,7);
+    if(days.length>62){ values=[]; labels=[]; titles=[]; for(let i=0;i<days.length;i+=7){ const wk=days.slice(i,i+7); const v=wk.reduce((s,d)=>s+(perDay[d]||0),0); values.push(v); labels.push(short(wk[0])); titles.push(short(wk[0])+'–'+short(wk[wk.length-1])+' · '+v); } }
+    else { values=days.map(d=>perDay[d]||0); labels=days.map(short); titles=days.map((d,i)=>fmtDate(d)+' · '+values[i]); }
+  }
+
+  // Age donut.
+  const ageBrackets=[[0,17,'0–17'],[18,25,'18–25'],[26,35,'26–35'],[36,45,'36–45'],[46,60,'46–60'],[61,999,'60+']];
+  const ageColors=['#4C56E8','#8B5CF6','#22C06B','#F59E0B','#EF4444','#A1A5B7'];
   const agesKnown=state.clients.map(c=>ageFromBirthDate(c.birthDate)).filter(a=>a!=null);
   const ageYearWord=state.lang==='ru'?'лет':'ani';
-  const ageRows=agesKnown.length? ageBrackets.map(([lo,hi,label])=>{ const cnt=agesKnown.filter(a=>a>=lo&&a<=hi).length; const pct=Math.round(cnt/agesKnown.length*100); return '<div class="flex items-center gap8" style="margin-top:8px;"><span class="small" style="width:60px;flex:none;">'+label+' '+ageYearWord+'</span><div style="flex:1;background:var(--surface-2);border-radius:8px;overflow:hidden;height:16px;"><div style="width:'+pct+'%;background:var(--accent);height:100%;"></div></div><span class="small mono" style="width:70px;flex:none;text-align:right;">'+cnt+' · '+pct+'%</span></div>'; }).join('') : '<div class="empty-state small">'+ra('Niciun client cu data nașterii completată.')+'</div>';
-  return '<div class="section-title">'+ra('Frecvență · ultimele 31 de zile')+'</div>'
-   + '<div class="card" style="padding:18px 20px;"><div class="stat-num mono" style="font-size:22px;">'+totalVisits+' '+(state.lang==='ru'?ruEntriesShort(totalVisits):'intrări')+'</div><div class="bars" style="margin-top:14px;">'+bars+'</div></div>'
-   + '<div class="section-title">'+ra('Distribuție pe vârstă')+'<small>'+(state.lang==='ru'?(agesKnown.length+' из '+state.clients.length+' клиентов с указанной датой рождения'):(agesKnown.length+' din '+state.clients.length+' clienți au data nașterii completată'))+'</small></div>'
-   + '<div class="card" style="padding:18px 20px;">'+ageRows+'</div>'
-   + '<div class="section-head"><div class="section-title">'+ra('Încasări recente')+' <span class="mono small" style="font-weight:700;">· '+money(paySum,(state.settings&&state.settings.currency))+'</span></div>'+(state.payments.length?('<button class="btn btn-danger btn-sm" data-action="clear-payments">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>'):'')+'</div>'
-   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>'+ra('Data')+'</th><th>'+ra('Client')+'</th><th>'+ra('Sumă')+'</th><th>'+ra('Metodă')+'</th></tr></thead><tbody>'+payRows+'</tbody></table></div>'+(state.payments.length?'':'<div class="empty-state small">'+ra('Nicio încasare încă.')+'</div>')+'</div>'
-   + '<div class="section-title">'+ra('Export & copie de siguranță')+'</div>'
-   + '<div class="card" style="padding:18px 20px;"><div class="flex gap8" style="flex-wrap:wrap;">'
-     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="clients">'+icon('export','icon-sm')+' '+ra('Clienți · CSV')+'</button>'
-     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="types">'+icon('export','icon-sm')+' '+ra('Abonamente · CSV')+'</button>'
-     + '<button class="btn btn-ghost btn-sm" data-action="export-csv" data-kind="payments">'+icon('export','icon-sm')+' '+ra('Încasări · CSV')+'</button>'
-   + '</div></div>'
-   + '<div class="section-head"><div class="section-title">'+ra('Istoricul modificărilor')+'</div>'+(state.modLog.length?('<button class="btn btn-danger btn-sm" data-action="clear-modlog">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>'):'')+'</div>'
-   + '<div class="card" style="padding:10px 18px 6px;"><div class="table-wrap"><table><thead><tr><th>'+ra('Data')+'</th><th>'+ra('Operație')+'</th><th>'+ra('Cine')+'</th></tr></thead><tbody>'
-     + state.modLog.slice(0,20).map(m=>'<tr><td class="mono small">'+fmtDateTime(m.date)+'</td><td>'+ra(esc(m.operation))+(m.details?(' · <span class="faint">'+esc(m.details)+'</span>'):'')+'</td><td class="small faint">'+esc(m.actor)+'</td></tr>').join('')+'</tbody></table></div>'+(state.modLog.length?'':'<div class="empty-state small">'+ra('Niciun eveniment încă.')+'</div>')+'</div>';
+  const ageCounts=ageBrackets.map(([lo,hi])=>agesKnown.filter(a=>a>=lo&&a<=hi).length);
+  let acc=0; const stops=ageCounts.map((c,i)=>{ const a=acc; acc+=agesKnown.length? c/agesKnown.length*100 : 0; return ageColors[i]+' '+a+'% '+acc+'%'; }).join(',');
+  const donut=agesKnown.length
+    ? '<div class="donut-wrap"><div class="donut" style="background:conic-gradient('+stops+');"><div class="donut-c"><b>'+agesKnown.length+'</b><span>'+esc(ra('clienți'))+'</span></div></div>'
+      + '<div class="legend">'+ageBrackets.map((b,i)=>'<div class="legend-row"><span class="legend-dot" style="background:'+ageColors[i]+';"></span><span>'+b[2]+' '+ageYearWord+'</span><b>'+ageCounts[i]+'</b><span>'+Math.round(ageCounts[i]*100/agesKnown.length)+'%</span></div>').join('')+'</div></div>'
+    : '<div class="empty-state small">'+ra('Niciun client cu data nașterii completată.')+'</div>';
+
+  // Payments table.
+  const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
+  const methodTone={cash:'success', card:'info', transfer:'purple'};
+  const payShown=state.reportPayAll? pays.slice(0,200) : pays.slice(0,6);
+  const payRows=payShown.map(p=>{ const c=byId[p.clientId]; return '<tr><td class="hdate">'+esc(fmtDateTime(p.date))+'</td>'
+    + '<td><div class="hclient" style="min-width:150px;"><div class="avatar'+avatarToneClass(p.clientName)+'" style="width:30px;height:30px;font-size:11px;">'+esc(initials(p.clientName))+'</div><span>'+esc(p.clientName||'—')+'</span></div></td>'
+    + '<td class="mono" style="white-space:nowrap;">'+money(p.amount,p.currency)+'</td>'
+    + '<td><span class="pill pill-'+(methodTone[p.method]||'muted')+'">'+esc(payMethodLabel(p.method))+'</span></td>'
+    + '<td>'+(c? '<button class="hmore" data-action="open-client-detail" data-id="'+c.id+'" title="'+esc(ra('Vezi fișa clientului'))+'">'+icon('more','icon-sm')+'</button>' : '')+'</td></tr>'; }).join('');
+  const loadingPays=state.reportPayments==null;
+
+  const exTile=(kind,ic,tone,title)=>'<button class="ex-tile tone-'+tone+'" data-action="export-csv" data-kind="'+kind+'"><span class="ex-ic">'+icon(ic)+'</span><span><span class="ex-t" style="display:block;">'+esc(title)+'</span><span class="ex-d">'+esc(ra('Exportă CSV'))+'</span></span></button>';
+
+  return '<div class="rp-periods">'
+     + chip('31d','calendar',ra('Ultimele 31 de zile')) + chip('7d','clock',ra('Ultimele 7 zile')) + chip('month','calendar',ra('Luna aceasta')) + chip('lastmonth','history',ra('Luna trecută')) + chip('custom','edit',ra('Personalizat'))
+     + '<span class="rp-range">'+icon('calendar','icon-sm')+' '+fmtDate(from)+' – '+fmtDate(to)+'</span></div>'
+   + (period==='custom'? '<div class="rp-custom"><label class="fsel">'+icon('calendar','icon-sm')+'<span class="fsel-l">'+esc(ra('De la'))+'</span><input type="date" data-bind="reportFrom" value="'+esc(from)+'"></label><label class="fsel">'+icon('calendar','icon-sm')+'<span class="fsel-l">'+esc(ra('Până la'))+'</span><input type="date" data-bind="reportTo" value="'+esc(to)+'"></label></div>' : '')
+   + '<div class="rp-kpis">'
+     + kpi(ra('Clienți activi'), activeClients, 'users', 'blue', '<span class="pill pill-xs '+(newClients?'pill-success':'pill-muted')+'">+'+newClients+' '+esc(ra('noi'))+'</span>')
+     + kpi(ra('Abonamente vândute'), sold, 'card', 'sky', trendPill(sold, prevSold, prevLabel))
+     + kpi(ra('Total intrări'), entries.length, 'logIn', 'green', trendPill(entries.length, prevEntries, prevLabel))
+     + kpi(ra('Încasări totale'), money(revenue,currency), 'coins', 'purple', trendPill(revenue, prevRevenue, prevLabel))
+   + '</div>'
+   + '<div class="rp-grid">'
+     + '<div class="rp-col">'
+       + '<div class="pg-card compact"><div class="rp-head"><div><div class="rp-title">'+ra('Intrări în sală')+'</div><div class="rp-sub">'+(mode==='hours'? ra('Pe ore ale zilei — când e cea mai mare aglomerație') : ra('Numărul de intrări permise, pe zile'))+'</div></div>'
+         + '<select class="rp-mini-sel" data-bind="reportChart" aria-label="'+esc(ra('Grupare'))+'"><option value="days"'+(mode==='days'?' selected':'')+'>'+ra('Pe zile')+'</option><option value="hours"'+(mode==='hours'?' selected':'')+'>'+ra('Pe ore')+'</option></select></div>'
+         + (entries.length? barChartHtml(values, labels, titles) : '<div class="empty-state small">'+ra('Nicio intrare în această perioadă.')+'</div>')+'</div>'
+       + '<div class="pg-card compact"><div class="rp-head"><div><div class="rp-title">'+ra('Încasări în perioadă')+'</div><div class="rp-sub">'+pays.length+' '+ra('plăți')+' · '+money(revenue,currency)+'</div></div>'
+         + '<div class="flex gap8 items-center">'+(pays.length>6? '<button class="rp-link" data-action="report-pay-all">'+(state.reportPayAll? ra('Arată mai puține') : ra('Vezi toate'))+'</button>' : '')
+         + (state.payments.length? '<button class="icon-btn danger" data-action="clear-payments" title="'+esc(ra('Șterge istoricul încasărilor'))+'">'+icon('trash','icon-sm')+'</button>' : '')+'</div></div>'
+         + (loadingPays? '<div class="empty-state small">'+ra('Se încarcă…')+'</div>' : pays.length? '<div class="hwrap"><table class="htable"><thead><tr><th>'+ra('Data')+'</th><th>'+ra('Client')+'</th><th>'+ra('Sumă')+'</th><th>'+ra('Metodă')+'</th><th></th></tr></thead><tbody>'+payRows+'</tbody></table></div>' : '<div class="empty-state small">'+ra('Nicio încasare în această perioadă.')+'</div>')+'</div>'
+     + '</div>'
+     + '<div class="rp-col">'
+       + '<div class="pg-card compact"><div><div class="rp-title">'+ra('Distribuție clienți pe vârstă')+'</div><div class="rp-sub">'+(state.lang==='ru'?(agesKnown.length+' из '+state.clients.length+' клиентов с указанной датой рождения'):(agesKnown.length+' din '+state.clients.length+' clienți au data nașterii completată'))+'</div></div>'+donut+'</div>'
+       + '<div class="pg-card compact"><div><div class="rp-title">'+ra('Export & copie de siguranță')+'</div><div class="rp-sub">'+ra('Descarcă datele în format CSV (se deschide în Excel)')+'</div></div>'
+         + '<div class="ex-grid">'+exTile('clients','users','green',ra('Clienți'))+exTile('types','tag','blue',ra('Abonamente'))+exTile('payments','coins','orange',ra('Încasări'))+exTile('report','chart','purple',ra('Raport perioadă'))+'</div>'
+         + '<div class="backup"><span class="ex-ic">'+icon('shield')+'</span><div><div class="ex-t">'+ra('Copie de siguranță')+'</div><div class="ex-d">'+ra('Toate datele sălii într-un singur fișier (JSON)')+'</div></div><button class="btn btn-ghost btn-sm" data-action="download-backup">'+icon('download','icon-sm')+' '+ra('Descarcă backup')+'</button></div></div>'
+       + '<div class="pg-card compact"><div class="rp-head"><div class="rp-title">'+ra('Istoricul modificărilor')+'</div>'+(state.modLog.length? '<button class="btn btn-danger btn-sm" data-action="clear-modlog">'+icon('trash','icon-sm')+' '+ra('Șterge istoricul')+'</button>' : '')+'</div>'
+         + (state.modLog.length? '<div class="hwrap"><table class="mini-table"><thead><tr><th>'+ra('Data')+'</th><th>'+ra('Operație')+'</th><th>'+ra('Cine')+'</th></tr></thead><tbody>'
+           + state.modLog.slice(0,12).map(m=>'<tr><td class="hdate small">'+fmtDateTime(m.date)+'</td><td>'+ra(esc(m.operation))+(m.details?(' · <span class="faint">'+esc(m.details)+'</span>'):'')+'</td><td class="small faint">'+esc(m.actor)+'</td></tr>').join('')+'</tbody></table></div>'
+           : '<div class="empty-state small">'+ra('Niciun eveniment încă.')+'</div>')+'</div>'
+     + '</div>'
+   + '</div>';
+}
+async function downloadBackup(){
+  if(!db) return;
+  showToast(ra('Se pregătește copia de siguranță…'));
+  const grab=async col=>{ try{ const s=await db.collection(col).get(); return s.docs.map(d=>Object.assign({id:d.id}, d.data())); }catch(e){ return null; } };
+  const data={ exportedAt:new Date().toISOString(), app:'Fitness Park', settings:state.settings,
+    subscriptionTypes:await grab('subscriptionTypes'), clients:await grab('clients'), payments:await grab('payments'),
+    accessLog:await grab('accessLog'), modLog:await grab('modLog'), buyRequests:await grab('buyRequests') };
+  const ok=browserSave('fitness-park-backup-'+todayStr()+'.json', new Blob([JSON.stringify(data)], {type:'application/json'}));
+  showToast(ok? ra('Copia de siguranță a fost descărcată.') : ra('Exportul a eșuat.'));
+  if(ok) logMod('Copie de siguranță descărcată','').catch(()=>{});
 }
 async function exportCSV(kind){
   let rows=[], filename='';
@@ -1911,6 +2170,19 @@ async function exportCSV(kind){
     let all=state.payments;
     try{ const snap=await colPay().orderBy('date','desc').get(); all=snap.docs.map(d=>d.data()); }catch(e){}
     all.forEach(p=>rows.push([fmtDateTime(p.date), p.clientName, p.amount, p.currency, payMethodLabel(p.method), p.note||''])); }
+  else if(kind==='report'){
+    const {from, to}=reportRange(); filename='raport-'+from+'_'+to+'.csv';
+    const inR=iso=>{ const d=localDay(iso); return d>=from && d<=to; };
+    const pays=(state.reportPayments||state.payments).filter(p=>inR(p.date));
+    const entries=state.log.filter(l=>l.result==='permis' && inR(l.timestamp));
+    const perDay={}; entries.forEach(l=>{ const d=localDay(l.timestamp); perDay[d]=(perDay[d]||0)+1; });
+    rows=[['Raport Fitness Park', fmtDate(from)+' – '+fmtDate(to)], [],
+      ['Total intrări', entries.length], ['Încasări totale', pays.reduce((s,p)=>s+Number(p.amount||0),0)], ['Număr plăți', pays.length],
+      ['Abonamente vândute', pays.filter(p=>p.note==='Abonament nou'||p.note==='Reînnoire abonament').length], [],
+      ['Data','Intrări']];
+    daysInRange(from,to).forEach(d=>rows.push([fmtDate(d), perDay[d]||0]));
+    rows.push([], ['Data plății','Client','Sumă','Monedă','Metodă','Notă']);
+    pays.forEach(p=>rows.push([fmtDateTime(p.date), p.clientName, p.amount, p.currency, payMethodLabel(p.method), p.note||''])); }
   else if(kind==='accesslog'){ filename='istoric-acces.csv'; rows=[['Data','Ora','Client','Telefon','Cod','Rezultat','Observații']];
     const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
     filteredHistory().forEach(l=>{ const d=new Date(l.timestamp); const c=byId[l.clientId]; rows.push([localDay(l.timestamp), isNaN(d)?'':d.toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}), l.clientName||'', (c&&c.phone)||'', l.code||'', resultLabel(l.result), l.message||'']); }); }
@@ -1920,66 +2192,170 @@ async function exportCSV(kind){
 }
 
 /* ---- Settings ---- */
+const DEFAULT_EMAIL_TEXTS={
+  activated:'Abonamentul tău a fost activat. Mai jos găsești detaliile și cardul tău de membru.',
+  expiring:'Abonamentul tău expiră pe {data}. Te așteptăm la recepție pentru reînnoire.'
+};
 function draftFromSettings(s){
-  s=s||DEFAULT_SETTINGS;
-  return { gymName:s.gymName, warnDays:s.warnDays, minMinutesBetweenEntries:s.minMinutesBetweenEntries, openHour:s.openHour, closeHour:s.closeHour, saturdayDifferent: s.saturdayDifferent!==undefined? s.saturdayDifferent : DEFAULT_SETTINGS.saturdayDifferent, saturdayOpenHour:s.saturdayOpenHour||DEFAULT_SETTINGS.saturdayOpenHour, saturdayCloseHour:s.saturdayCloseHour||DEFAULT_SETTINGS.saturdayCloseHour,
-    openDays:(s.openDays||DEFAULT_SETTINGS.openDays).slice(), closedDatesText:(s.closedDates||[]).join('\n'), newsText:s.newsText, currency:s.currency||'MDL' };
+  s=s||DEFAULT_SETTINGS; const et=s.emailTexts||{};
+  return { gymName:s.gymName, warnDays:s.warnDays, minMinutesBetweenEntries:s.minMinutesBetweenEntries,
+    weekSchedule:JSON.parse(JSON.stringify(weekScheduleOf(s))), closedDatesText:(s.closedDates||[]).join('\n'), newsText:s.newsText, currency:s.currency||'MDL',
+    address:s.address||'', phone:s.phone||'', logoDataUri:s.logoDataUri||'',
+    emailTexts:{activated:et.activated||DEFAULT_EMAIL_TEXTS.activated, expiring:et.expiring||DEFAULT_EMAIL_TEXTS.expiring} };
 }
+const TIME_OPTIONS=(()=>{ const a=[]; for(let h=0;h<24;h++){ a.push(String(h).padStart(2,'0')+':00', String(h).padStart(2,'0')+':30'); } a.push('23:59'); return a; })();
+function timeSelect(path, value, disabled){
+  const opts=TIME_OPTIONS.includes(value)? TIME_OPTIONS : TIME_OPTIONS.concat([value]).sort();
+  return '<select class="tsel" data-bind="'+path+'"'+(disabled?' disabled':'')+'>'+opts.map(t=>'<option'+(t===value?' selected':'')+'>'+t+'</option>').join('')+'</select>';
+}
+const SCHEDULE_DAY_ORDER=[1,2,3,4,5,6,0];
+function scheduleDayHtml(w, day){
+  const x=w[day]; const ivs=x.intervals||[]; const off=!x.open; const p='settingsDraft.weekSchedule.'+day;
+  return '<div class="sch-day'+(off?' off':'')+'">'
+   + '<label class="sch-head"><span class="switch"><input type="checkbox" data-bind="'+p+'.open"'+(x.open?' checked':'')+' aria-label="'+esc(dayLabel(day))+'"><span></span></span><b>'+esc(dayLabel(day))+'</b></label>'
+   + ivs.map((iv,i)=>'<div class="sch-iv'+(ivs.length>1?'':' single')+'">'+timeSelect(p+'.intervals.'+i+'.from', iv.from, off)+timeSelect(p+'.intervals.'+i+'.to', iv.to, off)
+       + (ivs.length>1? '<button class="sch-del" data-action="sched-del" data-id="'+day+':'+i+'" title="'+esc(ra('Șterge intervalul'))+'"'+(off?' disabled':'')+'>'+icon('trash','icon-sm')+'</button>' : '')+'</div>').join('')
+   + (off? '<div class="sch-off-note">'+esc(ra('Închis'))+'</div>' : '<button class="sch-add" data-action="sched-add" data-id="'+day+'">'+icon('plus','icon-sm')+' '+esc(ra('Adaugă interval'))+'</button>')
+   + '</div>';
+}
+function scheduleAddInterval(day){
+  const x=state.settingsDraft.weekSchedule[day]; const last=x.intervals[x.intervals.length-1];
+  const from=last? last.to : '08:00';
+  x.intervals.push({from, to: from<'21:00'? '21:00' : '23:59'});
+}
+function scheduleCopyMonday(){
+  const w=state.settingsDraft.weekSchedule; const mon=w[1];
+  if(!mon.open || !mon.intervals.length){ showToast(ra('Luni este închis — setează întâi programul de luni.')); return; }
+  [2,3,4,5,6,0].forEach(d=>{ if(w[d].open) w[d].intervals=JSON.parse(JSON.stringify(mon.intervals)); });
+  showToast(ra('Programul de luni a fost copiat la toate zilele deschise. Apasă „Salvează programul".'));
+}
+async function saveSchedule(){
+  const w=JSON.parse(JSON.stringify(state.settingsDraft.weekSchedule));
+  for(const day of SCHEDULE_DAY_ORDER){
+    const x=w[day]; if(!x.open) continue;
+    if(!x.intervals.length){ showToast(dayLabel(day)+': '+ra('adaugă un interval sau marchează ziua ca închisă.')); return; }
+    x.intervals.sort((a,b)=>a.from.localeCompare(b.from));
+    for(let i=0;i<x.intervals.length;i++){
+      const iv=x.intervals[i];
+      if(iv.from>=iv.to){ showToast(dayLabel(day)+': '+ra('ora de început trebuie să fie înaintea orei de închidere.')); return; }
+      if(i && iv.from<x.intervals[i-1].to){ showToast(dayLabel(day)+': '+ra('intervalele se suprapun.')); return; }
+    }
+  }
+  // Keep the old single-interval fields in sync for anything that still reads them.
+  const firstOpen=SCHEDULE_DAY_ORDER.map(d=>w[d]).find(x=>x.open&&x.intervals.length);
+  const legacy=firstOpen? {openHour:firstOpen.intervals[0].from, closeHour:firstOpen.intervals[firstOpen.intervals.length-1].to} : {};
+  try{ await saveSettingsDoc(Object.assign({weekSchedule:w, openDays:w.map(x=>!!x.open), saturdayDifferent:false}, legacy)); state.settingsDraft.weekSchedule=w; await logMod('Program de lucru actualizat',''); showToast(ra('Programul a fost salvat.')); }
+  catch(e){ showToast(ra('Eroare la salvare.')); }
+}
+async function uploadGymLogo(file){
+  if(!file || !/^image\//.test(file.type)){ showToast(ra('Alege o imagine (PNG sau JPG).')); return; }
+  if(file.size>2*1024*1024){ showToast(ra('Imaginea e prea mare (maxim 2 MB).')); return; }
+  try{
+    const url=await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(file); });
+    const img=await new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=url; });
+    const max=160, k=Math.min(1, max/Math.max(img.width,img.height));
+    const cv=document.createElement('canvas'); cv.width=Math.round(img.width*k); cv.height=Math.round(img.height*k);
+    cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+    state.settingsDraft.logoDataUri=cv.toDataURL('image/png'); scheduleRender();
+  }catch(e){ showToast(ra('Nu am putut citi imaginea.')); }
+}
+function gymLogoSrc(){ return (state.settings&&state.settings.logoDataUri)||LOGO_DATA_URI; }
 function renderSettings(){
   if(!state.settingsDraft){ state.settingsDraft=draftFromSettings(state.settings); }
   const d=state.settingsDraft;
-  const dayChecks=DAY_LABELS.map((lab,i)=>'<label class="checkline"><input type="checkbox" data-bind="settingsDraft.openDays.'+i+'" '+((d.openDays&&d.openDays[i])?'checked':'')+'> '+dayLabel(i)+'</label>').join('');
+  if(!d.weekSchedule){ Object.assign(d, draftFromSettings(state.settings), {newsText:d.newsText}); }
   const team=(state.settings&&state.settings.team)||[];
-  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'); const roleLabel=r=>ra(r==='owner'?'Proprietar — acces total':'Administrator'); const teamRows=team.length? team.map((m,i)=>'<div class="team-row"><div><b style="font-size:13px;">'+esc(m.email)+'</b><div class="small faint">'+roleLabel(m.role)+'</div></div>'+(m.role==='owner'?'':'<button class="btn btn-ghost btn-sm" data-action="remove-team" data-idx="'+i+'">'+ra('Retrage acces')+'</button>')+'</div>').join('') : '<div class="small faint">'+ra('Niciun coleg adăugat încă.')+'</div>';
-  return '<div class="section-title">'+ra('Program, avertizări și scanare')+'</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;">'
-     + '<div class="grid2">'+field(ra('Avertizare înainte de expirare (zile)'),'number','settingsDraft.warnDays',d.warnDays)+field(ra('Interval minim între intrări (minute)'),'number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
-     + '<div class="grid2">'+field(ra('Deschidere'),'time','settingsDraft.openHour',d.openHour)+field(ra('Închidere'),'time','settingsDraft.closeHour',d.closeHour)+'</div>' + '<label class="checkline"><input type="checkbox" data-bind="settingsDraft.saturdayDifferent" '+(d.saturdayDifferent?'checked':'')+'> '+ra('Program diferit sâmbăta')+'</label>' + (d.saturdayDifferent? ('<div class="grid2">'+field(ra('Deschidere sâmbătă'),'time','settingsDraft.saturdayOpenHour',d.saturdayOpenHour)+field(ra('Închidere sâmbătă'),'time','settingsDraft.saturdayCloseHour',d.saturdayCloseHour)+'</div>') : '')
-     + '<div><div class="small" style="font-weight:700;margin-bottom:8px;">'+ra('Zile deschise')+'</div><div class="flex gap8" style="flex-wrap:wrap;">'+dayChecks+'</div></div>'
-     + '<label class="field">'+ra('Zile închise / sărbători (o dată pe linie, AAAA-LL-ZZ)')+'<textarea rows="2" data-bind="settingsDraft.closedDatesText">'+esc(d.closedDatesText)+'</textarea></label>'
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-general">'+icon('check','icon-sm')+' '+ra('Salvează regulile')+'</button></div>'
-   + '<div class="section-title">'+ra('Identitatea sălii')+'</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;">'+field(ra('Numele sălii'),'text','settingsDraft.gymName',d.gymName)
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-name">'+icon('check','icon-sm')+' '+ra('Salvează denumirea')+'</button></div>'
-   + '<div class="section-title">'+ra('Noutăți & reguli pentru clienți')+'</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Acest text apare în contul fiecărui client, la secțiunea „Noutăți".')+'</div>'
-     + '<label class="field"><textarea rows="6" data-bind="settingsDraft.newsText">'+esc(d.newsText)+'</textarea></label>'
-     + '<div class="news-preview">'+esc(d.newsText||'').replace(/\n/g,'<br>')+'</div>'
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-news">'+icon('check','icon-sm')+' '+ra('Salvează noutățile')+'</button></div>'
-   + '<div class="section-title">'+ra('Parola contului tău')+'</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Cont curent: ')+esc((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'—')+'</div>'+field(ra('Parolă curentă'),'password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')
-     + '<div class="grid2">'+field(ra('Parolă nouă (minim 6 caractere)'),'password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field(ra('Confirmă parola nouă'),'password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
-     + '<div class="err-text">'+esc(state.pwErr||'')+'</div>'
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' '+ra('Schimbă parola')+'</button></div>'
-   + (canManageTeam? ('<div class="section-title">'+ra('Echipa sălii')+'</div>'
-   + '<div class="card settings-block" style="padding:20px 22px;"><div class="small faint">'+ra('Fiecare persoană de mai jos intră cu propriul email și cu parola pe care i-o setezi acum. Are acces la tot panoul, cu excepția Rapoartelor (doar proprietarul le vede).')+'</div>'
-     + field(ra('E-mail coleg'),'email','teamForm.email',(state.teamForm&&state.teamForm.email)||'','coleg@exemplu.md')
-     + field(ra('Parolă inițială (minim 6 caractere)'),'password','teamForm.password',(state.teamForm&&state.teamForm.password)||'')
-     + selectField(ra('Rol'),'teamForm.role',(state.teamForm&&state.teamForm.role)||'admin',[['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]])
-     + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă acces')+'</button>'
-     + '<hr class="hairline">'+teamRows+'</div>') : '')
-   + (state.adminRole==='owner'? (
-     '<div class="section-title">'+ra('Zonă BETA — testare')+'</div>'
-     + '<div class="card settings-block" style="padding:20px 22px;border-color:var(--danger);">'
-     + '<div class="small" style="color:var(--danger);font-weight:600;margin-bottom:10px;">'+ra('Folosește doar cât timp saitul e în testare, cu date de test. Șterge PERMANENT toți clienții din bază — abonamente, coduri QR, fișele lor. Istoricul de plăți/acces/modificări nu e afectat (se șterge separat, din Rapoarte).')+'</div>'
-     + '<button class="btn btn-danger-solid" data-action="clear-all-clients">'+icon('trash','icon-sm')+' '+ra('Șterge TOȚI clienții')+'</button>'
-     + '</div>'
-   ) : '');
+  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin');
+  const myEmail=((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'').toLowerCase();
+  const card=(ic, title, sub, actions, body, extra)=>'<div class="pg-card compact"'+(extra||'')+'><div class="pg-head"><div class="pg-ic">'+icon(ic)+'</div><div style="min-width:0;"><div class="pg-title">'+esc(title)+'</div><div class="pg-sub">'+esc(sub)+'</div></div>'+(actions? '<div class="pg-actions">'+actions+'</div>' : '')+'</div>'+body+'</div>';
+  const w=d.weekSchedule;
+  const teamRows=team.map((m,i)=>'<tr><td><div class="hclient" style="min-width:160px;"><div class="avatar'+avatarToneClass(m.name||m.email)+'">'+esc(initials(m.name||m.email))+'</div><div style="min-width:0;"><div class="hname">'+esc(m.name||'—')+'</div>'+((m.email||'').toLowerCase()===myEmail? '<div class="hsub">'+esc(ra('tu'))+'</div>' : '')+'</div></div></td>'
+    + '<td class="small">'+esc(m.email)+'</td>'
+    + '<td><span class="pill role-pill-'+(m.role==='owner'?'owner':'admin')+'">'+esc(m.role==='owner'? ra('Proprietar') : ra('Administrator'))+'</span></td>'
+    + '<td><div class="flex gap8" style="justify-content:flex-end;"><button class="icon-btn" data-action="open-edit-team" data-idx="'+i+'" title="'+esc(ra('Modifică'))+'">'+icon('edit','icon-sm')+'</button>'
+      + (m.role==='owner'? '' : '<button class="icon-btn danger" data-action="remove-team" data-idx="'+i+'" title="'+esc(ra('Retrage accesul'))+'">'+icon('trash','icon-sm')+'</button>')+'</div></td></tr>').join('');
+
+  return card('clock', ra('Program de lucru al sălii'), ra('Pentru fiecare zi alegi dacă e deschis și în ce intervale. În afara lor, scanarea refuză accesul.'),
+      '<button class="btn btn-ghost" data-action="sched-copy" title="'+esc(ra('Aplică intervalele de luni tuturor zilelor deschise'))+'">'+icon('copy','icon-sm')+' '+ra('Copiază programul de luni')+'</button><button class="btn btn-primary" data-action="save-schedule">'+icon('check','icon-sm')+' '+ra('Salvează programul')+'</button>',
+      '<div class="sch-grid">'+SCHEDULE_DAY_ORDER.map(day=>scheduleDayHtml(w, day)).join('')+'</div>')
+   + card('shield', ra('Reguli de acces'), ra('Avertizări, pauza dintre scanări și zilele libere.'),
+      '',
+      '<div class="set-grid">'+field(ra('Avertizare înainte de expirare (zile)'),'number','settingsDraft.warnDays',d.warnDays)+field(ra('Interval minim între intrări (minute)'),'number','settingsDraft.minMinutesBetweenEntries',d.minMinutesBetweenEntries)+'</div>'
+      + '<label class="field">'+ra('Zile închise / sărbători (o dată pe linie, AAAA-LL-ZZ)')+'<textarea rows="2" data-bind="settingsDraft.closedDatesText" placeholder="2026-12-25">'+esc(d.closedDatesText)+'</textarea></label>'
+      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-settings-general">'+icon('check','icon-sm')+' '+ra('Salvează regulile')+'</button>')
+   + card('home', ra('Identitatea sălii'), ra('Apare pe ecranul de start, în panou și în contul clienților.'),
+      '',
+      '<div class="set-grid">'+field(ra('Numele sălii'),'text','settingsDraft.gymName',d.gymName)
+        + '<div class="field" style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);font-weight:600;">'+ra('Logo (opțional)')+'<div class="logo-box"><div class="logo-prev"><img src="'+(d.logoDataUri||LOGO_DATA_URI)+'" alt=""></div>'
+          + '<label class="btn btn-ghost btn-sm" style="cursor:pointer;">'+icon('upload','icon-sm')+' '+ra('Încarcă logo')+'<input type="file" accept="image/png,image/jpeg,image/webp" data-logo-upload="1" style="display:none;"></label>'
+          + (d.logoDataUri? '<button class="btn btn-ghost btn-sm" data-action="remove-logo" style="color:var(--danger);">'+icon('trash','icon-sm')+' '+ra('Logo implicit')+'</button>' : '')
+          + '<span class="hint">PNG / JPG, max 2 MB</span></div></div>'
+        + field(ra('Adresă'),'text','settingsDraft.address',d.address,'str. Independenței 25, Chișinău')
+        + field(ra('Telefon'),'text','settingsDraft.phone',d.phone,'060 000 000')+'</div>'
+      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-identity">'+icon('check','icon-sm')+' '+ra('Salvează identitatea')+'</button>')
+   + (canManageTeam? card('users', ra('Echipă și roluri'), ra('Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte.'),
+      '<button class="btn btn-primary" data-action="open-add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă membru')+'</button>',
+      team.length? '<div class="hwrap"><table class="htable"><thead><tr><th>'+ra('Nume')+'</th><th>'+ra('Email')+'</th><th>'+ra('Rol')+'</th><th style="text-align:right;">'+ra('Acțiuni')+'</th></tr></thead><tbody>'+teamRows+'</tbody></table></div>' : '<div class="empty-state small">'+ra('Niciun coleg adăugat încă.')+'</div>') : '')
+   + card('mail', ra('Mesaje pentru clienți'), ra('Textele din emailurile automate și noutățile din contul clientului.'),
+      '',
+      '<div class="set-grid">'
+        + '<label class="field">'+ra('Email la activarea abonamentului')+'<textarea rows="4" data-bind="settingsDraft.emailTexts.activated">'+esc(d.emailTexts.activated)+'</textarea></label>'
+        + '<label class="field">'+ra('Email când abonamentul expiră curând')+'<textarea rows="4" data-bind="settingsDraft.emailTexts.expiring">'+esc(d.emailTexts.expiring)+'</textarea></label></div>'
+      + '<div class="hint">'+ra('Poți folosi: {nume}, {abonament}, {data} (data expirării). Detaliile abonamentului și butonul cu codul QR se adaugă automat sub text.')+'</div>'
+      + '<label class="field">'+ra('Noutăți & reguli (apar în contul fiecărui client)')+'<textarea rows="5" data-bind="settingsDraft.newsText">'+esc(d.newsText)+'</textarea></label>'
+      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-messages">'+icon('check','icon-sm')+' '+ra('Salvează mesajele')+'</button>')
+   + card('lock', ra('Parola contului tău'), ra('Cont curent: ')+((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'—'),
+      '',
+      '<div class="set-grid">'+field(ra('Parolă curentă'),'password','pwForm.current',(state.pwForm&&state.pwForm.current)||'')+'<div></div>'
+        + field(ra('Parolă nouă (minim 6 caractere)'),'password','pwForm.next',(state.pwForm&&state.pwForm.next)||'')+field(ra('Confirmă parola nouă'),'password','pwForm.confirm',(state.pwForm&&state.pwForm.confirm)||'')+'</div>'
+      + '<div class="err-text">'+esc(state.pwErr||'')+'</div>'
+      + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="change-password">'+icon('lock','icon-sm')+' '+ra('Schimbă parola')+'</button>')
+   + (state.adminRole==='owner'? card('trash', ra('Zonă BETA — testare'), ra('Doar pentru perioada de testare, cu date de test.'),
+      '',
+      '<div class="small" style="color:var(--danger);font-weight:600;">'+ra('Folosește doar cât timp saitul e în testare, cu date de test. Șterge PERMANENT toți clienții din bază — abonamente, coduri QR, fișele lor. Istoricul de plăți/acces/modificări nu e afectat (se șterge separat, din Rapoarte).')+'</div>'
+      + '<button class="btn btn-danger-solid" style="align-self:flex-start;" data-action="clear-all-clients">'+icon('trash','icon-sm')+' '+ra('Șterge TOȚI clienții')+'</button>', ' style="border-color:var(--danger);"') : '');
 }
 async function saveSettingsGeneral(){
   const d=state.settingsDraft;
-  try{ await saveSettingsDoc({ warnDays:Number(d.warnDays||5), minMinutesBetweenEntries:Number(d.minMinutesBetweenEntries||0), openHour:d.openHour, closeHour:d.closeHour, saturdayDifferent:!!d.saturdayDifferent, saturdayOpenHour:d.saturdayOpenHour, saturdayCloseHour:d.saturdayCloseHour, openDays:d.openDays, closedDates:(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean) }); await logMod('Reguli program actualizate',''); showToast(ra('Salvat.')); }
+  const warn=Number(d.warnDays), gap=Number(d.minMinutesBetweenEntries||0);
+  if(!(warn>=0 && warn<=60)){ showToast(ra('Avertizarea trebuie să fie între 0 și 60 de zile.')); return; }
+  if(!(gap>=0 && gap<=600)){ showToast(ra('Intervalul minim trebuie să fie între 0 și 600 de minute.')); return; }
+  const dates=(d.closedDatesText||'').split('\n').map(s=>s.trim()).filter(Boolean);
+  const bad=dates.find(x=>!/^\d{4}-\d{2}-\d{2}$/.test(x) || isNaN(new Date(x+'T00:00:00')));
+  if(bad){ showToast(ra('Dată greșită: ')+bad+' — '+ra('folosește formatul AAAA-LL-ZZ.')); return; }
+  try{ await saveSettingsDoc({ warnDays:warn, minMinutesBetweenEntries:gap, closedDates:dates }); await logMod('Reguli de acces actualizate',''); showToast(ra('Salvat.')); }
   catch(e){ showToast(ra('Eroare la salvare.')); }
 }
-async function saveSettingsName(){
+async function saveIdentity(){
   const d=state.settingsDraft;
-  try{ await saveSettingsDoc({gymName:d.gymName||'Fitness Park'}); await logMod('Denumire sală actualizată', d.gymName); showToast(ra('Salvat.')); }
-  catch(e){ showToast(ra('Eroare.')); }
+  if(!(d.gymName||'').trim()){ showToast(ra('Numele sălii nu poate fi gol.')); return; }
+  try{ await saveSettingsDoc({gymName:d.gymName.trim(), address:(d.address||'').trim(), phone:(d.phone||'').trim(), logoDataUri:d.logoDataUri||''}); await logMod('Identitatea sălii actualizată', d.gymName); showToast(ra('Salvat.')); }
+  catch(e){ showToast(ra('Eroare la salvare.')); }
 }
-async function saveSettingsNews(){
-  const d=state.settingsDraft;
-  try{ await saveSettingsDoc({newsText:d.newsText||''}); await logMod('Noutăți pentru clienți actualizate',''); showToast(ra('Salvat.')); }
-  catch(e){ showToast(ra('Eroare.')); }
+async function saveMessages(){
+  const d=state.settingsDraft; const et=d.emailTexts||{};
+  try{ await saveSettingsDoc({newsText:d.newsText||'', emailTexts:{activated:(et.activated||'').trim()||DEFAULT_EMAIL_TEXTS.activated, expiring:(et.expiring||'').trim()||DEFAULT_EMAIL_TEXTS.expiring}}); await logMod('Mesaje pentru clienți actualizate',''); showToast(ra('Salvat.')); }
+  catch(e){ showToast(ra('Eroare la salvare.')); }
+}
+function modalTeamMember(){
+  const isEdit=state.modal.type==='editTeam'; const f=isEdit? state.form : (state.teamForm||{}); const p=isEdit? 'form.' : 'teamForm.';
+  return modalWrap(isEdit? ra('Modifică membrul echipei') : ra('Adaugă membru'), isEdit? (f.email||'') : ra('Colegul va intra în panou cu acest email și parola de mai jos.'),
+    '<div style="display:flex;flex-direction:column;gap:12px;">'
+    + field(ra('Nume'),'text',p+'name',f.name||'','Ion Popescu')
+    + (isEdit? '' : field(ra('E-mail coleg'),'email',p+'email',f.email||'','coleg@exemplu.md') + field(ra('Parolă inițială (minim 6 caractere)'),'password',p+'password',f.password||''))
+    + selectField(ra('Rol'),p+'role',f.role||'admin',[['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]])
+    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
+    + '<button class="btn btn-primary btn-block" data-action="'+(isEdit?'save-edit-team':'add-team')+'">'+icon('check','icon-sm')+' '+(isEdit? ra('Salvează') : ra('Adaugă acces'))+'</button></div>');
+}
+async function saveEditTeam(){
+  const f=state.form; const team=((state.settings&&state.settings.team)||[]).map(m=>Object.assign({},m));
+  const m=team[f.idx]; if(!m){ closeModal(); return; }
+  const hasOwner=team.some(x=>x.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ state.formErr=ra('Doar proprietarul poate gestiona echipa.'); scheduleRender(); return; }
+  const role=f.role==='owner'? 'owner' : 'admin';
+  if(m.role==='owner' && role!=='owner' && team.filter(x=>x.role==='owner').length<2){ state.formErr=ra('Trebuie să rămână cel puțin un proprietar.'); scheduleRender(); return; }
+  m.name=(f.name||'').trim(); m.role=role;
+  try{ await saveSettingsDoc({team}); await logMod('Membru echipă modificat', m.email); closeModal(); showToast(ra('Salvat.')); }
+  catch(e){ state.formErr=ra('Eroare la salvare.'); scheduleRender(); }
 }
 async function changePassword(){
   const f=state.pwForm||{};
@@ -2024,8 +2400,8 @@ async function addTeam(){
     else if(e && e.code==='auth/weak-password'){ showToast(ra('Parola trebuie să aibă minim 6 caractere.')); return; }
     else{ showToast(ra('Eroare la crearea contului.')); return; }
   }
-  const team=existing.slice(); team.push({email, role:f.role||'admin'});
-  try{ await saveSettingsDoc({team}); state.teamForm={}; await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
+  const team=existing.slice(); team.push({email, role:f.role==='owner'?'owner':'admin', name:(f.name||'').trim()});
+  try{ await saveSettingsDoc({team}); state.teamForm={}; if(state.modal&&state.modal.type==='addTeam') closeModal(); await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
   catch(e){ showToast(ra('Eroare la salvarea accesului.')); }
   scheduleRender();
 }
@@ -2045,7 +2421,7 @@ function renderClientPortal(){
   const tab=state.clientTab||'sub';
   const myLog=(c.recentEntries||[]).map(e=>({clientName:c.name, timestamp:e.t, result:e.r}));
   return '<div class="client-shell"><div class="client-top"><div class="client-header-row">'
-   + '<div class="brand" style="margin:0;"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub" style="color:var(--text-muted);">'+tr('myAccount')+'</div></div></div>'
+   + '<div class="brand" style="margin:0;"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub" style="color:var(--text-muted);">'+tr('myAccount')+'</div></div></div>'
    + '<div class="flex gap8 items-center">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="client-logout">'+icon('logOut','icon-sm')+'</button></div>'
    + '</div></div>'
    + '<div class="client-body">'
@@ -2084,8 +2460,13 @@ function clientTabSub(c){
    + '</div>';
 }
 function clientTabNews(){
-  const text=(state.settings&&state.settings.newsText)||'';
-  return '<div class="card" style="padding:20px;"><div class="flex items-center gap8" style="margin-bottom:10px;">'+icon('news')+'<b>'+tr('newsRules')+'</b></div><div class="news-preview">'+esc(text).replace(/\n/g,'<br>')+'</div></div>';
+  const s=state.settings||{}; const text=s.newsText||'';
+  const contact=[s.address? '<div class="flex items-center gap8">'+icon('home','icon-sm')+'<span>'+esc(s.address)+'</span></div>' : '', s.phone? '<div class="flex items-center gap8">'+icon('phone','icon-sm')+'<a href="tel:'+esc(s.phone.replace(/[^\d+]/g,''))+'">'+esc(s.phone)+'</a></div>' : ''].join('');
+  const w=weekScheduleOf(s);
+  const hours=SCHEDULE_DAY_ORDER.map(day=>{ const x=w[day]; const iv=(x.intervals||[]).map(v=>v.from+'–'+v.to).join(', '); return '<div class="flex justify-between small" style="padding:3px 0;"><span class="muted">'+esc(dayLabel(day))+'</span><span class="mono">'+(x.open&&iv? esc(iv) : esc(tr('closedDay')))+'</span></div>'; }).join('');
+  return '<div class="card" style="padding:20px;"><div class="flex items-center gap8" style="margin-bottom:10px;">'+icon('news')+'<b>'+tr('newsRules')+'</b></div><div class="news-preview">'+esc(text).replace(/\n/g,'<br>')+'</div>'
+   + '<hr class="hairline" style="margin:16px 0;"><div class="flex items-center gap8" style="margin-bottom:8px;">'+icon('clock')+'<b>'+tr('openingHours')+'</b></div>'+hours
+   + (contact? '<hr class="hairline" style="margin:16px 0;"><div class="small" style="display:flex;flex-direction:column;gap:8px;">'+contact+'</div>' : '')+'</div>';
 }
 function clientTabHistory(log){
   return '<div class="card" style="padding:10px 16px 4px;">'+(log.length? log.map(logRowHtmlClient).join('') : '<div class="empty-state small">'+tr('noHistoryYet')+'</div>')+'</div>';
@@ -2109,6 +2490,7 @@ function renderModal(){
   if(t==='editClient') return modalEditClient();
   if(t==='renew') return modalRenew(); if(t==='editSub') return modalEditSub();
   if(t==='editType') return modalEditType();
+  if(t==='addTeam'||t==='editTeam') return modalTeamMember();
   return '';
 }
 
@@ -2151,6 +2533,7 @@ function afterRenderHooks(){
 /* ============ EVENTS ============ */
 function bindEvents(root){
   root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('input[type="tel"]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=el.value.replace(/\D/g,'').slice(0,11); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
+  root.querySelectorAll('[data-logo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const file=el.files&&el.files[0]; if(file) uploadGymLogo(file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
   root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.hasAttribute('data-confirm-overlay')){ state.confirmDialog=null; scheduleRender(); } else if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
   root.querySelectorAll('[data-nav]').forEach(el=>{
@@ -2220,9 +2603,20 @@ function onAction(el){
     case 'toggle-camera-reception': toggleCamera('scanInput'); return;
     case 'toggle-camera-client': toggleCamera('clientCode'); return;
     case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': askConfirm(ra('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.'), clearPayments, {danger:true}); return; case 'clear-modlog': askConfirm(ra('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.'), clearModLog, {danger:true}); return; case 'clear-accesslog': askConfirm(ra('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.'), clearAccessLog, {danger:true}); return;
-    case 'save-settings-general': saveSettingsGeneral(); return;
-    case 'save-settings-name': saveSettingsName(); return;
-    case 'save-settings-news': saveSettingsNews(); return;
+    case 'save-settings-general': runOnce(saveSettingsGeneral); return;
+    case 'save-schedule': runOnce(saveSchedule); return;
+    case 'save-identity': runOnce(saveIdentity); return;
+    case 'save-messages': runOnce(saveMessages); return;
+    case 'sched-add': scheduleAddInterval(Number(id)); break;
+    case 'sched-del': { const [dd,ii]=String(id).split(':').map(Number); const x=state.settingsDraft.weekSchedule[dd]; if(x && x.intervals.length>1) x.intervals.splice(ii,1); break; }
+    case 'sched-copy': scheduleCopyMonday(); break;
+    case 'remove-logo': state.settingsDraft.logoDataUri=''; break;
+    case 'open-add-team': state.teamForm={role:'admin'}; openModal('addTeam'); return;
+    case 'open-edit-team': { const i=Number(el.getAttribute('data-idx')); const m=((state.settings&&state.settings.team)||[])[i]; if(m) openModal('editTeam', {idx:i, email:m.email, name:m.name||'', role:m.role}); return; }
+    case 'save-edit-team': runOnce(saveEditTeam); return;
+    case 'report-period': state.reportPeriod=id; state.reportPayAll=false; break;
+    case 'report-pay-all': state.reportPayAll=!state.reportPayAll; break;
+    case 'download-backup': runOnce(downloadBackup); return;
     case 'change-password': runOnce(changePassword); return;
     case 'add-team': runOnce(addTeam); return; case 'clear-all-clients': clearAllClients(); return;
     case 'remove-team': removeTeam(Number(el.getAttribute('data-idx'))); return;
