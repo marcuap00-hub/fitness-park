@@ -364,18 +364,19 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .stat-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;}
 @media(max-width:1180px){.stat-grid{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media(max-width:720px){.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}.stat-grid>.stat-card:last-child{grid-column:1/-1;}}
-.stat-card{padding:18px 16px;display:flex;align-items:flex-start;gap:14px;border-radius:18px;min-width:0;}
-.stat-body{min-width:0;display:flex;flex-direction:column;gap:6px;}
-.stat-label{font-size:13px;color:var(--text-muted);font-weight:600;line-height:1.3;}
-.stat-numrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.stat-num{font-size:30px;font-weight:800;font-family:var(--font-display);}
-.stat-card .stat-num{font-size:26px;line-height:1.1;white-space:nowrap;}
-.stat-ic{flex:none;width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--t-soft,var(--accent-soft));color:var(--t,var(--accent));}
+/* Every stat card has the same three rows (icon + label, number, badge), so the numbers line up across the row. */
+.stat-card{padding:18px;display:flex;flex-direction:column;gap:16px;border-radius:18px;min-width:0;}
+.stat-head{display:flex;align-items:center;gap:12px;min-width:0;height:40px;}
+.stat-ic{flex:none;width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--t-soft,var(--accent-soft));color:var(--t,var(--accent));}
+.stat-label{min-width:0;font-size:13px;color:var(--text-muted);font-weight:600;line-height:1.3;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow-wrap:anywhere;}
+.stat-body{margin-top:auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:10px;}
+.stat-num{font-size:30px;font-weight:800;font-family:var(--font-display);line-height:1;letter-spacing:-.02em;white-space:nowrap;font-variant-numeric:tabular-nums;max-width:100%;overflow:hidden;text-overflow:ellipsis;}
+.stat-unit{font-size:14px;font-weight:700;color:var(--text-muted);letter-spacing:0;margin-left:5px;}
 .pill-xs{padding:2px 8px;font-size:11px;white-space:nowrap;}
 .tone-blue{--t:#4C56E8;--t-soft:rgba(76,86,232,.12);} .tone-sky{--t:#2F7FE0;--t-soft:rgba(47,127,224,.13);} .tone-orange{--t:#E0782A;--t-soft:rgba(224,120,42,.14);} .tone-green{--t:#1F9D63;--t-soft:rgba(31,157,99,.13);} .tone-purple{--t:#7058DB;--t-soft:rgba(112,88,219,.13);}
 :root[data-theme="dark"] .tone-blue{--t:#8B93FA;} :root[data-theme="dark"] .tone-sky{--t:#6FB0FF;} :root[data-theme="dark"] .tone-orange{--t:#F2A262;} :root[data-theme="dark"] .tone-green{--t:#4FD39A;} :root[data-theme="dark"] .tone-purple{--t:#A792F5;}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .tone-blue{--t:#8B93FA;} :root:not([data-theme="light"]) .tone-sky{--t:#6FB0FF;} :root:not([data-theme="light"]) .tone-orange{--t:#F2A262;} :root:not([data-theme="light"]) .tone-green{--t:#4FD39A;} :root:not([data-theme="light"]) .tone-purple{--t:#A792F5;} }
-@media(max-width:420px){.stat-card{padding:14px 12px;gap:10px;}.stat-ic{width:40px;height:40px;border-radius:12px;}.stat-card .stat-num{font-size:22px;}}
+@media(max-width:420px){.stat-card{padding:14px;gap:12px;}.stat-head{gap:10px;height:34px;}.stat-ic{width:34px;height:34px;border-radius:10px;}.stat-label{font-size:12px;}.stat-num{font-size:24px;}.stat-unit{font-size:12px;}}
 /* ---- page cards (clients, history) ---- */
 .pg-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column;gap:16px;min-width:0;}
 .pg-head{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
@@ -1370,7 +1371,11 @@ const colBuyReq=()=>db.collection('buyRequests');
 
 /* ============ RENDER SCHEDULING ============ */
 let rafPending=false;
-function scheduleRender(){ if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false; render(); }); }
+function scheduleRender(){ if(rafPending) return; rafPending=true; requestAnimationFrame(()=>{ rafPending=false;
+  // Live updates wait while a date is being typed by hand; the page is redrawn once the field is left.
+  const a=document.activeElement;
+  if(a && a.dataset && a.dataset.typing && (a.type==='date'||a.type==='time')){ if(!a.dataset.waitRender){ a.dataset.waitRender='1'; a.addEventListener('blur', ()=>setTimeout(scheduleRender,250), {once:true}); } return; }
+  render(); }); }
 function showToast(msg){ state.toast=msg; scheduleRender(); clearTimeout(showToast._t); showToast._t=setTimeout(()=>{ state.toast=null; scheduleRender(); },2600); }
 async function logMod(operation, details){ try{ await colMod().add({date:new Date().toISOString(), operation, actor:(firebase.auth().currentUser&&firebase.auth().currentUser.email)||'Administrator', details:details||''}); }catch(e){} }
 async function logClientRequest(operation, c){ try{ await colMod().add({date:new Date().toISOString(), operation, actor:c.name+' (client)', details:'', resolved:false, clientId:c.id}); }catch(e){} }
@@ -1867,6 +1872,9 @@ function renderLanding(){
      + '<button class="hp-foot-a" data-action="go-admin">'+esc(ht('footerAdmin'))+' '+arrow+'</button></div></footer>'
    + '</div>';
 }
+// label is plain text; numHtml is trusted markup built by the caller (numbers, moneyStatHtml).
+function statCardHtml(label, numHtml, ic, tone, pillHtml){ return '<div class="card stat-card tone-'+tone+'"><div class="stat-head"><div class="stat-ic">'+icon(ic)+'</div><div class="stat-label" title="'+esc(label)+'">'+esc(label)+'</div></div><div class="stat-body"><div class="stat-num">'+numHtml+'</div>'+(pillHtml||'')+'</div></div>'; }
+function moneyStatHtml(n, cur){ const s=money(n, cur); const i=s.lastIndexOf(' '); return esc(s.slice(0,i))+'<span class="stat-unit">'+esc(s.slice(i+1))+'</span>'; }
 function copyrightHtml(){ return '<div class="copyright">© '+new Date().getFullYear()+' '+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div>'; }
 function renderAdminGate(){
   const s=state.settings||{}; const needsSetup = !(s.hasTeam || (s.team && s.team.length));
@@ -2046,7 +2054,7 @@ function renderReception(){
   const pctValid=total? Math.round(validCount*100/total) : 0;
   const expToday=expSoon.filter(c=>dlOf(c)===0).length;
   const currency=(state.settings&&state.settings.currency);
-  const stat=(label,num,ic,tone,pill,pillTone)=>'<div class="card stat-card tone-'+tone+'"><div class="stat-ic">'+icon(ic)+'</div><div class="stat-body"><div class="stat-label">'+label+'</div><div class="stat-numrow"><span class="stat-num">'+num+'</span>'+(pill? '<span class="pill pill-xs pill-'+pillTone+'">'+esc(pill)+'</span>' : '')+'</div></div></div>';
+  const stat=(label,num,ic,tone,pill,pillTone)=>statCardHtml(label, num, ic, tone, pill? '<span class="pill pill-xs pill-'+pillTone+'">'+esc(pill)+'</span>' : '');
   const expCards=expSoon.slice(0,12).map(c=>{ const dl=daysLeft(c.subscription.validTo); return '<div class="exp-card'+(dl<=1?' urgent':'')+'"><div class="exp-name">'+esc(c.name)+'</div><div class="exp-meta">'+daysLeftShort(dl)+' · '+fmtDate(c.subscription.validTo)+'</div></div>'; }).join('') || '<div class="empty-state small">'+ra('Niciun abonament nu expiră curând.')+'</div>';
   const emailable=expSoon.filter(c=>c.email);
   const reminderBtn = expSoon.length? ('<button class="btn btn-ghost btn-sm" data-action="send-expiry-reminders"'+(emailable.length?'':' disabled')+'>'+icon('send','icon-sm')+' '+ra('Trimite reamintire')+' ('+emailable.length+')</button>') : '';
@@ -2058,7 +2066,7 @@ function renderReception(){
      + stat(ra('Abonamente valabile'), validCount, 'shield', 'sky', pctValid+'% '+ra('din total'), 'success')
      + stat(expInLabel((state.settings&&state.settings.warnDays)||5), expSoon.length, 'clock', 'orange', ra('azi')+': '+expToday, expToday? 'warning' : 'muted')
      + stat(ra('Intrări azi'), todayEntries, 'logIn', 'green', ra('ieri')+': '+yesterdayEntries, 'muted')
-     + stat(ra('Încasări azi'), money(todayRevenue,currency), 'chart', 'purple', ra('ieri')+': '+money(yesterdayRevenue,currency), 'muted')
+     + stat(ra('Încasări azi'), moneyStatHtml(todayRevenue,currency), 'chart', 'purple', ra('ieri')+': '+money(yesterdayRevenue,currency), 'muted')
    + '</div>'
    + '<div class="card" style="padding:18px 20px;"><div class="section-head"><div class="section-title">'+ra('Abonamente care expiră curând')+'</div>'+reminderBtn+'</div><div class="expiring-grid" style="margin-top:12px;">'+expCards+'</div></div>'
    + '<div class="two-col">'+scanCardHtml()+'<div class="card" style="padding:18px 20px;"><div class="section-title">'+ra('Ultimele scanări')+'</div><div style="margin-top:8px;">'+recentRows+'</div></div></div>';
@@ -2825,7 +2833,7 @@ function renderReports(){
   const newClients=state.clients.filter(c=>c.createdAt && inRange(c.createdAt,from,to)).length;
   const currency=(state.settings&&state.settings.currency);
   const prevLabel=fmtDate(prevFrom)+' – '+fmtDate(prevTo);
-  const kpi=(label,num,ic,tone,pill)=>'<div class="card stat-card tone-'+tone+'"><div class="stat-ic">'+icon(ic)+'</div><div class="stat-body"><div class="stat-label">'+esc(label)+'</div><div class="stat-numrow"><span class="stat-num">'+num+'</span>'+pill+'</div></div></div>';
+  const kpi=statCardHtml;
   const chip=(key,ic,label)=>'<button class="rp-chip'+(period===key?' on':'')+'" data-action="report-period" data-id="'+key+'">'+icon(ic,'icon-sm')+' '+esc(label)+'</button>';
 
   // Entries chart: per day (grouped by week for long ranges) or by hour of day.
@@ -2874,7 +2882,7 @@ function renderReports(){
      + kpi(ra('Clienți activi'), activeClients, 'users', 'blue', '<span class="pill pill-xs '+(newClients?'pill-success':'pill-muted')+'">+'+newClients+' '+esc(ra('noi'))+'</span>')
      + kpi(ra('Abonamente vândute'), sold, 'card', 'sky', trendPill(sold, prevSold, prevLabel))
      + kpi(ra('Total intrări'), entries.length, 'logIn', 'green', trendPill(entries.length, prevEntries, prevLabel))
-     + kpi(ra('Încasări totale'), money(revenue,currency), 'coins', 'purple', trendPill(revenue, prevRevenue, prevLabel))
+     + kpi(ra('Încasări totale'), moneyStatHtml(revenue,currency), 'coins', 'purple', trendPill(revenue, prevRevenue, prevLabel))
    + '</div>'
    + '<div class="rp-grid">'
      + '<div class="rp-col">'
@@ -3431,7 +3439,9 @@ function bindEvents(root){
   });
   root.querySelectorAll('[data-bind]').forEach(el=>{
     const path=el.getAttribute('data-bind');
-    const ev=(el.tagName==='SELECT'||el.type==='checkbox'||el.type==='date'||el.type==='time')?'change':'input';
+    const dateLike=el.type==='date'||el.type==='time';
+    const ev=(el.tagName==='SELECT'||el.type==='checkbox'||dateLike)?'change':'input';
+    let typed=false, pending=false;
     el.addEventListener(ev, ()=>{
       const val = el.type==='checkbox'? el.checked : el.value;
       setPath(state, path, val);
@@ -3439,8 +3449,20 @@ function bindEvents(root){
       if(/^clientForm\./.test(path)) return;
       if(/^history(Query|Period|Time|Result|From|To)$/.test(path)) state.historyPage=1;
       if(path==='form.typeId'){ if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); }
+      // A date typed by hand fires "change" after every digit; redrawing then would throw the cursor into
+      // another part of the date. The redraw waits until the field is left (a date picked from the calendar redraws at once).
+      if(dateLike && typed){ pending=true; return; }
       scheduleRender();
     });
+    if(dateLike){
+      el.addEventListener('keydown', ()=>{ typed=true; el.dataset.typing='1'; });
+      el.addEventListener('blur', e=>{
+        if(!pending) return; pending=false;
+        // Leaving the field by clicking a button: that button redraws after its own action.
+        if(e.relatedTarget && e.relatedTarget.closest && e.relatedTarget.closest('[data-action]')) return;
+        setTimeout(scheduleRender, 250);
+      });
+    }
   });
   root.querySelectorAll('[data-enter]').forEach(el=>{
     el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); const a=el.getAttribute('data-enter'); const btn=root.querySelector('[data-action="'+a+'"]'); if(btn) btn.click(); } });
