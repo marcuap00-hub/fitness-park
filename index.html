@@ -107,6 +107,8 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
   radial-gradient(900px 500px at 110% 10%, var(--gold), transparent 35%),
   var(--bg);}
 :root[data-theme="dark"] .gate-wrap, @media (prefers-color-scheme:dark){.gate-wrap{opacity:1;}}
+.gate-wrap{flex-direction:column;gap:16px;}
+.copyright{font-size:12px;font-weight:500;color:var(--text-faint);text-align:center;letter-spacing:.01em;}
 .gate-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 28px;}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
 .brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px;flex:none;object-fit:contain;padding:4px;}
@@ -477,6 +479,29 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .rq-empty-t{font-weight:600;font-size:14px;}
 .rq-empty-d{margin-top:2px;font-size:12px;color:var(--text-muted);}
 .rq-sec.rq-done .rq-row{opacity:.75;}
+.rq-sec.rq-photo{--rq:#D6407A;--rq-soft:rgba(214,64,122,.12);--rq-tint:rgba(214,64,122,.05);}
+.rq-av img{width:100%;height:100%;border-radius:50%;object-fit:cover;}
+.rq-av.big{width:52px;height:52px;}
+/* profile photo pickers */
+.photo-pick{display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:14px;border:1.5px dashed var(--border);border-radius:16px;background:var(--surface-2);cursor:pointer;transition:border-color .12s;}
+.photo-pick:hover{border-color:var(--accent);}
+.photo-pick.err{border-color:var(--danger);}
+.photo-pick.done{border-style:solid;}
+.photo-av{flex:none;width:64px;height:64px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);}
+.photo-av img{width:100%;height:100%;object-fit:cover;}
+.photo-av .icon{width:26px;height:26px;}
+.photo-t{font-weight:700;font-size:14px;color:var(--text);}
+.photo-d{font-size:12.5px;color:var(--text-muted);margin-top:2px;line-height:1.4;}
+.photo-btn{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 12px;border-radius:9px;background:var(--accent);color:#fff;font-size:12.5px;font-weight:700;}
+.sub-av{position:relative;flex:none;width:54px;height:54px;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.75);color:#fff;cursor:pointer;}
+.sub-av img{width:100%;height:100%;object-fit:cover;}
+.sub-av-edit{position:absolute;right:0;bottom:0;width:20px;height:20px;border-radius:50%;background:#fff;color:#171A24;display:flex;align-items:center;justify-content:center;}
+.sub-av-edit .icon{width:12px;height:12px;}
+.photo-req{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:16px;background:var(--warning-bg);border:1px solid rgba(180,104,10,.25);flex-wrap:wrap;}
+.photo-req.pending{background:var(--info-bg);border-color:rgba(36,87,201,.2);}
+.photo-req .photo-av{width:48px;height:48px;background:var(--surface);color:var(--warning);}
+.photo-req.pending .photo-av{color:var(--info);}
+.photo-req .btn{margin-left:auto;}
 :root[data-theme="dark"] .rq-sec{--rq:#8B93FA;} :root[data-theme="dark"] .rq-sec.rq-card{--rq:#F2A262;} :root[data-theme="dark"] .rq-sec.rq-ops{--rq:#A792F5;} :root[data-theme="dark"] .rq-sec.rq-done{--rq:#4FD39A;}
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .rq-sec{--rq:#8B93FA;} :root:not([data-theme="light"]) .rq-sec.rq-card{--rq:#F2A262;} :root:not([data-theme="light"]) .rq-sec.rq-ops{--rq:#A792F5;} :root:not([data-theme="light"]) .rq-sec.rq-done{--rq:#4FD39A;} }
 @media(max-width:720px){
@@ -678,7 +703,10 @@ const I18N = {
     fullName:'Nume și prenume', fullNamePh:'Ex: Popescu Ion', phone:'Telefon', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Introdu adresa de email — pe ea primești confirmarea abonamentului.', errEmailInvalid:'Adresa de email nu este validă (ex: nume@gmail.com).',
     desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal (250 MDL / oră)', wantsPrinted:'Vreau și abonamentul în format tipărit',
     notesOpt:'Observații (opțional)', sendRequest:'Trimite cererea',
-    errEnterName:'Introdu numele tău.', errEnterPhone:'Introdu numărul de telefon.', errPhoneInvalid:'Numărul de telefon nu este valid (format: 0XX XXX XXX).', errChoosePlan:'Alege un abonament.', errBirthDate:'Completează data nașterii.',
+    errEnterName:'Introdu numele tău.', errEnterPhone:'Introdu numărul de telefon.', errPhoneInvalid:'Numărul de telefon nu este valid (format: 0XX XXX XXX).', errChoosePlan:'Alege un abonament.',
+    photoTitle:'Poza ta de profil', photoHint:'Obligatorie — după ea te recunoaște recepția la intrare.', photoUpload:'Încarcă poza', photoChange:'Schimbă poza',
+    errPhoto:'Adaugă poza ta de profil — este obligatorie.', photoReqTitle:'Adaugă poza ta de profil', photoSent:'Poza a fost trimisă recepției. Apare în cont după ce o confirmă.',
+    photoPending:'Poza ta așteaptă confirmarea recepției.', photoError:'Nu am putut trimite poza. Încearcă din nou.', photoBadFile:'Alege o imagine (JPG sau PNG).', photoSendOther:'Trimite altă poză', errBirthDate:'Completează data nașterii.',
     tabSub:'Abonamentul meu', tabNews:'Noutăți & reguli', tabHistory:'Istoricul meu',
     noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția', unlimitedLabel:'Nelimitat',
     fromLabel:'De la', toLabel:'Până la',
@@ -712,7 +740,10 @@ const I18N = {
     fullName:'Имя и фамилия', fullNamePh:'Напр.: Иван Попеску', phone:'Телефон', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Введите email — на него придёт подтверждение абонемента.', errEmailInvalid:'Неверный адрес email (напр.: name@gmail.com).',
     desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера (250 MDL / час)', wantsPrinted:'Также хочу абонемент в печатном виде',
     notesOpt:'Примечания (необязательно)', sendRequest:'Отправить заявку',
-    errEnterName:'Введите ваше имя.', errEnterPhone:'Введите номер телефона.', errPhoneInvalid:'Номер телефона недействителен (формат: 0XX XXX XXX).', errChoosePlan:'Выберите абонемент.', errBirthDate:'Укажите дату рождения.',
+    errEnterName:'Введите ваше имя.', errEnterPhone:'Введите номер телефона.', errPhoneInvalid:'Номер телефона недействителен (формат: 0XX XXX XXX).', errChoosePlan:'Выберите абонемент.',
+    photoTitle:'Ваше фото профиля', photoHint:'Обязательно — по нему ресепшн узнаёт вас на входе.', photoUpload:'Загрузить фото', photoChange:'Сменить фото',
+    errPhoto:'Добавьте фото профиля — это обязательно.', photoReqTitle:'Добавьте фото профиля', photoSent:'Фото отправлено на ресепшн. Оно появится после подтверждения.',
+    photoPending:'Ваше фото ждёт подтверждения ресепшн.', photoError:'Не удалось отправить фото. Попробуйте ещё раз.', photoBadFile:'Выберите изображение (JPG или PNG).', photoSendOther:'Отправить другое фото', errBirthDate:'Укажите дату рождения.',
     tabSub:'Мой абонемент', tabNews:'Новости и правила', tabHistory:'Моя история',
     noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн', unlimitedLabel:'Безлимит',
     fromLabel:'С', toLabel:'По',
@@ -800,6 +831,11 @@ const RO_RU = {
   'Toată ziua':'Весь день', 'Dimineața (06–12)':'Утро (06–12)', 'După-amiaza (12–18)':'День (12–18)', 'Seara (18–24)':'Вечер (18–24)', 'Noaptea (00–06)':'Ночь (00–06)',
   'Acces permis':'Доступ разрешён', 'Acces refuzat':'Доступ запрещён', 'Resetează':'Сбросить', 'Observații':'Примечания', 'Vezi fișa clientului':'Открыть карточку клиента',
   'Pagina anterioară':'Предыдущая страница', 'Pagina următoare':'Следующая страница',
+  'Poze de profil de la clienți':'Фото профиля от клиентов', 'Clienți care și-au trimis poza din contul lor.':'Клиенты, отправившие фото из своего кабинета.',
+  'Aprobă':'Одобрить', 'Poza a fost aprobată.':'Фото одобрено.', 'Poză respinsă.':'Фото отклонено.', 'Clientul nu mai există.':'Клиент больше не существует.',
+  'înlocuiește poza actuală':'заменит текущее фото', 'Poză de profil (opțional)':'Фото профиля (необязательно)', 'Poza trimisă de client':'Фото, отправленное клиентом',
+  'Recepția îl recunoaște pe client după poză. Se poate adăuga și mai târziu, din fișa clientului.':'По фото ресепшн узнаёт клиента. Можно добавить и позже, из карточки клиента.',
+  'Alege poza':'Выбрать фото', 'Scoate poza':'Убрать фото', 'Alege o imagine (JPG sau PNG).':'Выберите изображение (JPG или PNG).',
   'Ultimele 31 de zile':'Последние 31 день', 'Luna trecută':'Прошлый месяц', 'Personalizat':'Свой период', 'Clienți activi':'Активные клиенты', 'noi':'новых', 'nou':'новое',
   'Abonamente vândute':'Продано абонементов', 'Total intrări':'Всего посещений', 'Încasări totale':'Всего поступлений', 'Față de perioada anterioară':'По сравнению с прошлым периодом',
   'Intrări în sală':'Посещения зала', 'Pe ore ale zilei — când e cea mai mare aglomerație':'По часам — когда больше всего людей', 'Numărul de intrări permise, pe zile':'Число разрешённых входов по дням',
@@ -1249,15 +1285,15 @@ function renderLanding(){
    + '<div class="gate-desc">'+tr('welcomeDesc')+'</div>'
    + choiceBtn('go-client','qrcode',tr('imClient'),tr('imClientDesc'))
    + choiceBtn('go-buy','tag',tr('buySub'),tr('buySubDesc'))
-   + '<div class="small faint center" style="margin-top:14px;">'+esc(gymName)+' · '+tr('clubManagement')+'</div>'
    + '<button class="back-link" data-action="go-admin" style="width:100%;justify-content:center;margin:18px 0 0;">'+icon('shield','icon-sm')+' '+tr('receptionAdmin')+'</button>'
-   + '</div></div>';
+   + '</div>'+copyrightHtml()+'</div>';
 }
+function copyrightHtml(){ return '<div class="copyright">© '+new Date().getFullYear()+' '+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div>'; }
 function renderAdminGate(){
   const needsSetup = !(state.settings && state.settings.team && state.settings.team.length);
   return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')
    + (needsSetup? adminSetupForm() : adminLoginForm())
-   + '</div></div>';
+   + '</div>'+copyrightHtml()+'</div>';
 }
 function adminLoginForm(){
   return '<div class="gate-title">'+ra('Intră în panou')+'</div>'
@@ -1286,7 +1322,7 @@ function renderClientGate(){
    + '<button class="btn btn-primary btn-block" data-action="client-login-submit">'+icon('check','icon-sm')+' '+tr('viewMySub')+'</button>'
    + '<button class="btn btn-ghost btn-block mt4" data-action="toggle-camera-client">'+icon('camera','icon-sm')+' '+(state.cameraOn?tr('stopCamera'):tr('scanWithCamera'))+'</button>'
    + (state.cameraOn? cameraBlock() : '')
-   + '</div></div>';
+   + '</div>'+copyrightHtml()+'</div>';
 }
 function renderBuyGate(){
   const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
@@ -1295,7 +1331,7 @@ function renderBuyGate(){
      + '<div class="gate-title">'+tr('buySentTitle')+'</div>'
      + '<div class="gate-desc">'+tr('buySentDesc')+'</div>'
      + '<button class="btn btn-primary btn-block" data-action="back-landing">'+tr('backToStart')+'</button>'
-     + '</div></div>';
+     + '</div>'+copyrightHtml()+'</div>';
   }
   const f=state.buyForm||{};
   const buyTypes=state.types.filter(t=>t.active!==false && t.tier!=='exclusiv');
@@ -1312,6 +1348,11 @@ function renderBuyGate(){
   return '<div class="gate-wrap"><div class="gate-card" style="max-width:520px;">'+backLink()+brandBlock(gymName)
    + '<div class="gate-title">'+tr('buyTitle')+'</div>'
    + '<div class="gate-desc">'+tr('buyDesc')+'</div>'
+   + '<label class="photo-pick'+(f.photoDataUri?' done':'')+(state.formErr===tr('errPhoto')?' err':'')+'">'
+     + '<span class="photo-av">'+(f.photoDataUri? '<img src="'+f.photoDataUri+'" alt="">' : icon('camera'))+'</span>'
+     + '<span><span class="photo-t" style="display:block;">'+tr('photoTitle')+' *</span><span class="photo-d" style="display:block;">'+tr('photoHint')+'</span>'
+     + '<span class="photo-btn">'+icon(f.photoDataUri?'refresh':'upload','icon-sm')+' '+(f.photoDataUri? tr('photoChange') : tr('photoUpload'))+'</span></span>'
+     + '<input type="file" accept="image/*" data-photo-target="buyForm" style="display:none;"></label>'
    + field(tr('fullName'),'text','buyForm.name',f.name,tr('fullNamePh'))
    + field(tr('phone'),'tel','buyForm.phone',f.phone,tr('phonePh'))
    + field(tr('emailOpt'),'email','buyForm.email',f.email,'nume@gmail.com')
@@ -1323,7 +1364,7 @@ function renderBuyGate(){
    + '<label class="field">'+tr('notesOpt')+'<textarea rows="2" data-bind="buyForm.note">'+esc(f.note||'')+'</textarea></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
    + '<button class="btn btn-primary btn-block" data-action="submit-buy-request">'+icon('send','icon-sm')+' '+tr('sendRequest')+'</button>'
-   + '</div></div>';
+   + '</div>'+copyrightHtml()+'</div>';
 }
 function emailConfigured(){ return typeof EMAIL_SCRIPT_URL!=='undefined' && !!EMAIL_SCRIPT_URL; }
 async function notifyClientByEmail(client, kind, silent){
@@ -1341,6 +1382,7 @@ async function notifyClientByEmail(client, kind, silent){
 }
 async function submitBuyRequest(){
   const f=state.buyForm||{};
+  if(!f.photoDataUri){ state.formErr=tr('errPhoto'); scheduleRender(); return; }
   if(!f.name||!f.name.trim()){ state.formErr=tr('errEnterName'); scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr=tr('errEnterPhone'); scheduleRender(); return; }
   if(!isValidMdPhone(f.phone)){ state.formErr=tr('errPhoneInvalid'); scheduleRender(); return; }
@@ -1349,7 +1391,7 @@ async function submitBuyRequest(){
   if(!f.birthYear){ state.formErr=tr('errBirthDate'); scheduleRender(); return; }
   if(!f.typeId){ state.formErr=tr('errChoosePlan'); scheduleRender(); return; }
   const t=typeById(f.typeId);
-  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthYear), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; try{ localStorage.setItem('fp_pending_phone', f.phone.trim()); localStorage.setItem('fp_pending_at', new Date().toISOString()); }catch(e){} scheduleRender(); }
+  try{ await colBuyReq().add({ name:f.name.trim(), phone:f.phone.trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthYear), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, photoDataUri:f.photoDataUri, status:'pending', date:new Date().toISOString() }); state.buySubmitted=true; state.formErr=''; try{ localStorage.setItem('fp_pending_phone', f.phone.trim()); localStorage.setItem('fp_pending_at', new Date().toISOString()); }catch(e){} scheduleRender(); }
   catch(e){ state.formErr=tr('toastReqError'); scheduleRender(); }
 }
 function cameraBlock(){ return '<div class="center" style="margin-top:10px;"><video id="scanVideo" class="scan-video" autoplay playsinline muted></video><div class="small faint mt4">'+tr('aimCamera')+'</div></div>'; }
@@ -1378,7 +1420,7 @@ function renderAdminShell(){
    + '<div class="main">'
      + '<div class="topbar"><div class="flex items-center gap8" style="min-width:0;"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div style="min-width:0;"><div class="topbar-eyebrow">'+ra('Administrare sală')+'</div><div class="topbar-title">'+ra(meta.label)+'</div></div></div><div class="flex gap8 items-center" style="flex:none;">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="admin-lock" title="'+esc(ra('Blochează'))+'">'+icon('lock','icon-sm')+'<span class="lock-txt"> '+ra('Blochează')+'</span></button></div></div>'
      + (state.mobileNavOpen? ('<div class="mobile-nav-backdrop"></div><div class="mobile-nav">'+navHtml+'</div>') : '')
-     + '<div class="content">'+body+'</div>'
+     + '<div class="content">'+body+copyrightHtml()+'</div>'
    + '</div>'
    + (state.modal? renderModal() : '')
    + '</div>';
@@ -1442,7 +1484,8 @@ function scanCardHtml(){
 
 /* ---- Requests (all client requests in one place) ---- */
 function renderRequests(){
-  const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending');
+  const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending' && r.kind!=='photo');
+  const pendingPhotos=(state.buyRequests||[]).filter(r=>r.status==='pending' && r.kind==='photo');
   const cardPending=state.clients.filter(c=>c.cardRequestPending);
   const allReqOps=(state.modLog||[]).filter(l=>l.operation==='Cerere antrenor personal' || l.operation==='Cerere card tipărit');
   const pendingOps=allReqOps.filter(l=>l.resolved!==true).slice(0,30);
@@ -1450,7 +1493,7 @@ function renderRequests(){
 
   const sep='<span class="sep">·</span>';
   const time=iso=> iso? '<span class="rq-time">'+icon('clock','icon-sm')+' '+esc(fmtDateTime(iso))+'</span>' : '';
-  const row=(avIcon, main, when, actions)=>'<div class="rq-row"><div class="rq-av">'+icon(avIcon,'icon-sm')+'</div><div class="rq-main">'+main+'</div>'+time(when)+(actions? '<div class="rq-actions">'+actions+'</div>' : '')+'</div>';
+  const row=(avIcon, main, when, actions, photo)=>'<div class="rq-row"><div class="rq-av'+(photo?' big':'')+'">'+(photo? '<img src="'+photo+'" alt="">' : icon(avIcon,'icon-sm'))+'</div><div class="rq-main">'+main+'</div>'+time(when)+(actions? '<div class="rq-actions">'+actions+'</div>' : '')+'</div>';
   const empty=emptyIcon=>'<div class="rq-empty"><div class="rq-av">'+icon(emptyIcon,'icon-sm')+'</div><div><div class="rq-empty-t">'+esc(ra('Nicio cerere în așteptare.'))+'</div><div class="rq-empty-d">'+esc(ra('Când apar cereri noi, acestea vor fi afișate aici.'))+'</div></div></div>';
   const section=(key, cls, ic, title, desc, count, body)=>{
     const collapsed=isReqCollapsed(key);
@@ -1473,8 +1516,16 @@ function renderRequests(){
     const actions=(needsOwner? '<span class="small faint">'+icon('lock','icon-sm')+' '+esc(ra('Necesită aprobarea unui proprietar'))+'</span>'
         : '<button class="btn btn-primary btn-sm" data-action="convert-buy-request" data-id="'+r.id+'">'+icon('userPlus','icon-sm')+' '+esc(ra('Creează client'))+'</button>')
       + '<button class="btn btn-ghost btn-sm rq-reject" data-action="reject-buy-request" data-id="'+r.id+'">'+icon('x','icon-sm')+' '+esc(ra('Respinge'))+'</button>';
-    return row('user', main, r.date, actions);
+    return row('user', main, r.date, actions, r.photoDataUri);
   }).join('') : empty('cart');
+
+  const photoRows=pendingPhotos.map(r=>{
+    const c=state.clients.find(x=>x.id===r.clientId);
+    return row('camera', esc(r.clientName||'—')+sep+'<span class="mono">'+esc(r.code||'')+'</span>'+(c&&c.photoDataUri? '<span class="rq-chip">'+icon('refresh','icon-sm')+' '+esc(ra('înlocuiește poza actuală'))+'</span>' : ''), r.date,
+      '<button class="btn btn-primary btn-sm" data-action="approve-photo-request" data-id="'+r.id+'">'+icon('check','icon-sm')+' '+esc(ra('Aprobă'))+'</button>'
+      + '<button class="btn btn-ghost btn-sm rq-reject" data-action="reject-photo-request" data-id="'+r.id+'">'+icon('x','icon-sm')+' '+esc(ra('Respinge'))+'</button>'
+      + (c? '<button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+icon('user','icon-sm')+' '+esc(ra('Vezi fișa'))+'</button>' : ''), r.photoDataUri);
+  }).join('');
 
   const cardRows=cardPending.length? cardPending.map(c=>row('card',
       esc(c.name)+sep+esc(c.phone)+sep+esc(ra('cod curent'))+' <span class="mono">'+esc(c.code)+'</span>',
@@ -1490,6 +1541,7 @@ function renderRequests(){
 
   return '<div class="section-sub">'+ra('Toate cererile clienților, într-un singur loc')+'</div>'
    + section('buy', 'rq-buy', 'cart', ra('Cereri de cumpărare abonament'), ra('Clienți care doresc să achiziționeze un abonament.'), pendingBuys.length, buyRows)
+   + (pendingPhotos.length? section('photo', 'rq-photo', 'camera', ra('Poze de profil de la clienți'), ra('Clienți care și-au trimis poza din contul lor.'), pendingPhotos.length, photoRows) : '')
    + section('card', 'rq-card', 'card', ra('Cereri card pierdut'), ra('Clienți care au raportat pierderea cardului de acces.'), cardPending.length, cardRows)
    + section('ops', 'rq-ops', 'dumbbell', ra('Cereri antrenor personal / card tipărit'), ra('Solicitări pentru antrenor personal sau card tipărit.'), pendingOps.length, pendingOpsRows)
    + (resolvedOps.length? section('done', 'rq-done', 'check', ra('Rezolvate recent'), ra('Ultimele cereri marcate ca rezolvate.'), resolvedOps.length, resolvedOpsRows) : '');
@@ -1555,6 +1607,11 @@ function modalNewClient(){
   const availableTypes=state.types.filter(t=>t.active!==false && (state.adminRole==='owner' || t.tier!=='exclusiv'));
   const selType=typeById(f.typeId); const validToField=(selType&&selType.unlimited)? ('<label class="field">'+ra('Valabil până la')+'<div class="small" style="padding:10px 0;color:var(--text-faint);">∞ '+ra('fără expirare')+'</div></label>') : field(ra('Valabil până la'),'date','form.validTo',f.validTo);
   return modalWrap(ra('Client nou'),ra('Datele se salvează în baza de date a sălii.'), ''
+   + '<label class="photo-pick'+(f.photoDataUri?' done':'')+'" style="margin-bottom:0;">'
+     + '<span class="photo-av">'+(f.photoDataUri? '<img src="'+f.photoDataUri+'" alt="">' : icon('camera'))+'</span>'
+     + '<span><span class="photo-t" style="display:block;">'+(f.fromRequest&&f.photoDataUri? ra('Poza trimisă de client') : ra('Poză de profil (opțional)'))+'</span><span class="photo-d" style="display:block;">'+ra('Recepția îl recunoaște pe client după poză. Se poate adăuga și mai târziu, din fișa clientului.')+'</span>'
+     + '<span class="photo-btn">'+icon(f.photoDataUri?'refresh':'upload','icon-sm')+' '+(f.photoDataUri? ra('Schimbă poza') : ra('Alege poza'))+'</span></span>'
+     + '<input type="file" accept="image/*" data-photo-target="form" style="display:none;"></label>'
    + field(ra('Nume și prenume'),'text','form.name',f.name,'Ex: Popescu Ion')
    + field(ra('Telefon'),'tel','form.phone',f.phone,'06X XXX XXX')
    + field('Email','email','form.email',f.email,'nume@gmail.com')
@@ -1589,6 +1646,7 @@ async function saveNewClient(){
     subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', unlimited:t?!!t.unlimited:false, accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null,
       entryLimit:(t&&t.entryLimit)||null, entriesUsed:0,
       validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method } };
+  if(f.photoDataUri){ doc.photoDataUri=f.photoDataUri; doc.photoUpdatedAt=doc.createdAt; }
   try{
     const ref=await colClients().add(doc);
     if(!state.clients.find(x=>x.id===ref.id)){ state.clients=state.clients.concat([Object.assign({id:ref.id}, doc)]); }
@@ -1711,9 +1769,34 @@ async function resolveRequest(id){
 }
 function approveCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Aprobi cererea și generezi un card nou? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'), async ()=>{ const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode, cardRequestPending:false, cardRequestStatus:'approved'}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (cerere aprobată)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }); }
 async function rejectCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ await colClients().doc(id).update({cardRequestPending:false, cardRequestStatus:'rejected'}); await logMod('Cerere card nou respinsă', c.name); openModal('clientDetail',{id}); showToast(ra('Cerere respinsă.')); } catch(e){ showToast(ra('Eroare.')); } }
-function convertBuyRequest(id){ const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return; const t=typeById(r.typeId); if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ showToast(ra('Abonamentele Exclusiv necesită aprobarea unui proprietar.')); return; } const from=todayStr(); const bd=splitBirthDate(r.birthDate); openModal('newClient', { name:r.name, phone:r.phone, email:r.email||'', birthYear:bd.birthYear, typeId:r.typeId, price:t?t.price:r.price, currency:t?t.currency:r.currency, validFrom:from, validTo:subEndDate(from,t), paidFull:true, amountPaid:0, method:'', notes:r.note||'', fromRequest:id }); }
+function convertBuyRequest(id){ const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return; const t=typeById(r.typeId); if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ showToast(ra('Abonamentele Exclusiv necesită aprobarea unui proprietar.')); return; } const from=todayStr(); const bd=splitBirthDate(r.birthDate); openModal('newClient', { name:r.name, phone:r.phone, email:r.email||'', birthYear:bd.birthYear, typeId:r.typeId, price:t?t.price:r.price, currency:t?t.currency:r.currency, validFrom:from, validTo:subEndDate(from,t), paidFull:true, amountPaid:0, method:'', notes:r.note||'', fromRequest:id, photoDataUri:r.photoDataUri||'' }); }
+async function approvePhotoRequest(id){
+  const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return;
+  const c=state.clients.find(x=>x.id===r.clientId);
+  if(!c){ colBuyReq().doc(id).update({status:'rejected'}).catch(()=>{}); showToast(ra('Clientul nu mai există.')); return; }
+  try{ await colClients().doc(c.id).update({photoDataUri:r.photoDataUri, photoUpdatedAt:new Date().toISOString()}); await colBuyReq().doc(id).update({status:'approved'}); await logMod('Poză client aprobată', c.name); showToast(ra('Poza a fost aprobată.')); }
+  catch(e){ showToast(ra('Eroare.')); }
+}
+async function rejectPhotoRequest(id){ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Poză respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }
+// Clients can't write their own record (Firestore rules), so a photo from the client portal goes
+// to reception as a request and is applied only once staff approve it.
+async function sendClientPhoto(file){
+  const c=state.clients.find(x=>x.id===state.clientSession); if(!c) return;
+  try{
+    const dataUri=await readImageResized(file, 320, 0.62);
+    await colBuyReq().add({kind:'photo', clientId:c.id, clientName:c.name, code:c.code, photoDataUri:dataUri, status:'pending', date:new Date().toISOString()});
+    try{ localStorage.setItem('fp_photo_sent_'+c.id, new Date().toISOString()); }catch(e){}
+    showToast(tr('photoSent')); scheduleRender();
+  }catch(e){ showToast(tr('photoError')); }
+}
+function clientPhotoPending(c){
+  let at=null; try{ at=localStorage.getItem('fp_photo_sent_'+c.id); }catch(e){}
+  if(!at) return false;
+  const fresh=(Date.now()-new Date(at).getTime()) < 14*86400000;
+  return fresh && !(c.photoUpdatedAt && c.photoUpdatedAt>=at);
+}
 async function rejectBuyRequest(id){ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }
-function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Sigur înlocuiești cardul acestui client? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'), async ()=>{ const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }); } function readImageResized(file, maxSize, quality){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=()=>reject(new Error('read-error')); reader.onload=()=>{ const img=new Image(); img.onerror=()=>reject(new Error('image-error')); img.onload=()=>{ let w=img.width, h=img.height; const scale=Math.min(1, maxSize/Math.max(w,h)); w=Math.max(1,Math.round(w*scale)); h=Math.max(1,Math.round(h*scale)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const ctx=cv.getContext('2d'); if(!ctx){ reject(new Error('no-ctx')); return; } ctx.drawImage(img,0,0,w,h); resolve(cv.toDataURL('image/jpeg', quality)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); } async function uploadClientPhoto(id, file){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ const dataUri=await readImageResized(file, 320, 0.62); await colClients().doc(id).update({photoDataUri:dataUri}); await logMod('Fotografie client actualizată', c.name); openModal('clientDetail',{id}); showToast(ra('Fotografia a fost salvată.')); }catch(e){ showToast(ra('Eroare la încărcarea fotografiei.')); } }
+function replaceLostCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Sigur înlocuiești cardul acestui client? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'), async ()=>{ const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (pierdut)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }); } function readImageResized(file, maxSize, quality){ return new Promise((resolve,reject)=>{ const reader=new FileReader(); reader.onerror=()=>reject(new Error('read-error')); reader.onload=()=>{ const img=new Image(); img.onerror=()=>reject(new Error('image-error')); img.onload=()=>{ let w=img.width, h=img.height; const scale=Math.min(1, maxSize/Math.max(w,h)); w=Math.max(1,Math.round(w*scale)); h=Math.max(1,Math.round(h*scale)); const cv=document.createElement('canvas'); cv.width=w; cv.height=h; const ctx=cv.getContext('2d'); if(!ctx){ reject(new Error('no-ctx')); return; } ctx.drawImage(img,0,0,w,h); resolve(cv.toDataURL('image/jpeg', quality)); }; img.src=reader.result; }; reader.readAsDataURL(file); }); } async function uploadClientPhoto(id, file){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ const dataUri=await readImageResized(file, 320, 0.62); await colClients().doc(id).update({photoDataUri:dataUri, photoUpdatedAt:new Date().toISOString()}); await logMod('Fotografie client actualizată', c.name); openModal('clientDetail',{id}); showToast(ra('Fotografia a fost salvată.')); }catch(e){ showToast(ra('Eroare la încărcarea fotografiei.')); } }
 function deleteClientPhoto(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Ștergi poza acestui client?'), async ()=>{ try{ await colClients().doc(id).update({photoDataUri:firebase.firestore.FieldValue.delete()}); await logMod('Fotografie client ștearsă', c.name); openModal('clientDetail',{id}); showToast(ra('Fotografia a fost ștearsă.')); }catch(e){ showToast(ra('Eroare.')); } }); } function roundRectPath(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
 function newCardToast(code){ return (state.lang==='ru'?'Новая карта создана: ':'Card nou generat: ')+code+(state.lang==='ru'?' · зарегистрирована пошлина 10 MDL.':' · taxă 10 MDL înregistrată.'); }
 function buildCardCanvas(c){
@@ -2425,14 +2508,20 @@ function renderClientPortal(){
    + '<div class="flex gap8 items-center">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="client-logout">'+icon('logOut','icon-sm')+'</button></div>'
    + '</div></div>'
    + '<div class="client-body">'
-     + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div><div class="small" style="opacity:.85;">'+esc(subTypeDisplayName(c)||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
+     + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div class="flex items-center" style="gap:12px;min-width:0;">'
+       + '<label class="sub-av" title="'+esc(c.photoDataUri? tr('photoChange') : tr('photoUpload'))+'">'+(c.photoDataUri? '<img src="'+c.photoDataUri+'" alt="">' : icon('camera'))+'<span class="sub-av-edit">'+icon(c.photoDataUri?'edit':'plus')+'</span><input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label>'
+       + '<div style="min-width:0;"><div class="small" style="opacity:.85;">'+esc(subTypeDisplayName(c)||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
        + (tone==='unlimited'? ('<div class="sub-days">∞<span>'+tr('unlimitedLabel')+'</span></div>') : dl!==null? ('<div class="sub-days">'+(dl<0?0:dl)+'<span>'+(dl<0?tr('subExpired'):tr('daysLeft'))+'</span></div>') : '<div class="sub-days" style="font-size:20px;">'+tr('noSubShort')+'<span>'+tr('contactReception')+'</span></div>')
        + '<div class="sub-range"><span>'+tr('fromLabel')+' '+fmtDate(sub.validFrom)+'</span><span>'+(tone==='unlimited'? '∞' : (tr('toLabel')+' '+fmtDate(sub.validTo)))+'</span></div></div>'
+     + (c.photoDataUri? '' : clientPhotoPending(c)
+        ? '<div class="photo-req pending"><span class="photo-av">'+icon('clock')+'</span><div style="flex:1;min-width:180px;"><div class="photo-t">'+tr('photoPending')+'</div></div><label class="btn btn-ghost btn-sm">'+icon('camera','icon-sm')+' '+tr('photoSendOther')+'<input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label></div>'
+        : '<div class="photo-req"><span class="photo-av">'+icon('camera')+'</span><div style="flex:1;min-width:180px;"><div class="photo-t">'+tr('photoReqTitle')+' *</div><div class="photo-d">'+tr('photoHint')+'</div></div><label class="btn btn-primary btn-sm">'+icon('upload','icon-sm')+' '+tr('photoUpload')+'<input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label></div>')
      + '<div class="client-tabs">'
        + '<div class="client-tab'+(tab==='sub'?' active':'')+'" data-action="client-tab" data-tab="sub">'+tr('tabSub')+'</div>'
        + '<div class="client-tab'+(tab==='news'?' active':'')+'" data-action="client-tab" data-tab="news">'+tr('tabNews')+'</div>'
        + '<div class="client-tab'+(tab==='history'?' active':'')+'" data-action="client-tab" data-tab="history">'+tr('tabHistory')+'</div></div>'
      + (tab==='sub'? clientTabSub(c) : tab==='news'? clientTabNews() : clientTabHistory(myLog))
+     + copyrightHtml()
    + '</div></div>';
 }
 function clientTabSub(c){
@@ -2534,6 +2623,14 @@ function afterRenderHooks(){
 function bindEvents(root){
   root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('input[type="tel"]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=el.value.replace(/\D/g,'').slice(0,11); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
   root.querySelectorAll('[data-logo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const file=el.files&&el.files[0]; if(file) uploadGymLogo(file); }); });
+  // Photo pickers inside forms (buy request, new client) keep the resized image in the form state until it is saved.
+  root.querySelectorAll('[data-photo-target]').forEach(el=>{ el.addEventListener('change', async ()=>{
+    const file=el.files&&el.files[0]; if(!file) return;
+    if(!/^image\//.test(file.type)){ showToast(tr('photoBadFile')); return; }
+    try{ const uri=await readImageResized(file, 320, 0.62); const key=el.getAttribute('data-photo-target'); state[key]=Object.assign({}, state[key], {photoDataUri:uri}); if(state.formErr===tr('errPhoto')) state.formErr=''; scheduleRender(); }
+    catch(e){ showToast(tr('photoBadFile')); }
+  }); });
+  root.querySelectorAll('[data-client-photo]').forEach(el=>{ el.addEventListener('change', ()=>{ const file=el.files&&el.files[0]; if(!file) return; if(!/^image\//.test(file.type)){ showToast(tr('photoBadFile')); return; } sendClientPhoto(file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
   root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.hasAttribute('data-confirm-overlay')){ state.confirmDialog=null; scheduleRender(); } else if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
   root.querySelectorAll('[data-nav]').forEach(el=>{
@@ -2581,6 +2678,8 @@ function onAction(el){
     case 'toggle-pause-client': togglePauseClient(id); return;
     case 'delete-client': askConfirm(ra('Sigur ștergi acest client? Acțiunea nu poate fi anulată.'), ()=>deleteClient(id), {danger:true}); return;
     case 'copy-code': copyClientCode(id); return;
+    case 'approve-photo-request': runOnce(()=>approvePhotoRequest(id)); return;
+    case 'reject-photo-request': runOnce(()=>rejectPhotoRequest(id)); return;
     case 'toggle-req': state.reqCollapsed=Object.assign({}, state.reqCollapsed, {[id]:!isReqCollapsed(id)}); break;
     case 'clear-client-query': state.clientQuery=''; break;
     case 'clear-history-query': state.historyQuery=''; state.historyPage=1; break;
