@@ -553,6 +553,17 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .scan-zone.ok{border-color:var(--success);background:var(--success-bg);}
 .scan-zone.bad{border-color:var(--danger);background:var(--danger-bg);}
 .scan-ic-wrap{width:58px;height:58px;border-radius:16px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-faint);}
+.scan-photo{position:relative;width:104px;height:104px;}
+.scan-photo img{width:104px;height:104px;border-radius:50%;object-fit:cover;border:3px solid var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.12);}
+.scan-badge{position:absolute;right:0;bottom:2px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;border:3px solid var(--surface);}
+.scan-zone.ok .scan-badge{background:var(--success);} .scan-zone.bad .scan-badge{background:var(--danger);}
+.desk-side{display:flex;flex-direction:column;gap:14px;min-width:0;}
+.desk-search{width:100%;margin-top:12px;}
+.desk-results{margin-top:8px;}
+.desk-name{font-weight:600;font-size:13.5px;margin-bottom:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.avatar.desk-av{overflow:hidden;padding:0;}
+.avatar.desk-av img{width:100%;height:100%;object-fit:cover;}
+.role-pill-reception{background:var(--success-bg);color:var(--success);}
 .scan-title{font-weight:700;font-size:15px;}
 .scan-sub{font-size:12.5px;color:var(--text-muted);}
 video.scan-video{width:100%;max-width:280px;border-radius:12px;margin-top:6px;}
@@ -1182,7 +1193,9 @@ const RO_RU = {
   'Identitatea sălii':'Данные зала', 'Apare pe ecranul de start, în panou și în contul clienților.':'Показывается на стартовом экране, в панели и в кабинете клиента.',
   'Preț antrenor personal (apare în contul clientului)':'Цена персонального тренера (видна в кабинете клиента)', 'Logo (opțional)':'Логотип (необязательно)', 'Încarcă logo':'Загрузить логотип', 'Logo implicit':'Стандартный логотип', 'Adresă':'Адрес', 'Salvează identitatea':'Сохранить данные',
   'Numele sălii nu poate fi gol.':'Название зала не может быть пустым.', 'Alege o imagine (PNG sau JPG).':'Выберите изображение (PNG или JPG).', 'Imaginea e prea mare (maxim 2 MB).':'Изображение слишком большое (макс. 2 МБ).', 'Nu am putut citi imaginea.':'Не удалось прочитать изображение.',
-  'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов.',
+  'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов. Сотрудники ресепшн только сканируют входы.',
+  'Recepționer':'Ресепшн', 'Recepționer — doar scanează':'Ресепшн — только сканирует', 'Administratorii pot adăuga doar recepționeri.':'Администраторы могут добавлять только сотрудников ресепшн.', 'Administratorii pot gestiona doar recepționerii.':'Администраторы могут управлять только сотрудниками ресепшн.',
+  'Caută client după nume':'Поиск клиента по имени', 'Pentru clienții care și-au uitat cardul.':'Для клиентов, которые забыли карту.', 'Scrie cel puțin 2 litere din nume':'Введите хотя бы 2 буквы имени', 'Fără acces':'Нет доступа', 'Valabil':'Действителен','Verifică intrarea':'Проверить вход', 'Nicio scanare azi.':'Сегодня сканирований нет.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
   'Modifică membrul echipei':'Изменить сотрудника', 'Colegul va intra în panou cu acest email și parola de mai jos.':'Коллега будет входить с этим email и паролем ниже.', 'Trebuie să rămână cel puțin un proprietar.':'Должен остаться хотя бы один владелец.',
   'Mesaje pentru clienți':'Сообщения клиентам', 'Textele din emailurile automate și noutățile din contul clientului.':'Тексты автоматических писем и новости в кабинете клиента.',
@@ -1359,7 +1372,8 @@ function saveSettingsDoc(overrides){
   const merged=Object.assign({}, state.settings||DEFAULT_SETTINGS, overrides);
   // Once the team list lives in private/staff it must never be copied back into the public settings.
   if(state.staffDoc || merged.hasTeam){ delete merged.team; delete merged.teamEmails; merged.hasTeam=true; }
-  else merged.teamEmails=(merged.team||[]).map(m=>(m.email||'').trim().toLowerCase()).filter(Boolean);
+  // Receptionists are left out: in the old rules everyone on this list has full access.
+  else merged.teamEmails=(merged.team||[]).filter(m=>m.role!=='reception').map(m=>(m.email||'').trim().toLowerCase()).filter(Boolean);
   return refSettings().set(merged);
 }
 const colTypes=()=>db.collection('subscriptionTypes');
@@ -1415,9 +1429,18 @@ let staffUnsubs=[];
 async function subscribeStaff(){
   unsubscribeStaff();
   // Firestore picks up the new login token asynchronously; wait until a staff-only read succeeds, otherwise the listeners would start as anonymous and die with permission-denied.
-  for(let i=0;i<8;i++){ try{ await colPay().limit(1).get(); break; }catch(e){ await new Promise(r=>setTimeout(r,500)); } }
+  const desk=isDeskRole();
+  for(let i=0;i<8;i++){ try{ await (desk? colLog() : colPay()).limit(1).get(); break; }catch(e){ await new Promise(r=>setTimeout(r,500)); } }
   if(!state.adminUnlocked) return;
   const toList=snap=>snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
+  // A receptionist only gets what scanning needs: the clients and the access log.
+  if(desk){
+    staffUnsubs=[
+      colClients().onSnapshot(snap=>{ state.clients=toList(snap); scheduleRender(); }, ()=>{}),
+      colLog().orderBy('timestamp','desc').limit(300).onSnapshot(snap=>{ state.log=toList(snap); scheduleRender(); }, ()=>{}),
+    ];
+    return;
+  }
   staffUnsubs=[
     colClients().onSnapshot(snap=>{ state.clients=toList(snap); normalizeClientEmails(); scheduleRender(); }, ()=>{}),
     colLog().orderBy('timestamp','desc').limit(1500).onSnapshot(snap=>{ state.log=toList(snap); scheduleRender(); }, ()=>{}),
@@ -1448,16 +1471,30 @@ async function staffMemberFor(email){
   const find=team=>(team||[]).find(m=>(m.email||'').toLowerCase()===email) || null;
   let settings={}; try{ const s=await refSettings().get(); settings=(s.exists&&s.data())||{}; }catch(e){}
   if(!settings.hasTeam){ state.staffDoc=null; return find(settings.team); }
-  // Only staff may read the list. Right after a login Firestore can still be using the previous (anonymous)
-  // token for a moment, so a refusal is retried briefly before deciding this is not a staff account.
+  // Only the team may read the list. Right after a login Firestore can still be using the previous (anonymous)
+  // token for a moment, so a refusal is retried briefly before deciding this is not a team account.
   for(let i=0;i<4;i++){
-    try{ const s=await refStaff().get(); state.staffDoc=s.exists? s.data() : null; return find(state.staffDoc&&state.staffDoc.team); }
-    catch(e){ if(!e || e.code!=='permission-denied') return null; await new Promise(r=>setTimeout(r,400)); }
+    try{
+      const s=await refStaff().get(); const d=s.exists? s.data() : null; if(!d) return null;
+      // The role comes from the lists the Firestore rules check, not from the editable team entries.
+      const role=(d.owners||[]).includes(email)? 'owner' : (d.emails||[]).includes(email)? 'admin' : (d.desk||[]).includes(email)? 'reception' : null;
+      if(role!=='reception') state.staffDoc=d;
+      return role? Object.assign({email}, find(d.team), {role}) : null;
+    }catch(e){ if(!e || e.code!=='permission-denied') return null; await new Promise(r=>setTimeout(r,400)); }
   }
   return null;
 }
-// emails = who counts as staff; owners = who may change the list (both checked by the Firestore rules).
-function staffDocFor(team){ const em=m=>(m.email||'').trim().toLowerCase(); return {team, emails:team.map(em).filter(Boolean), owners:team.filter(m=>m.role==='owner').map(em).filter(Boolean)}; }
+// emails = full staff; owners = who may change the whole list; desk = receptionists (scan only).
+// All three are checked by the Firestore rules.
+function staffDocFor(team){
+  const em=m=>(m.email||'').trim().toLowerCase();
+  return {team, emails:team.filter(m=>m.role!=='reception').map(em).filter(Boolean), owners:team.filter(m=>m.role==='owner').map(em).filter(Boolean), desk:team.filter(m=>m.role==='reception').map(em).filter(Boolean)};
+}
+function isDeskRole(){ return state.adminRole==='reception'; }
+function normTeamRole(r){ return r==='owner'||r==='reception'? r : 'admin'; }
+function teamRoleLabel(r){ r=normTeamRole(r); return r==='owner'? ra('Proprietar') : r==='reception'? ra('Recepționer') : ra('Administrator'); }
+// Owners manage everyone; administrators only receptionists.
+function canManageMember(role){ return state.adminRole==='owner' || (state.adminRole==='admin' && role==='reception'); }
 async function saveTeam(team){
   if(state.staffDoc || (state.settings&&state.settings.hasTeam)){ const d=staffDocFor(team); await refStaff().set(d); state.staffDoc=d; }
   else await saveSettingsDoc({team});
@@ -1494,9 +1531,9 @@ async function restoreSignedInUser(user){
 }
 function unlockAdmin(member){
   stopClientSession();
-  state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
+  state.adminUnlocked=true; state.adminRole=['owner','admin','reception'].includes(member.role)? member.role : 'admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception'; state.deskQuery='';
   lastActivityAt=Date.now();
-  subscribeStaff().then(migrateStaffList);
+  if(isDeskRole()) subscribeStaff(); else subscribeStaff().then(migrateStaffList);
   scheduleRender();
 }
 let clientUnsub=null;
@@ -2018,18 +2055,19 @@ const ADMIN_NAV=[
   {key:'settings', label:'Sală & echipă', ic:'settings'},
 ];
 function renderAdminShell(){
-  const sec=state.adminSection;
-  const navList = state.adminRole==='owner'? ADMIN_NAV : ADMIN_NAV.filter(n=>n.key!=='reports');
+  const desk=isDeskRole();
+  const sec=desk? 'reception' : state.adminSection;
+  const navList = desk? ADMIN_NAV.filter(n=>n.key==='reception') : state.adminRole==='owner'? ADMIN_NAV : ADMIN_NAV.filter(n=>n.key!=='reports');
   const pendingReqCount=(state.buyRequests||[]).filter(r=>r.status==='pending').length + state.clients.filter(c=>c.cardRequestPending).length + (state.modLog||[]).filter(l=>(l.operation==='Cerere antrenor personal'||l.operation==='Cerere card tipărit') && l.resolved!==true).length;
   const navHtml=navList.map(n=>'<div class="nav-item'+(sec===n.key?' active':'')+'" data-nav="'+n.key+'">'+icon(n.ic,'icon-sm')+ra(n.label)+((n.key==='requests'&&pendingReqCount)? (' <span class="pill pill-danger" style="margin-left:auto;">'+pendingReqCount+'</span>') : '')+'</div>').join('');
   const meta=ADMIN_NAV.find(n=>n.key===sec)||ADMIN_NAV[0];
-  const body = sec==='reception'?renderReception() : sec==='requests'?renderRequests() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings();
+  const body = desk? renderDesk() : sec==='reception'?renderReception() : sec==='requests'?renderRequests() : sec==='clients'?renderClients() : sec==='history'?renderHistory() : sec==='plans'?renderPlans() : sec==='reports'&&state.adminRole==='owner'?renderReports() : renderSettings();
   return '<div class="admin-shell">'
    + '<div class="sidebar"><div class="brand"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub">'+ra('Club Management')+'</div></div></div>'
      + navHtml
    + '</div>'
    + '<div class="main">'
-     + '<div class="topbar"><div class="flex items-center gap8" style="min-width:0;"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div style="min-width:0;"><div class="topbar-eyebrow">'+ra('Administrare sală')+'</div><div class="topbar-title">'+ra(meta.label)+'</div></div></div><div class="flex gap8 items-center" style="flex:none;">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="admin-lock" title="'+esc(ra('Blochează'))+'">'+icon('lock','icon-sm')+'<span class="lock-txt"> '+ra('Blochează')+'</span></button></div></div>'
+     + '<div class="topbar"><div class="flex items-center gap8" style="min-width:0;"><button class="nav-toggle" data-action="toggle-mobile-nav">'+icon('menu','icon-sm')+'</button><div style="min-width:0;"><div class="topbar-eyebrow">'+(desk? ra('Recepționer') : ra('Administrare sală'))+'</div><div class="topbar-title">'+ra(meta.label)+'</div></div></div><div class="flex gap8 items-center" style="flex:none;">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="admin-lock" title="'+esc(ra('Blochează'))+'">'+icon('lock','icon-sm')+'<span class="lock-txt"> '+ra('Blochează')+'</span></button></div></div>'
      + (state.mobileNavOpen? ('<div class="mobile-nav-backdrop"></div><div class="mobile-nav">'+navHtml+'</div>') : '')
      + '<div class="content">'+body+copyrightHtml()+'</div>'
    + '</div>'
@@ -2084,13 +2122,35 @@ function scanCardHtml(){
   const zoneClass=!r?'':(r.result==='permis'?' ok':' bad');
   let zoneBody;
   if(state.cameraOn){ zoneBody='<video id="scanVideo" class="scan-video" autoplay playsinline muted></video><div class="small faint">'+ra('Îndreaptă camera spre codul QR')+'</div>'; }
-  else if(r){ zoneBody='<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div><div class="scan-title">'+esc(r.client?r.client.name:ra('Cod: ')+r.code)+'</div><div class="scan-sub">'+esc(logMessage(r))+'</div>'; }
+  else if(r){ const ph=r.client? safeImg(r.client.photoDataUri) : '';
+    zoneBody=(ph? '<div class="scan-photo"><img src="'+ph+'" alt=""><span class="scan-badge">'+icon(r.result==='permis'?'check':'x','icon-sm')+'</span></div>' : '<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div>')+'<div class="scan-title">'+esc(r.client?r.client.name:ra('Cod: ')+r.code)+'</div><div class="scan-sub">'+esc(logMessage(r))+'</div>'; }
   else{ zoneBody='<div class="scan-ic-wrap">'+icon('qrcode','icon-lg')+'</div><div class="scan-title">'+ra('Pregătit de verificare')+'</div><div class="scan-sub">'+ra('Scanează cu cititorul QR, camera, sau scrie codul.')+'</div>'; }
   return '<div class="card scan-box"><div class="section-title" style="margin-bottom:14px;">'+ra('Verificare acces')+'</div>'
    + '<div class="scan-zone'+zoneClass+'">'+zoneBody+'</div>'
    + '<div class="flex gap8" style="margin-top:14px;"><input id="scanInput" data-gymcode placeholder="'+ra('Scanează sau scrie codul')+'" class="mono" data-enter="verify-scan"><button class="btn btn-primary" data-action="verify-scan">'+icon('check','icon-sm')+'</button></div>'
    + '<button class="btn btn-ghost btn-block" style="margin-top:8px;" data-action="toggle-camera-reception">'+icon('camera','icon-sm')+' '+(state.cameraOn?ra('Oprește camera'):ra('Folosește camera'))+'</button>'
    + '<div class="small faint mt4">'+ra('Un cititor QR USB funcționează ca o tastatură — scrie direct în câmp.')+'</div></div>';
+}
+
+/* ---- Receptionist: scan, look a client up by name, today's entries ---- */
+function renderDesk(){
+  const today=todayStr();
+  const todayLog=state.log.filter(l=>localDay(l.timestamp)===today);
+  const allowed=todayLog.filter(l=>l.result==='permis').length;
+  const q=(state.deskQuery||'').trim().toLowerCase();
+  const matches=q.length>=2? state.clients.filter(c=>(c.name||'').toLowerCase().includes(q)).sort((a,b)=>String(a.name).localeCompare(String(b.name),'ro')).slice(0,8) : [];
+  const personRow=c=>{ const ph=safeImg(c.photoDataUri); const st=subStatus(c); const ok=!c.paused && (st.tone==='success'||st.tone==='warning');
+    return '<div class="list-row"><div class="avatar desk-av">'+(ph? '<img src="'+ph+'" alt="">' : esc(initials(c.name)))+'</div>'
+      + '<div style="flex:1;min-width:0;"><div class="desk-name">'+esc(c.name)+'</div><span class="pill pill-xs pill-'+(ok?'success':'danger')+'">'+esc(ok? ra('Valabil') : ra('Fără acces'))+'</span></div>'
+      + '<button class="btn btn-primary btn-sm" data-action="desk-checkin" data-id="'+esc(c.id)+'">'+icon('logIn','icon-sm')+' '+ra('Verifică intrarea')+'</button></div>'; };
+  const search='<div class="card" style="padding:18px 20px;"><div class="section-title">'+ra('Caută client după nume')+'</div>'
+    + '<div class="small faint mt4">'+ra('Pentru clienții care și-au uitat cardul.')+'</div>'
+    + '<input class="desk-search" data-bind="deskQuery" value="'+esc(state.deskQuery||'')+'" placeholder="'+esc(ra('Scrie cel puțin 2 litere din nume'))+'" autocomplete="off">'
+    + (q.length>=2? (matches.length? '<div class="desk-results">'+matches.map(personRow).join('')+'</div>' : '<div class="empty-state small">'+ra('Niciun client găsit.')+'</div>') : '')
+    + '</div>';
+  const entries='<div class="card" style="padding:18px 20px;"><div class="section-head"><div class="section-title">'+ra('Intrări azi')+'</div><span class="pill pill-success">'+allowed+'</span></div>'
+    + '<div style="margin-top:8px;">'+(todayLog.length? todayLog.slice(0,40).map(logRowHtml).join('') : '<div class="empty-state small">'+ra('Nicio scanare azi.')+'</div>')+'</div></div>';
+  return '<div class="two-col">'+scanCardHtml()+'<div class="desk-side">'+search+entries+'</div></div>';
 }
 
 /* ---- Requests (all client requests in one place) ---- */
@@ -3023,15 +3083,15 @@ function renderSettings(){
   const d=state.settingsDraft;
   if(!d.weekSchedule){ Object.assign(d, draftFromSettings(state.settings), {newsText:d.newsText}); }
   const team=currentTeam();
-  const hasOwner=team.some(m=>m.role==='owner'); const canManageTeam=state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin');
+  const canManageTeam=state.adminRole==='owner'||state.adminRole==='admin';
   const myEmail=((firebase.auth().currentUser&&firebase.auth().currentUser.email)||'').toLowerCase();
   const card=(ic, title, sub, actions, body, extra)=>'<div class="pg-card compact"'+(extra||'')+'><div class="pg-head"><div class="pg-ic">'+icon(ic)+'</div><div style="min-width:0;"><div class="pg-title">'+esc(title)+'</div><div class="pg-sub">'+esc(sub)+'</div></div>'+(actions? '<div class="pg-actions">'+actions+'</div>' : '')+'</div>'+body+'</div>';
   const w=d.weekSchedule;
   const teamRows=team.map((m,i)=>'<tr><td><div class="hclient" style="min-width:160px;"><div class="avatar'+avatarToneClass(m.name||m.email)+'">'+esc(initials(m.name||m.email))+'</div><div style="min-width:0;"><div class="hname">'+esc(m.name||'—')+'</div>'+((m.email||'').toLowerCase()===myEmail? '<div class="hsub">'+esc(ra('tu'))+'</div>' : '')+'</div></div></td>'
     + '<td class="small">'+esc(m.email)+'</td>'
-    + '<td><span class="pill role-pill-'+(m.role==='owner'?'owner':'admin')+'">'+esc(m.role==='owner'? ra('Proprietar') : ra('Administrator'))+'</span></td>'
-    + '<td><div class="flex gap8" style="justify-content:flex-end;"><button class="icon-btn" data-action="open-edit-team" data-idx="'+i+'" title="'+esc(ra('Modifică'))+'">'+icon('edit','icon-sm')+'</button>'
-      + (m.role==='owner'? '' : '<button class="icon-btn danger" data-action="remove-team" data-idx="'+i+'" title="'+esc(ra('Retrage accesul'))+'">'+icon('trash','icon-sm')+'</button>')+'</div></td></tr>').join('');
+    + '<td><span class="pill role-pill-'+normTeamRole(m.role)+'">'+esc(teamRoleLabel(m.role))+'</span></td>'
+    + '<td><div class="flex gap8" style="justify-content:flex-end;">'+(canManageMember(m.role)? '<button class="icon-btn" data-action="open-edit-team" data-idx="'+i+'" title="'+esc(ra('Modifică'))+'">'+icon('edit','icon-sm')+'</button>' : '')
+      + (m.role==='owner'||!canManageMember(m.role)? '' : '<button class="icon-btn danger" data-action="remove-team" data-idx="'+i+'" title="'+esc(ra('Retrage accesul'))+'">'+icon('trash','icon-sm')+'</button>')+'</div></td></tr>').join('');
 
   return card('clock', ra('Program de lucru al sălii'), ra('Pentru fiecare zi alegi dacă e deschis și în ce intervale. În afara lor, scanarea refuză accesul.'),
       '<button class="btn btn-ghost" data-action="sched-copy" title="'+esc(ra('Aplică intervalele de luni tuturor zilelor deschise'))+'">'+icon('copy','icon-sm')+' '+ra('Copiază programul de luni')+'</button><button class="btn btn-primary" data-action="save-schedule">'+icon('check','icon-sm')+' '+ra('Salvează programul')+'</button>',
@@ -3052,7 +3112,7 @@ function renderSettings(){
         + field(ra('Telefon'),'text','settingsDraft.phone',d.phone,'060 000 000')
         + field(ra('Preț antrenor personal (apare în contul clientului)'),'text','settingsDraft.trainerPrice',d.trainerPrice,'250 MDL / oră')+'</div>'
       + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-identity">'+icon('check','icon-sm')+' '+ra('Salvează identitatea')+'</button>')
-   + (canManageTeam? card('users', ra('Echipă și roluri'), ra('Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte.'),
+   + (canManageTeam? card('users', ra('Echipă și roluri'), ra('Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.'),
       '<button class="btn btn-primary" data-action="open-add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă membru')+'</button>',
       team.length? '<div class="hwrap"><table class="htable"><thead><tr><th>'+ra('Nume')+'</th><th>'+ra('Email')+'</th><th>'+ra('Rol')+'</th><th style="text-align:right;">'+ra('Acțiuni')+'</th></tr></thead><tbody>'+teamRows+'</tbody></table></div>' : '<div class="empty-state small">'+ra('Niciun coleg adăugat încă.')+'</div>') : '')
    + card('mail', ra('Mesaje pentru clienți'), ra('Textele din emailurile automate și noutățile din contul clientului.'),
@@ -3178,15 +3238,15 @@ function modalTeamMember(){
     '<div style="display:flex;flex-direction:column;gap:12px;">'
     + field(ra('Nume'),'text',p+'name',f.name||'','Ion Popescu')
     + (isEdit? '' : field(ra('E-mail coleg'),'email',p+'email',f.email||'','coleg@exemplu.md') + field(ra('Parolă inițială (minim 8 caractere)'),'password',p+'password',f.password||''))
-    + selectField(ra('Rol'),p+'role',f.role||'admin',[['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]])
+    + selectField(ra('Rol'),p+'role',f.role||(state.adminRole==='owner'?'admin':'reception'),[['reception',ra('Recepționer — doar scanează')],['admin',ra('Administrator')],['owner',ra('Proprietar — acces total')]].filter(o=>canManageMember(o[0])))
     + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
     + '<button class="btn btn-primary btn-block" data-action="'+(isEdit?'save-edit-team':'add-team')+'">'+icon('check','icon-sm')+' '+(isEdit? ra('Salvează') : ra('Adaugă acces'))+'</button></div>');
 }
 async function saveEditTeam(){
   const f=state.form; const team=currentTeam().map(m=>Object.assign({},m));
   const m=team[f.idx]; if(!m){ closeModal(); return; }
-  const hasOwner=team.some(x=>x.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ state.formErr=ra('Doar proprietarul poate gestiona echipa.'); scheduleRender(); return; }
-  const role=f.role==='owner'? 'owner' : 'admin';
+  const role=normTeamRole(f.role);
+  if(!canManageMember(m.role) || !canManageMember(role)){ state.formErr=ra('Administratorii pot gestiona doar recepționerii.'); scheduleRender(); return; }
   if(m.role==='owner' && role!=='owner' && team.filter(x=>x.role==='owner').length<2){ state.formErr=ra('Trebuie să rămână cel puțin un proprietar.'); scheduleRender(); return; }
   m.name=(f.name||'').trim(); m.role=role;
   try{ await saveTeam(team); await logMod('Membru echipă modificat', m.email); closeModal(); showToast(ra('Salvat.')); }
@@ -3222,7 +3282,7 @@ async function addTeam(){
   if(!email||!email.includes('@')){ showToast(ra('Introdu un e-mail valid.')); return; }
   const pass=f.password||'';
   if(!pass||pass.length<8){ showToast(ra('Parola inițială trebuie să aibă minim 8 caractere.')); return; }
-  const existing=currentTeam(); const hasOwner=existing.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast(ra('Doar proprietarul poate gestiona echipa.')); return; }
+  const existing=currentTeam(); const role=normTeamRole(f.role); if(!canManageMember(role)){ showToast(ra('Administratorii pot adăuga doar recepționeri.')); return; }
   if(existing.some(m=>(m.email||'').toLowerCase()===email)){ showToast(ra('Acest email are deja acces.')); return; }
   let secondaryApp=null; let reused=false;
   try{
@@ -3235,13 +3295,13 @@ async function addTeam(){
     else if(e && e.code==='auth/weak-password'){ showToast(ra('Parola trebuie să aibă minim 6 caractere.')); return; }
     else{ showToast(ra('Eroare la crearea contului.')); return; }
   }
-  const team=existing.slice(); team.push({email, role:f.role==='owner'?'owner':'admin', name:(f.name||'').trim()});
+  const team=existing.slice(); team.push({email, role, name:(f.name||'').trim()});
   try{ await saveTeam(team); state.teamForm={}; if(state.modal&&state.modal.type==='addTeam') closeModal(); await logMod('Acces echipă adăugat', email); showToast(reused? ra('Acces redat — acest email avea deja un cont Firebase; colegul intră cu parola lui veche, nu cu cea introdusă acum.') : ra('Cont creat — colegul poate intra cu acest email și parola primită.')); }
   catch(e){ showToast(ra('Eroare la salvarea accesului.')); }
   scheduleRender();
 }
 async function removeTeam(idx){
-  const team=currentTeam().slice(); const hasOwner=team.some(m=>m.role==='owner'); if(!(state.adminRole==='owner'||(!hasOwner&&state.adminRole==='admin'))){ showToast(ra('Doar proprietarul poate gestiona echipa.')); return; } if(team[idx] && team[idx].role==='owner'){ showToast(ra('Accesul proprietarului nu poate fi retras.')); return; } const rm=team.splice(idx,1);
+  const team=currentTeam().slice(); if(!team[idx] || !canManageMember(team[idx].role)){ showToast(ra('Administratorii pot gestiona doar recepționerii.')); return; } if(team[idx] && team[idx].role==='owner'){ showToast(ra('Accesul proprietarului nu poate fi retras.')); return; } const rm=team.splice(idx,1);
   try{ await saveTeam(team); await logMod('Acces echipă retras', rm[0]?rm[0].email:''); showToast(ra('Acces retras.')); }
   catch(e){ showToast(ra('Eroare.')); }
 }
@@ -3528,6 +3588,7 @@ function onAction(el){
     case 'save-type': runOnce(saveType); return;
     case 'delete-type': askConfirm(ra('Ștergi acest tip de abonament din catalog?'), ()=>deleteType(id), {danger:true}); return;
     case 'verify-scan': { const v=document.getElementById('scanInput'); verifyAccess(v?v.value:''); return; }
+    case 'desk-checkin': { const c=state.clients.find(x=>x.id===id); if(c){ state.deskQuery=''; window.scrollTo(0,0); verifyAccess(c.code); } return; }
     case 'toggle-camera-reception': toggleCamera('scanInput'); return;
     case 'export-csv': exportCSV(el.getAttribute('data-kind')); return; case 'clear-payments': askConfirm(ra('Sigur ștergi tot istoricul încasărilor? Acțiunea nu poate fi anulată.'), clearPayments, {danger:true}); return; case 'clear-modlog': askConfirm(ra('Sigur ștergi tot istoricul modificărilor? Acțiunea nu poate fi anulată.'), clearModLog, {danger:true}); return; case 'clear-accesslog': askConfirm(ra('Sigur ștergi tot istoricul accesului? Acțiunea nu poate fi anulată.'), clearAccessLog, {danger:true}); return;
     case 'save-settings-general': runOnce(saveSettingsGeneral); return;
@@ -3538,7 +3599,7 @@ function onAction(el){
     case 'sched-del': { const [dd,ii]=String(id).split(':').map(Number); const x=state.settingsDraft.weekSchedule[dd]; if(x && x.intervals.length>1) x.intervals.splice(ii,1); break; }
     case 'sched-copy': scheduleCopyMonday(); break;
     case 'remove-logo': state.settingsDraft.logoDataUri=''; break;
-    case 'open-add-team': state.teamForm={role:'admin'}; openModal('addTeam'); return;
+    case 'open-add-team': state.teamForm={role:state.adminRole==='owner'?'admin':'reception'}; openModal('addTeam'); return;
     case 'open-edit-team': { const i=Number(el.getAttribute('data-idx')); const m=currentTeam()[i]; if(m) openModal('editTeam', {idx:i, email:m.email, name:m.name||'', role:m.role}); return; }
     case 'save-edit-team': runOnce(saveEditTeam); return;
     case 'report-period': state.reportPeriod=id; state.reportPayAll=false; break;
