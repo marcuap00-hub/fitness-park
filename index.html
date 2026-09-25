@@ -1196,7 +1196,7 @@ const RO_RU = {
   'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов. Сотрудники ресепшн только сканируют входы.',
   'Recepționer':'Ресепшн', 'Recepționer — doar scanează':'Ресепшн — только сканирует', 'Administratorii pot adăuga doar recepționeri.':'Администраторы могут добавлять только сотрудников ресепшн.', 'Administratorii pot gestiona doar recepționerii.':'Администраторы могут управлять только сотрудниками ресепшн.',
   'Caută client':'Поиск клиента', 'Pentru clienții care și-au uitat cardul.':'Для клиентов, которые забыли карту.', 'Nume sau email (cel puțin 2 litere)':'Имя или email (минимум 2 буквы)', 'Caută după nume, email, telefon sau cod':'Поиск по имени, email, телефону или коду',
-  'Fără abonament activ':'Нет активного абонемента', 'abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
+  'Fără abonament activ':'Нет активного абонемента', 'activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
   'Au date incomplete (se importă, completezi apoi în fișa clientului):':'С неполными данными (импортируются, дополните потом в карточке клиента):', 'cu date incomplete':'с неполными данными', 'Importat din evidența veche':'Импортирован из старого учёта', 'Fără acces':'Нет доступа', 'Valabil':'Действителен','Verifică intrarea':'Проверить вход', 'Nicio scanare azi.':'Сегодня сканирований нет.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
   'Modifică membrul echipei':'Изменить сотрудника', 'Colegul va intra în panou cu acest email și parola de mai jos.':'Коллега будет входить с этим email и паролем ниже.', 'Trebuie să rămână cel puțin un proprietar.':'Должен остаться хотя бы один владелец.',
@@ -1468,16 +1468,17 @@ function normalizeClientEmails(){
 // settings document; it is moved over automatically once the new Firestore rules are published.
 const refStaff=()=>db.doc('private/staff');
 function currentTeam(){ return (state.staffDoc&&state.staffDoc.team) || (state.settings&&state.settings.team) || []; }
-async function staffMemberFor(email){
+async function staffMemberFor(email, tries){
   email=(email||'').trim().toLowerCase(); if(!email) return null;
   const find=team=>(team||[]).find(m=>(m.email||'').toLowerCase()===email) || null;
   let settings={}; try{ const s=await refSettings().get(); settings=(s.exists&&s.data())||{}; }catch(e){}
   if(!settings.hasTeam){ state.staffDoc=null; return find(settings.team); }
   // Only the team may read the list. Right after a login Firestore can still be using the previous (anonymous)
   // token for a moment, so a refusal is retried briefly before deciding this is not a team account.
-  for(let i=0;i<4;i++){
+  // A staff login waits longer (tries); a client sign-in or page load should not be held up.
+  for(let i=0;i<(tries||4);i++){
     try{
-      const s=await refStaff().get(); const d=s.exists? s.data() : null; if(!d) return null;
+      const s=await refStaff().get({source:'server'}); const d=s.exists? s.data() : null; if(!d) return null;
       // The role comes from the lists the Firestore rules check, not from the editable team entries.
       const role=(d.owners||[]).includes(email)? 'owner' : (d.emails||[]).includes(email)? 'admin' : (d.desk||[]).includes(email)? 'reception' : null;
       if(role!=='reception') state.staffDoc=d;
@@ -2091,7 +2092,7 @@ function renderReception(){
   const yesterday=addDays(today,-1);
   const yesterdayEntries=state.log.filter(l=>l.result==='permis' && localDay(l.timestamp)===yesterday).length;
   const yesterdayRevenue=state.payments.filter(p=>localDay(p.date)===yesterday).reduce((s,p)=>s+Number(p.amount||0),0);
-  const newThisMonth=state.clients.filter(c=>localDay(c.createdAt).slice(0,7)===today.slice(0,7)).length;
+  const newThisMonth=state.clients.filter(c=>!c.imported && localDay(c.createdAt).slice(0,7)===today.slice(0,7)).length;
   const pctValid=total? Math.round(validCount*100/total) : 0;
   const expToday=expSoon.filter(c=>dlOf(c)===0).length;
   const currency=(state.settings&&state.settings.currency);
@@ -2241,7 +2242,9 @@ function renderClients(){
   const qDigits=q.replace(/\D/g,'');
   if(q) list=list.filter(c=>(c.name||'').toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (qDigits && (c.phone||'').replace(/\D/g,'').includes(qDigits)) || (c.code||'').toLowerCase().includes(q));
   list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
-  const rows=list.length? '<div class="crow-list">'+list.map(clientRowHtml).join('')+'</div>' : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
+  // Long lists are shown in pages of 100 so the panel stays fast with thousands of clients.
+  const limit=state.clientLimit||100; const shown=list.slice(0,limit);
+  const rows=list.length? '<div class="crow-list">'+shown.map(clientRowHtml).join('')+'</div>'+(list.length>limit? '<button class="btn btn-ghost btn-block" style="margin-top:12px;" data-action="clients-more">'+ra('Arată mai mulți')+' ('+(list.length-limit)+' '+ra('rămași')+')</button>' : '') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
   return '<div class="pg-card">'
    + '<div class="pg-head"><div class="pg-ic">'+icon('users')+'</div>'
      + '<div style="min-width:0;"><div class="pg-title">'+state.clients.length+' '+ra('clienți înregistrați')+'</div><div class="pg-sub">'+ra('Gestionează rapid clienții și abonamentele acestora.')+'</div></div>'
@@ -3184,28 +3187,29 @@ function buildImportPreview(text){
   const ix={name:col(['nume','nume si prenume','name']), phone:col(['telefon','phone']), email:col(['email','e mail']), year:col(['an nastere','anul nasterii','an']), plan:col(['abonament','tip abonament']), from:col(['valabil de la','de la','inceput']), to:col(['valabil pana la','pana la','expirare','expira'])};
   if(ix.name<0 || ix.to<0) return {error:ra('Lipsesc coloanele „Nume” sau „Valabil până la”.')};
   const typesByName={}; state.types.forEach(t=>{ typesByName[normKey(t.name)]=t; });
-  const existingPhones=new Set(state.clients.map(c=>(c.phone||'').replace(/\D/g,'')).filter(Boolean));
-  const existingNames=new Set(state.clients.map(c=>normKey(c.name)));
+  // A duplicate is the same name, in any word order. The phone is not used: family members often share one number.
+  const nameKey=s=>normKey(s).split(' ').filter(Boolean).sort().join(' ');
+  const existingNames=new Set(state.clients.map(c=>nameKey(c.name)));
   // Every row is imported (only clients already in the database are skipped). A row without a known plan keeps
   // its expiry date; a row without an expiry date comes in without a subscription (no access until one is added).
-  const ok=[], dup=[], warn=[];
+  const ok=[], dup=[], warn=[]; let active=0, expired=0, noDate=0; const today=todayStr();
   rows.slice(1).forEach(r=>{
     const get=i=>i>=0? String(r[i]||'').trim() : '';
-    const name=get(ix.name).replace(/\s+/g,' '); if(!name) return;
+    const name=get(ix.name).replace(/\s+/g,' '); if(!name || !/\p{L}/u.test(name)) return;
     let phone=get(ix.phone).replace(/\D/g,''); if(phone.length===8) phone='0'+phone;
-    if((phone && existingPhones.has(phone)) || existingNames.has(normKey(name))){ dup.push(name); return; }
+    if(existingNames.has(nameKey(name))){ dup.push(name); return; }
     const planText=get(ix.plan); const t=typesByName[normKey(planText)];
     const to=csvDate(get(ix.to));
     let from='';
-    if(to){ const today=todayStr(); from=csvDate(get(ix.from)) || (t? addDays(to, -(Math.max(1,Number(t.durationDays||30))-1)) : (today<to? today : to)); }
-    if(!to) warn.push(name+' — '+ra('fără dată de expirare — se importă fără abonament'));
-    else if(!t) warn.push(name+' — '+ra('abonament de ales'));
+    if(to){ from=csvDate(get(ix.from)) || (t? addDays(to, -(Math.max(1,Number(t.durationDays||30))-1)) : (today<to? today : to)); }
+    // Former members come in with their expired subscription, so reception finds them and can renew.
+    if(!to) noDate++; else if(to<today) expired++; else{ active++; if(!t) warn.push(name+' — '+ra('abonament de ales')); }
     const year=get(ix.year).match(/^\d{4}$/)? get(ix.year) : '';
     const email=isValidEmail(get(ix.email))? get(ix.email).toLowerCase() : '';
-    existingNames.add(normKey(name)); if(phone) existingPhones.add(phone);
+    existingNames.add(nameKey(name));
     ok.push({name, phone, email, year, typeId:t? t.id : '', planText:t? '' : planText.slice(0,120), from, to});
   });
-  return {ok, dup, warn};
+  return {ok, dup, warn, active, expired, noDate};
 }
 async function importClients(){
   const p=state.importPreview; if(!p || !p.ok || !p.ok.length) return;
@@ -3222,7 +3226,7 @@ async function importClients(){
         const subscription=!r.to? {} : { typeId:t? t.id : '', typeName:t? (t.name||'') : (r.planText||''), tier:(t&&t.tier)||'fitness', unlimited:!!(t&&t.unlimited), accessFrom:(t&&t.accessFrom)||null, accessTo:(t&&t.accessTo)||null, entryLimit:(t&&t.entryLimit)||null, entriesUsed:0,
             validFrom:r.from, validTo:r.to, price:Number((t&&t.price)||0), currency:cur, totalDue:Number((t&&t.price)||0), totalPaid:Number((t&&t.price)||0), paymentMethod:'' };
         batch.set(colClients().doc(), { name:r.name, phone:r.phone, email:r.email, birthDate:combineBirthDate(r.year), code:newCode(), createdAt:now,
-          notes:'Importat din evidența veche'+(!r.to? ' — fără abonament' : !t? ' — tipul abonamentului de ales' : ''), imported:true, paused:false, lastEntryAt:null, subscription });
+          notes:'Importat din evidența veche'+(!r.to? ' — fără abonament' : (!t && r.to>=todayStr())? ' — tipul abonamentului de ales' : ''), imported:true, paused:false, lastEntryAt:null, subscription });
       });
       await batch.commit();
     }
@@ -3235,8 +3239,8 @@ function importCardHtml(){
   return '<div class="pg-card compact"><div class="pg-head"><div class="pg-ic">'+icon('upload')+'</div><div style="min-width:0;"><div class="pg-title">'+ra('Import clienți din fișier')+'</div><div class="pg-sub">'+ra('Fișier CSV (Excel) cu coloanele: Nume; Telefon; Email; An naștere; Abonament; Valabil de la; Valabil până la.')+'</div></div></div>'
    + '<label class="btn btn-ghost" style="align-self:flex-start;cursor:pointer;">'+icon('upload','icon-sm')+' '+ra('Alege fișierul CSV')+'<input type="file" accept=".csv,text/csv" data-import-csv="1" style="display:none;"></label>'
    + (p&&p.error? '<div class="err-text">'+esc(p.error)+'</div>' : '')
-   + (p&&!p.error? '<div class="imp-sum"><span class="pill pill-success">'+p.ok.length+' '+ra('de importat')+'</span><span class="pill pill-muted">'+p.dup.length+' '+ra('există deja')+'</span>'+(p.warn.length? '<span class="pill pill-warning">'+p.warn.length+' '+ra('cu date incomplete')+'</span>' : '')+'</div>'
-       + (p.warn.length? '<div class="hint"><b>'+ra('Au date incomplete (se importă, completezi apoi în fișa clientului):')+'</b><br>'+p.warn.map(esc).join('<br>')+'</div>' : '')
+   + (p&&!p.error? '<div class="imp-sum"><span class="pill pill-info">'+p.ok.length+' '+ra('de importat')+'</span><span class="pill pill-success">'+p.active+' '+ra('activi')+'</span><span class="pill pill-danger">'+p.expired+' '+ra('cu abonament expirat')+'</span>'+(p.noDate? '<span class="pill pill-muted">'+p.noDate+' '+ra('fără dată')+'</span>' : '')+'<span class="pill pill-muted">'+p.dup.length+' '+ra('există deja')+'</span></div>'
+       + (p.warn.length? '<div class="hint"><b>'+ra('Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):')+'</b><br>'+p.warn.map(esc).join('<br>')+'</div>' : '')
        + (p.ok.length? '<div class="hint">'+ra('Plata se trece ca achitată, fără să apară la încasările de azi. Fiecare client primește un cod QR nou.')+'</div><button class="btn btn-primary" style="align-self:flex-start;" data-action="import-clients">'+icon('check','icon-sm')+' '+ra('Importă')+' '+p.ok.length+' '+ra('clienți')+'</button>' : '') : '')
    + '</div>';
 }
@@ -3516,6 +3520,7 @@ function bindEvents(root){
       // The sign-in form shows nothing that depends on the typed text, so it is not redrawn on every key.
       if(/^clientForm\./.test(path)) return;
       if(/^history(Query|Period|Time|Result|From|To)$/.test(path)) state.historyPage=1;
+      if(path==='clientQuery'||path==='clientSort') state.clientLimit=100;
       if(path==='form.typeId'){ if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); }
       // A date typed by hand fires "change" after every digit; redrawing then would throw the cursor into
       // another part of the date. The redraw waits until the field is left (a date picked from the calendar redraws at once).
@@ -3578,7 +3583,8 @@ function onAction(el){
     case 'approve-photo-request': runOnce(()=>approvePhotoRequest(id)); return;
     case 'reject-photo-request': runOnce(()=>rejectPhotoRequest(id)); return;
     case 'toggle-req': state.reqCollapsed=Object.assign({}, state.reqCollapsed, {[id]:!isReqCollapsed(id)}); break;
-    case 'clear-client-query': state.clientQuery=''; break;
+    case 'clear-client-query': state.clientQuery=''; state.clientLimit=100; break;
+    case 'clients-more': state.clientLimit=(state.clientLimit||100)+100; break;
     case 'clear-history-query': state.historyQuery=''; state.historyPage=1; break;
     case 'hist-reset': state.historyQuery=''; state.historyPeriod='all'; state.historyTime='all'; state.historyResult='all'; state.historyFrom=''; state.historyTo=''; state.historyPage=1; break;
     case 'hist-page': state.historyPage=Math.max(1, Number(id)||1); break;
@@ -3638,7 +3644,7 @@ async function adminLoginSubmit(){
     await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
     await firebase.auth().signInWithEmailAndPassword(email, pass);
   }catch(e){ state.formErr=(e&&e.code==='auth/too-many-requests')? ra('Prea multe încercări. Așteaptă puțin și mai încearcă o dată.') : ra('Email sau parolă greșită.'); scheduleRender(); return; }
-  const member=await staffMemberFor(email);
+  const member=await staffMemberFor(email, 12);
   if(!member){
     try{ await firebase.auth().signOut(); await firebase.auth().signInAnonymously(); }catch(e){}
     state.formErr=ra('Acest cont nu (mai) are acces la panou.');
