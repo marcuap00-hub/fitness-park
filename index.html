@@ -937,9 +937,14 @@ const ICONS = {
 };
 function icon(name, cls){ return '<svg class="icon '+(cls||'')+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||'')+'</svg>'; }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; const loc=(state&&state.lang==='ru')?'ru-RU':'ro-RO'; return d.toLocaleDateString(loc,{day:'2-digit',month:'2-digit',year:'numeric'}); }
-function fmtDateTime(iso){ if(!iso) return '—'; const d=new Date(iso); if(isNaN(d)) return iso; const loc=(state&&state.lang==='ru')?'ru-RU':'ro-RO'; return d.toLocaleDateString(loc,{day:'2-digit',month:'2-digit'})+', '+d.toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'}); }
-function money(n,cur){ n=Number(n||0); return n.toLocaleString('ro-RO',{maximumFractionDigits:0})+' '+(cur||'MDL'); }
+// Some records (buy requests, client requests) are written by anonymous visitors, so every value that
+// reaches the page is escaped or strictly validated here, never inserted raw.
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return '—'; const loc=(state&&state.lang==='ru')?'ru-RU':'ro-RO'; return d.toLocaleDateString(loc,{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function fmtDateTime(iso){ if(!iso) return '—'; const d=new Date(iso); if(isNaN(d)) return '—'; const loc=(state&&state.lang==='ru')?'ru-RU':'ro-RO'; return d.toLocaleDateString(loc,{day:'2-digit',month:'2-digit'})+', '+d.toLocaleTimeString(loc,{hour:'2-digit',minute:'2-digit'}); }
+function money(n,cur){ n=Number(n||0); if(!isFinite(n)) n=0; return n.toLocaleString('ro-RO',{maximumFractionDigits:0})+' '+(/^[A-Z]{3}$/.test(cur||'')? cur : 'MDL'); }
+// Only real base64 images are accepted as photos/logos; anything else (e.g. text crafted to break out
+// of the src attribute) is dropped.
+function safeImg(uri){ return (typeof uri==='string' && uri.length<1500000 && /^data:image\/(png|jpe?g|webp|gif);base64,[A-Za-z0-9+/]+=*$/.test(uri))? uri : ''; }
 function initials(name){ return (name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]||'').join('').toUpperCase()||'?'; }
 function localISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 function localDay(iso){ if(!iso) return ''; const d=new Date(iso); return isNaN(d)? '' : localISO(d); }
@@ -1312,7 +1317,7 @@ const RO_RU = {
 };
 function themeToggleBtn(){ const dt=document.documentElement.getAttribute('data-theme'); const isDark = dt==='dark' || (dt!=='light' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); return '<button class="modal-close" data-action="toggle-theme" title="Temă / Тема" style="flex:none;">'+icon(isDark?'sun':'moon','icon-sm')+'</button>'; }
 function langToggleBtn(){ const ru=state.lang==='ru'; return '<button class="lang-toggle" data-action="toggle-lang" title="Română / Русский" aria-label="'+(ru?'Сменить язык на румынский':'Schimbă limba în rusă')+'"><span'+(ru?'':' class="on"')+'>RO</span><span'+(ru?' class="on"':'')+'>RU</span></button>'; }
-function clientAvatarHtml(c, size){ size=size||38; if(c.photoDataUri){ return '<img src="'+c.photoDataUri+'" alt="" style="width:'+size+'px;height:'+size+'px;border-radius:11px;object-fit:cover;flex:none;">'; } return '<div class="avatar" style="width:'+size+'px;height:'+size+'px;">'+esc(initials(c.name))+'</div>'; }
+function clientAvatarHtml(c, size){ size=size||38; if(c.photoDataUri){ return '<img src="'+safeImg(c.photoDataUri)+'" alt="" style="width:'+size+'px;height:'+size+'px;border-radius:11px;object-fit:cover;flex:none;">'; } return '<div class="avatar" style="width:'+size+'px;height:'+size+'px;">'+esc(initials(c.name))+'</div>'; }
 
 const state={
   screen:'landing', adminUnlocked:false, adminRole:null, adminSection:'reception',
@@ -1824,7 +1829,7 @@ function renderBuyGate(){
    + '<div class="gate-title">'+tr('buyTitle')+'</div>'
    + '<div class="gate-desc">'+tr('buyDesc')+'</div>'
    + '<label class="photo-pick'+(f.photoDataUri?' done':'')+(state.formErr===tr('errPhoto')?' err':'')+'">'
-     + '<span class="photo-av">'+(f.photoDataUri? '<img src="'+f.photoDataUri+'" alt="">' : icon('camera'))+'</span>'
+     + '<span class="photo-av">'+(f.photoDataUri? '<img src="'+safeImg(f.photoDataUri)+'" alt="">' : icon('camera'))+'</span>'
      + '<span><span class="photo-t" style="display:block;">'+tr('photoTitle')+' *</span><span class="photo-d" style="display:block;">'+tr('photoHint')+'</span>'
      + '<span class="photo-btn">'+icon(f.photoDataUri?'refresh':'upload','icon-sm')+' '+(f.photoDataUri? tr('photoChange') : tr('photoUpload'))+'</span></span>'
      + '<input type="file" accept="image/*" data-photo-target="buyForm" style="display:none;"></label>'
@@ -1969,7 +1974,7 @@ function renderRequests(){
 
   const sep='<span class="sep">·</span>';
   const time=iso=> iso? '<span class="rq-time">'+icon('clock','icon-sm')+' '+esc(fmtDateTime(iso))+'</span>' : '';
-  const row=(avIcon, main, when, actions, photo)=>'<div class="rq-row"><div class="rq-av'+(photo?' big':'')+'">'+(photo? '<img src="'+photo+'" alt="">' : icon(avIcon,'icon-sm'))+'</div><div class="rq-main">'+main+'</div>'+time(when)+(actions? '<div class="rq-actions">'+actions+'</div>' : '')+'</div>';
+  const row=(avIcon, main, when, actions, photo)=>{ const ph=safeImg(photo); return '<div class="rq-row"><div class="rq-av'+(ph?' big':'')+'">'+(ph? '<img src="'+ph+'" alt="">' : icon(avIcon,'icon-sm'))+'</div><div class="rq-main">'+main+'</div>'+time(when)+(actions? '<div class="rq-actions">'+actions+'</div>' : '')+'</div>'; };
   const empty=emptyIcon=>'<div class="rq-empty"><div class="rq-av">'+icon(emptyIcon,'icon-sm')+'</div><div><div class="rq-empty-t">'+esc(ra('Nicio cerere în așteptare.'))+'</div><div class="rq-empty-d">'+esc(ra('Când apar cereri noi, acestea vor fi afișate aici.'))+'</div></div></div>';
   const section=(key, cls, ic, title, desc, count, body)=>{
     const collapsed=isReqCollapsed(key);
@@ -2093,7 +2098,7 @@ function modalNewClient(){
   const selType=typeById(f.typeId); const validToField=(selType&&selType.unlimited)? ('<label class="field">'+ra('Valabil până la')+'<div class="small" style="padding:10px 0;color:var(--text-faint);">∞ '+ra('fără expirare')+'</div></label>') : field(ra('Valabil până la'),'date','form.validTo',f.validTo);
   return modalWrap(ra('Client nou'),ra('Datele se salvează în baza de date a sălii.'), ''
    + '<label class="photo-pick'+(f.photoDataUri?' done':'')+'" style="margin-bottom:0;">'
-     + '<span class="photo-av">'+(f.photoDataUri? '<img src="'+f.photoDataUri+'" alt="">' : icon('camera'))+'</span>'
+     + '<span class="photo-av">'+(f.photoDataUri? '<img src="'+safeImg(f.photoDataUri)+'" alt="">' : icon('camera'))+'</span>'
      + '<span><span class="photo-t" style="display:block;">'+(f.fromRequest&&f.photoDataUri? ra('Poza trimisă de client') : ra('Poză de profil (opțional)'))+'</span><span class="photo-d" style="display:block;">'+ra('Recepția îl recunoaște pe client după poză. Se poate adăuga și mai târziu, din fișa clientului.')+'</span>'
      + '<span class="photo-btn">'+icon(f.photoDataUri?'refresh':'upload','icon-sm')+' '+(f.photoDataUri? ra('Schimbă poza') : ra('Alege poza'))+'</span></span>'
      + '<input type="file" accept="image/*" data-photo-target="form" style="display:none;"></label>'
@@ -2139,7 +2144,7 @@ async function saveNewClient(){
     subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', unlimited:t?!!t.unlimited:false, accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null,
       entryLimit:(t&&t.entryLimit)||null, entriesUsed:0,
       validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method } };
-  if(f.photoDataUri){ doc.photoDataUri=f.photoDataUri; doc.photoUpdatedAt=doc.createdAt; }
+  if(safeImg(f.photoDataUri)){ doc.photoDataUri=f.photoDataUri; doc.photoUpdatedAt=doc.createdAt; }
   try{
     const ref=await colClients().add(doc);
     if(!state.clients.find(x=>x.id===ref.id)){ state.clients=state.clients.concat([Object.assign({id:ref.id}, doc)]); }
@@ -2170,7 +2175,7 @@ function modalClientDetail(){
 
   const hero='<div class="cd-hero">'
    + '<img class="cd-hero-mark" src="'+LOGO_DATA_URI+'" alt="">'
-   + '<div class="cd-avatar">'+(c.photoDataUri? '<img src="'+c.photoDataUri+'" alt="">' : esc(initials(c.name)))+'<span class="cd-dot cd-dot-'+st.tone+'"></span></div>'
+   + '<div class="cd-avatar">'+(c.photoDataUri? '<img src="'+safeImg(c.photoDataUri)+'" alt="">' : esc(initials(c.name)))+'<span class="cd-dot cd-dot-'+st.tone+'"></span></div>'
    + '<div style="min-width:0;"><div class="cd-name">'+esc(c.name)+'</div><span class="pill pill-'+st.tone+'">'+esc(st.label)+'</span></div>'
    + '<button class="cd-hero-code" data-action="copy-code" data-id="'+c.id+'" title="'+esc(ra('Copiază codul'))+'"><span class="cd-hero-code-l">'+esc(ra('Cod membru'))+'</span><span class="cd-hero-code-v">'+esc(c.code)+'</span><span class="cd-hero-code-h">'+icon('copy','icon-sm')+' '+esc(ra('Copiază'))+'</span></button>'
    + '</div>';
@@ -2259,11 +2264,12 @@ async function resolveRequest(id){
 }
 function approveCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(ra('Aprobi cererea și generezi un card nou? Codul vechi (')+c.code+ra(') nu va mai funcționa după ce salvezi. Se va înregistra o taxă de reemitere de 10 MDL.'), async ()=>{ const newCode=generateUniqueCode(); try{ await colClients().doc(id).update({code:newCode, cardRequestPending:false, cardRequestStatus:'approved'}); await colPay().add({clientId:id, clientName:c.name, amount:10, currency:(state.settings&&state.settings.currency)||'MDL', method:'cash', date:new Date().toISOString(), note:'Card înlocuit - taxă reemitere'}); await logMod('Card înlocuit (cerere aprobată)', c.name+' · cod nou '+newCode+' · taxă 10 MDL'); openModal('clientDetail',{id}); showToast(newCardToast(newCode)); } catch(e){ showToast(ra('Eroare la înlocuirea cardului.')); } }); }
 async function rejectCardRequest(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; try{ await colClients().doc(id).update({cardRequestPending:false, cardRequestStatus:'rejected'}); await logMod('Cerere card nou respinsă', c.name); openModal('clientDetail',{id}); showToast(ra('Cerere respinsă.')); } catch(e){ showToast(ra('Eroare.')); } }
-function convertBuyRequest(id){ const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return; const t=typeById(r.typeId); if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ showToast(ra('Abonamentele Exclusiv necesită aprobarea unui proprietar.')); return; } const from=todayStr(); const bd=splitBirthDate(r.birthDate); openModal('newClient', { name:r.name, phone:r.phone, email:r.email||'', birthYear:bd.birthYear, typeId:r.typeId, price:t?t.price:r.price, currency:t?t.currency:r.currency, validFrom:from, validTo:subEndDate(from,t), paidFull:true, amountPaid:0, method:'', notes:r.note||'', fromRequest:id, photoDataUri:r.photoDataUri||'' }); }
+function convertBuyRequest(id){ const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return; const t=typeById(r.typeId); if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ showToast(ra('Abonamentele Exclusiv necesită aprobarea unui proprietar.')); return; } const from=todayStr(); const bd=splitBirthDate(r.birthDate); openModal('newClient', { name:r.name, phone:r.phone, email:r.email||'', birthYear:bd.birthYear, typeId:r.typeId, price:t?t.price:r.price, currency:t?t.currency:r.currency, validFrom:from, validTo:subEndDate(from,t), paidFull:true, amountPaid:0, method:'', notes:r.note||'', fromRequest:id, photoDataUri:safeImg(r.photoDataUri) }); }
 async function approvePhotoRequest(id){
   const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return;
   const c=state.clients.find(x=>x.id===r.clientId);
   if(!c){ colBuyReq().doc(id).update({status:'rejected'}).catch(()=>{}); showToast(ra('Clientul nu mai există.')); return; }
+  if(!safeImg(r.photoDataUri)){ showToast(ra('Poza nu este validă.')); return; }
   try{ await colClients().doc(c.id).update({photoDataUri:r.photoDataUri, photoUpdatedAt:new Date().toISOString()}); await colBuyReq().doc(id).update({status:'approved'}); await logMod('Poză client aprobată', c.name); showToast(ra('Poza a fost aprobată.')); }
   catch(e){ showToast(ra('Eroare.')); }
 }
@@ -2291,7 +2297,7 @@ function clientProfileFormHtml(c, missing){
   if(state.profileFormFor!==c.id){ state.profileFormFor=c.id; state.profileForm={phone:'', email:'', birthYear:'', photoDataUri:''}; state.formErr=''; }
   const f=state.profileForm;
   return '<div class="cp-card cp-profile"><div class="cp-card-h">'+icon('user','icon-sm')+' '+tr('profTitle')+'</div><p class="cp-profile-d">'+tr('profDesc')+'</p>'
-   + (missing.includes('photo')? '<label class="photo-pick'+(f.photoDataUri?' done':'')+(state.formErr===tr('errPhoto')?' err':'')+'"><span class="photo-av">'+(f.photoDataUri? '<img src="'+f.photoDataUri+'" alt="">' : icon('camera'))+'</span><span><span class="photo-t" style="display:block;">'+tr('photoTitle')+' *</span><span class="photo-d" style="display:block;">'+tr('photoHint')+'</span><span class="photo-btn">'+icon(f.photoDataUri?'refresh':'upload','icon-sm')+' '+(f.photoDataUri? tr('photoChange') : tr('photoUpload'))+'</span></span><input type="file" accept="image/*" data-photo-target="profileForm" style="display:none;"></label>' : '')
+   + (missing.includes('photo')? '<label class="photo-pick'+(f.photoDataUri?' done':'')+(state.formErr===tr('errPhoto')?' err':'')+'"><span class="photo-av">'+(f.photoDataUri? '<img src="'+safeImg(f.photoDataUri)+'" alt="">' : icon('camera'))+'</span><span><span class="photo-t" style="display:block;">'+tr('photoTitle')+' *</span><span class="photo-d" style="display:block;">'+tr('photoHint')+'</span><span class="photo-btn">'+icon(f.photoDataUri?'refresh':'upload','icon-sm')+' '+(f.photoDataUri? tr('photoChange') : tr('photoUpload'))+'</span></span><input type="file" accept="image/*" data-photo-target="profileForm" style="display:none;"></label>' : '')
    + '<div class="set-grid">'
      + (missing.includes('phone')? field(tr('phone')+' *','tel','profileForm.phone',f.phone,tr('phonePh')) : '')
      + (missing.includes('email')? field(tr('emailOpt')+' *','email','profileForm.email',f.email,'nume@gmail.com') : '')
@@ -2322,7 +2328,7 @@ async function approveProfileRequest(id){
   if(!c){ colBuyReq().doc(id).update({status:'rejected'}).catch(()=>{}); showToast(ra('Clientul nu mai există.')); return; }
   const now=new Date().toISOString(); const upd={profileUpdatedAt:now};
   if(r.phone) upd.phone=r.phone; if(r.email) upd.email=r.email; if(r.birthDate) upd.birthDate=r.birthDate;
-  if(r.photoDataUri){ upd.photoDataUri=r.photoDataUri; upd.photoUpdatedAt=now; }
+  if(safeImg(r.photoDataUri)){ upd.photoDataUri=r.photoDataUri; upd.photoUpdatedAt=now; }
   try{ await colClients().doc(c.id).update(upd); await colBuyReq().doc(id).update({status:'approved'}); await logMod('Date client confirmate', c.name); showToast(ra('Datele clientului au fost salvate.')); }
   catch(e){ showToast(ra('Eroare.')); }
 }
@@ -2806,7 +2812,8 @@ async function exportCSV(kind){
   else if(kind==='accesslog'){ filename='istoric-acces.csv'; rows=[['Data','Ora','Client','Telefon','Cod','Rezultat','Observații']];
     const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
     filteredHistory().forEach(l=>{ const d=new Date(l.timestamp); const c=byId[l.clientId]; rows.push([localDay(l.timestamp), isNaN(d)?'':d.toLocaleTimeString('ro-RO',{hour:'2-digit',minute:'2-digit'}), l.clientName||'', (c&&c.phone)||'', l.code||'', resultLabel(l.result), l.message||'']); }); }
-  const csv=rows.map(r=>r.map(v=>{ v=String(v==null?'':v); return /[",;\n]/.test(v)? ('"'+v.replace(/"/g,'""')+'"') : v; }).join(',')).join('\r\n');
+  // A cell starting with = + - @ would run as a formula in Excel, so such text is prefixed with an apostrophe.
+  const csv=rows.map(r=>r.map(v=>{ v=String(v==null?'':v); if(/^[=+\-@\t\r]/.test(v) && !/^-?\d+([.,]\d+)?$/.test(v)) v="'"+v; return /[",;\n]/.test(v)? ('"'+v.replace(/"/g,'""')+'"') : v; }).join(',')).join('\r\n');
   const ok=browserSave(filename, new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'}));
   showToast(ok? ra('Fișier salvat.') : ra('Exportul a eșuat.'));
 }
@@ -2879,7 +2886,7 @@ async function uploadGymLogo(file){
     state.settingsDraft.logoDataUri=cv.toDataURL('image/png'); scheduleRender();
   }catch(e){ showToast(ra('Nu am putut citi imaginea.')); }
 }
-function gymLogoSrc(){ return (state.settings&&state.settings.logoDataUri)||LOGO_DATA_URI; }
+function gymLogoSrc(){ return safeImg(state.settings&&state.settings.logoDataUri)||LOGO_DATA_URI; }
 function renderSettings(){
   if(!state.settingsDraft){ state.settingsDraft=draftFromSettings(state.settings); }
   const d=state.settingsDraft;
@@ -2906,7 +2913,7 @@ function renderSettings(){
    + card('home', ra('Identitatea sălii'), ra('Apare pe ecranul de start, în panou și în contul clienților.'),
       '',
       '<div class="set-grid">'+field(ra('Numele sălii'),'text','settingsDraft.gymName',d.gymName)
-        + '<div class="field" style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);font-weight:600;">'+ra('Logo (opțional)')+'<div class="logo-box"><div class="logo-prev"><img src="'+(d.logoDataUri||LOGO_DATA_URI)+'" alt=""></div>'
+        + '<div class="field" style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);font-weight:600;">'+ra('Logo (opțional)')+'<div class="logo-box"><div class="logo-prev"><img src="'+(safeImg(d.logoDataUri)||LOGO_DATA_URI)+'" alt=""></div>'
           + '<label class="btn btn-ghost btn-sm" style="cursor:pointer;">'+icon('upload','icon-sm')+' '+ra('Încarcă logo')+'<input type="file" accept="image/png,image/jpeg,image/webp" data-logo-upload="1" style="display:none;"></label>'
           + (d.logoDataUri? '<button class="btn btn-ghost btn-sm" data-action="remove-logo" style="color:var(--danger);">'+icon('trash','icon-sm')+' '+ra('Logo implicit')+'</button>' : '')
           + '<span class="hint">PNG / JPG, max 2 MB</span></div></div>'
@@ -3133,7 +3140,7 @@ function renderClientPortal(){
    + '<div class="cp-grid">'
    + '<div class="cp-col cp-area-top">'
      + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div class="flex items-center" style="gap:12px;min-width:0;">'
-       + '<label class="sub-av" title="'+esc(c.photoDataUri? tr('photoChange') : tr('photoUpload'))+'">'+(c.photoDataUri? '<img src="'+c.photoDataUri+'" alt="">' : icon('camera'))+'<span class="sub-av-edit">'+icon(c.photoDataUri?'edit':'plus')+'</span><input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label>'
+       + '<label class="sub-av" title="'+esc(c.photoDataUri? tr('photoChange') : tr('photoUpload'))+'">'+(c.photoDataUri? '<img src="'+safeImg(c.photoDataUri)+'" alt="">' : icon('camera'))+'<span class="sub-av-edit">'+icon(c.photoDataUri?'edit':'plus')+'</span><input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label>'
        + '<div style="min-width:0;"><div class="small" style="opacity:.85;">'+esc(subTypeDisplayName(c)||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
        + (tone==='unlimited'? ('<div class="sub-days">∞<span>'+tr('unlimitedLabel')+'</span></div>') : dl!==null? ('<div class="sub-days">'+(dl<0?0:dl)+'<span>'+(dl<0?tr('subExpired'):tr('daysLeft'))+'</span></div>') : '<div class="sub-days" style="font-size:20px;">'+tr('noSubShort')+'<span>'+tr('contactReception')+'</span></div>')
        + '<div class="sub-range"><span>'+tr('fromLabel')+' '+fmtDate(sub.validFrom)+'</span><span>'+(tone==='unlimited'? '∞' : (tr('toLabel')+' '+fmtDate(sub.validTo)))+'</span></div></div>'
