@@ -1196,7 +1196,7 @@ const RO_RU = {
   'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов. Сотрудники ресепшн только сканируют входы.',
   'Recepționer':'Ресепшн', 'Recepționer — doar scanează':'Ресепшн — только сканирует', 'Administratorii pot adăuga doar recepționeri.':'Администраторы могут добавлять только сотрудников ресепшн.', 'Administratorii pot gestiona doar recepționerii.':'Администраторы могут управлять только сотрудниками ресепшн.',
   'Caută client':'Поиск клиента', 'Pentru clienții care și-au uitat cardul.':'Для клиентов, которые забыли карту.', 'Nume sau email (cel puțin 2 litere)':'Имя или email (минимум 2 буквы)', 'Caută după nume, email, telefon sau cod':'Поиск по имени, email, телефону или коду',
-  'Fără abonament activ':'Нет активного абонемента', 'activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
+  'Fără abonament activ':'Нет активного абонемента', 'Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.':'Список команды ещё загружается. Попробуйте через несколько секунд.', 'Se încarcă echipa…':'Загружаем команду…','activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
   'Au date incomplete (se importă, completezi apoi în fișa clientului):':'С неполными данными (импортируются, дополните потом в карточке клиента):', 'cu date incomplete':'с неполными данными', 'Importat din evidența veche':'Импортирован из старого учёта', 'Fără acces':'Нет доступа', 'Valabil':'Действителен','Verifică intrarea':'Проверить вход', 'Nicio scanare azi.':'Сегодня сканирований нет.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
   'Modifică membrul echipei':'Изменить сотрудника', 'Colegul va intra în panou cu acest email și parola de mai jos.':'Коллега будет входить с этим email и паролем ниже.', 'Trebuie să rămână cel puțin un proprietar.':'Должен остаться хотя бы один владелец.',
@@ -1498,7 +1498,10 @@ function normTeamRole(r){ return r==='owner'||r==='reception'? r : 'admin'; }
 function teamRoleLabel(r){ r=normTeamRole(r); return r==='owner'? ra('Proprietar') : r==='reception'? ra('Recepționer') : ra('Administrator'); }
 // Owners manage everyone; administrators only receptionists.
 function canManageMember(role){ return state.adminRole==='owner' || (state.adminRole==='admin' && role==='reception'); }
+// After the move the list must be loaded before any change, otherwise a partial list would overwrite it.
+function teamListLoading(){ return !!(state.settings && state.settings.hasTeam && !state.staffDoc); }
 async function saveTeam(team){
+  if(teamListLoading()) throw new Error('staff-list-not-loaded');
   if(state.staffDoc || (state.settings&&state.settings.hasTeam)){ const d=staffDocFor(team); await refStaff().set(d); state.staffDoc=d; }
   else await saveSettingsDoc({team});
 }
@@ -3120,7 +3123,7 @@ function renderSettings(){
       + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-identity">'+icon('check','icon-sm')+' '+ra('Salvează identitatea')+'</button>')
    + (canManageTeam? card('users', ra('Echipă și roluri'), ra('Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.'),
       '<button class="btn btn-primary" data-action="open-add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă membru')+'</button>',
-      team.length? '<div class="hwrap"><table class="htable"><thead><tr><th>'+ra('Nume')+'</th><th>'+ra('Email')+'</th><th>'+ra('Rol')+'</th><th style="text-align:right;">'+ra('Acțiuni')+'</th></tr></thead><tbody>'+teamRows+'</tbody></table></div>' : '<div class="empty-state small">'+ra('Niciun coleg adăugat încă.')+'</div>') : '')
+      teamListLoading()? '<div class="empty-state small">'+ra('Se încarcă echipa…')+'</div>' : team.length? '<div class="hwrap"><table class="htable"><thead><tr><th>'+ra('Nume')+'</th><th>'+ra('Email')+'</th><th>'+ra('Rol')+'</th><th style="text-align:right;">'+ra('Acțiuni')+'</th></tr></thead><tbody>'+teamRows+'</tbody></table></div>' : '<div class="empty-state small">'+ra('Niciun coleg adăugat încă.')+'</div>') : '')
    + card('mail', ra('Mesaje pentru clienți'), ra('Textele din emailurile automate și noutățile din contul clientului.'),
       '',
       '<div class="set-grid">'
@@ -3294,6 +3297,7 @@ async function addTeam(){
   if(!email||!email.includes('@')){ showToast(ra('Introdu un e-mail valid.')); return; }
   const pass=f.password||'';
   if(!pass||pass.length<8){ showToast(ra('Parola inițială trebuie să aibă minim 8 caractere.')); return; }
+  if(teamListLoading()){ showToast(ra('Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.')); return; }
   const existing=currentTeam(); const role=normTeamRole(f.role); if(!canManageMember(role)){ showToast(ra('Administratorii pot adăuga doar recepționeri.')); return; }
   if(existing.some(m=>(m.email||'').toLowerCase()===email)){ showToast(ra('Acest email are deja acces.')); return; }
   let secondaryApp=null; let reused=false;
