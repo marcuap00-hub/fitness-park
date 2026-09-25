@@ -1912,7 +1912,7 @@ function renderClientGate(){
   }
   if(!state.clientForm) state.clientForm={};
   const f=state.clientForm; const reg=state.clientAuthMode==='register';
-  const emailIn='<label class="field">'+tr('caEmail')+'<input type="email" autocomplete="username" inputmode="email" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="'+(reg?'client-signup':'client-signin')+'"></label>';
+  const emailIn='<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="'+(reg?'client-signup':'client-signin')+'"></label>';
   if(reg) return wrap('<div class="gate-title">'+tr('caRegTitle')+'</div>'
     + '<div class="gate-desc">'+tr('caRegDesc')+'</div>' + emailIn
     + '<label class="field">'+tr('caPassNew')+'<input type="password" autocomplete="new-password" data-bind="clientForm.password" value="'+esc(f.password||'')+'" data-enter="client-signup"></label>'
@@ -3435,6 +3435,8 @@ function bindEvents(root){
     el.addEventListener(ev, ()=>{
       const val = el.type==='checkbox'? el.checked : el.value;
       setPath(state, path, val);
+      // The sign-in form shows nothing that depends on the typed text, so it is not redrawn on every key.
+      if(/^clientForm\./.test(path)) return;
       if(/^history(Query|Period|Time|Result|From|To)$/.test(path)) state.historyPage=1;
       if(path==='form.typeId'){ if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); }
       scheduleRender();
