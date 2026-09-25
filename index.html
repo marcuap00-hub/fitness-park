@@ -260,6 +260,10 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .lang-toggle span.on{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.14);}
 .lang-toggle:hover span:not(.on){color:var(--text);}
 .copyright{font-size:12px;font-weight:500;color:var(--text-faint);text-align:center;letter-spacing:.01em;}
+.gate-admin-row{display:flex;justify-content:center;margin-top:18px;}
+.gate-admin-link{display:inline-flex;align-items:center;gap:4px;padding:0;border:none;background:none;font:inherit;font-size:12px;font-weight:500;color:var(--text-faint);cursor:pointer;}
+.gate-admin-link:hover{color:var(--text);}
+.gate-admin-link .icon{width:12px;height:12px;}
 .gate-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 28px;}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
 .brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px;flex:none;object-fit:contain;padding:4px;}
@@ -1471,11 +1475,6 @@ const HOME_TEXT={
 };
 function ht(key, vars){ let s=(HOME_TEXT[state.lang]||HOME_TEXT.ro)[key]||HOME_TEXT.ro[key]||key; Object.keys(vars||{}).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; }
 const HOME_DEFAULT_STREET='Strada Libertății 59', HOME_DEFAULT_CITY='Bălți';
-// Quick ways for staff to reach the login without scrolling, invisible to clients:
-// a bookmark ending in #admin, 5 quick taps on the header logo, and a shield button only on devices where staff have logged in.
-function isStaffDevice(){ try{ return localStorage.getItem('fp_staff_device')==='1'; }catch(e){ return false; } }
-let logoTaps=[];
-function secretStaffTap(){ const now=Date.now(); logoTaps=logoTaps.filter(t=>now-t<2500); logoTaps.push(now); if(logoTaps.length>=5){ logoTaps=[]; return true; } return false; }
 // Groups consecutive days with the same hours: "Luni – Vineri 08:00–21:00".
 function homeHoursRows(s){
   const w=weekScheduleOf(s); const rows=[];
@@ -1511,7 +1510,7 @@ function renderLanding(){
    + '<header class="hp-nav"><div class="hp-wrap">'
      + '<button class="hp-logo" data-action="hp-scroll" data-id="top" aria-label="'+esc(gym)+'"><img src="'+gymLogoSrc()+'" alt=""><span class="hp-logo-t">'+logoText+'</span></button>'
      + '<nav class="hp-links">'+go('despre',ht('navAbout'))+go('ritm',ht('navRhythm'))+go('abonamente',ht('navPlans'))+go('contact',ht('navContact'))+'</nav>'
-     + '<div class="hp-actions">'+(isStaffDevice()? '<button class="modal-close" data-action="go-admin" title="'+esc(ht('footerAdmin'))+'" aria-label="'+esc(ht('footerAdmin'))+'">'+icon('shield','icon-sm')+'</button>' : '')+langToggleBtn()+themeToggleBtn()+'<button class="modal-close hp-show-sm" data-action="go-client" title="'+esc(ht('myAccount'))+'" aria-label="'+esc(ht('myAccount'))+'">'+icon('user','icon-sm')+'</button><button class="hp-btn hp-btn-ghost hp-btn-sm hp-hide-sm" data-action="go-client">'+esc(ht('myAccount'))+'</button><button class="hp-btn hp-btn-primary hp-btn-sm hp-hide-sm" data-action="hp-scroll" data-id="abonamente">'+esc(ht('cta'))+' '+arrow+'</button></div>'
+     + '<div class="hp-actions">'+langToggleBtn()+themeToggleBtn()+'<button class="modal-close hp-show-sm" data-action="go-client" title="'+esc(ht('myAccount'))+'" aria-label="'+esc(ht('myAccount'))+'">'+icon('user','icon-sm')+'</button><button class="hp-btn hp-btn-ghost hp-btn-sm hp-hide-sm" data-action="go-client">'+esc(ht('myAccount'))+'</button><button class="hp-btn hp-btn-primary hp-btn-sm hp-hide-sm" data-action="hp-scroll" data-id="abonamente">'+esc(ht('cta'))+' '+arrow+'</button></div>'
    + '</div></header>'
    + '<section class="hp-hero" id="hp-top">'+(imgs.hero? '<div class="hp-hero-img" style="background-image:url('+imgs.hero+');"></div>' : '')
      + '<div class="hp-wrap"><div class="hp-eyebrow line">'+esc(gym)+' · '+esc(city||street)+'</div>'
@@ -1586,6 +1585,7 @@ function renderClientGate(){
    + '<button class="btn btn-primary btn-block" data-action="client-login-submit">'+icon('check','icon-sm')+' '+tr('viewMySub')+'</button>'
    + '<button class="btn btn-ghost btn-block mt4" data-action="toggle-camera-client">'+icon('camera','icon-sm')+' '+(state.cameraOn?tr('stopCamera'):tr('scanWithCamera'))+'</button>'
    + (state.cameraOn? cameraBlock() : '')
+   + '<div class="gate-admin-row"><button class="gate-admin-link" data-action="go-admin">'+esc(ht('footerAdmin'))+'</button></div>'
    + '</div>'+copyrightHtml()+'</div>';
 }
 function renderBuyGate(){
@@ -2929,7 +2929,7 @@ function onAction(el){
     case 'go-admin': state.formErr=''; state.screen='admin-gate'; window.scrollTo(0,0); break;
     case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); window.scrollTo(0,0); break;
     case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); window.scrollTo(0,0); break;
-    case 'hp-scroll': { if(id==='top' && el.closest('.hp-nav') && secretStaffTap()){ state.formErr=''; state.screen='admin-gate'; window.scrollTo(0,0); break; } const target=id==='top'? null : document.getElementById('hp-'+id); if(target) target.scrollIntoView({behavior:'smooth', block:'start'}); else window.scrollTo({top:0, behavior:'smooth'}); return; }
+    case 'hp-scroll': { const target=id==='top'? null : document.getElementById('hp-'+id); if(target) target.scrollIntoView({behavior:'smooth', block:'start'}); else window.scrollTo({top:0, behavior:'smooth'}); return; }
     case 'hp-buy-plan': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:id}; state.screen='buy-gate'; window.scrollTo(0,0); break;
     case 'admin-login-submit': runOnce(adminLoginSubmit); return;
     case 'admin-setup-submit': runOnce(adminSetupSubmit); return;
@@ -3012,7 +3012,6 @@ async function adminLoginSubmit(){
     scheduleRender(); return;
   }
   state.adminUnlocked=true; state.adminRole=member.role||'admin'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
-  try{ localStorage.setItem('fp_staff_device','1'); }catch(e){}
   subscribeStaff();
   scheduleRender();
 }
@@ -3034,7 +3033,6 @@ async function adminSetupSubmit(){
     await firebase.auth().createUserWithEmailAndPassword(email, p1);
     await saveSettingsDoc({team:[{email, role:'owner'}]});
     state.adminUnlocked=true; state.adminRole='owner'; state.screen='admin'; state.formErr=''; state.adminSection='reception';
-    try{ localStorage.setItem('fp_staff_device','1'); }catch(e){}
     subscribeStaff();
     showToast(ra('Panoul de administrare e gata.'));
   }catch(e){
