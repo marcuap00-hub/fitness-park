@@ -121,7 +121,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .hp-nav{position:sticky;top:0;z-index:30;background:rgba(var(--hp-bg-rgb),.86);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--hp-line);}
 .hp-nav .hp-wrap{display:flex;align-items:center;gap:24px;height:78px;}
 .hp-logo{display:flex;align-items:center;gap:12px;background:none;border:none;color:var(--hp-text);cursor:pointer;padding:0;font:inherit;}
-.hp-logo img{width:46px;height:46px;border-radius:50%;background:#fff;object-fit:contain;padding:3px;box-shadow:0 0 0 2px rgba(142,147,255,.35);}
+.hp-logo img{width:46px;height:46px;object-fit:contain;}
 .hp-logo-t{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.02em;}
 .hp-logo-t span{color:var(--hp-lav);}
 .hp-links{display:flex;gap:30px;margin:0 auto;}
@@ -266,7 +266,7 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .gate-admin-link .icon{width:12px;height:12px;}
 .gate-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 28px;}
 .brand{display:flex;align-items:center;gap:10px;margin-bottom:22px;}
-.brand-mark{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--accent),var(--gold));display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px;flex:none;object-fit:contain;padding:4px;}
+.brand-mark{width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:var(--font-display);font-weight:800;font-size:16px;flex:none;object-fit:contain;}
 .brand-name{font-family:var(--font-display);font-weight:800;font-size:17px;}
 .brand-sub{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.09em;font-weight:700;}
 .gate-title{font-size:23px;font-weight:800;margin:2px 0 6px;}
@@ -2855,8 +2855,7 @@ function renderClientPortal(){
    + '</div>'
    + '<div class="cp-col cp-area-rest">'
      + '<div class="client-tabs cp-tabs">'+tabBtn('sub',tr('tabSub'))+tabBtn('history',tr('tabHistory'))+tabBtn('news',tr('tabNews'))+'</div>'
-     + (tab==='sub'? clientTabSub(c) : tab==='news'? clientTabNews() : clientTabHistory(myLog))
-     + clientTrainerCard(c)
+     + (tab==='sub'? clientTabSub(c)+clientTrainerCard(c) : tab==='news'? clientTabNews() : clientTabHistory(myLog))
    + '</div>'
    + '</div>'
    + '<div class="cp-foot"><span>© '+new Date().getFullYear()+' '+esc(gym)+'. '+tr('cpRights')+'</span><span>'+tr('cpSlogan')+'</span></div>'
