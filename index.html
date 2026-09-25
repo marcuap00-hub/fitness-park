@@ -3534,6 +3534,8 @@ function bindEvents(root){
       if(/^history(Query|Period|Time|Result|From|To)$/.test(path)) state.historyPage=1;
       if(path==='clientQuery'||path==='clientSort') state.clientLimit=100;
       if(path==='form.typeId'){ if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); }
+      // A new start date moves the end date by the plan's length (the end date can still be changed by hand afterwards).
+      if(path==='form.validFrom' && state.modal && ['newClient','renew','editSub'].includes(state.modal.type) && /^(19|20)\d\d-\d\d-\d\d$/.test(val)){ const t=typeById(state.form.typeId); if(t) state.form.validTo=subEndDate(val, t); }
       // A date typed by hand fires "change" after every digit; redrawing then would throw the cursor into
       // another part of the date. The redraw waits until the field is left (a date picked from the calendar redraws at once).
       if(dateLike && typed){ pending=true; return; }
