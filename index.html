@@ -1649,12 +1649,13 @@ function renderInstallHelp(){
    + '<button class="btn btn-primary btn-block" data-action="install-help-close">'+esc(tr('instOk'))+'</button></div></div>';
 }
 const HOME_DEFAULT_STREET='Strada Libertății 59', HOME_DEFAULT_CITY='Bălți';
-// "Strada Libertății 59, Bălți" → street + city; a missing or half-typed address falls back to the default.
+// "Strada Libertății 59, Bălți" → street + city. Without a city after the comma the gym's city (Bălți) is
+// assumed, and a missing or half-typed address falls back to the default one.
 function gymAddress(s){
   const rawAddr=((s&&s.address)||'').trim(); const addrOk=rawAddr.replace(/[^\p{L}\d]/gu,'').length>=6;
   const cut=addrOk? rawAddr.lastIndexOf(',') : -1;
   const street=!addrOk? HOME_DEFAULT_STREET : cut>0? rawAddr.slice(0,cut).trim() : rawAddr;
-  const city=!addrOk? HOME_DEFAULT_CITY : cut>0? rawAddr.slice(cut+1).trim() : '';
+  const city=(cut>0 && rawAddr.slice(cut+1).trim()) || HOME_DEFAULT_CITY;
   const fullAddr=city? street+', '+city : street;
   return {street, city, fullAddr, mapUrl:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fullAddr+', Moldova')};
 }
@@ -1669,7 +1670,7 @@ function renderLanding(){
   const s=state.settings||{};
   const gym=s.gymName||'Fitness Park';
   const {street, city, fullAddr, mapUrl}=gymAddress(s);
-  const V={gym:esc(gym), street:esc(street), city:esc(city||street)};
+  const V={gym:esc(gym), street:esc(street), city:esc(city)};
   const imgs=(typeof window.HOME_IMAGES==='object' && window.HOME_IMAGES) || {};
   const words=gym.trim().split(/\s+/); const logoText=words.length>1? esc(words.slice(0,-1).join(' '))+' <span>'+esc(words[words.length-1])+'</span>' : esc(gym);
   const go=(id,label)=>'<button data-action="hp-scroll" data-id="'+id+'">'+esc(label)+'</button>';
@@ -1691,7 +1692,7 @@ function renderLanding(){
    + '</div></header>'
    + '<section class="hp-hero" id="hp-top"><div class="hp-wrap hp-hero-grid'+(isStandaloneApp()?' solo':'')+'">'
      + '<div class="hp-hero-main"'+(imgs.hero? ' style="background-image:url('+imgs.hero+');"' : '')+'><div class="hp-hero-in">'
-     + '<div class="hp-eyebrow line">'+esc(gym)+' · '+esc(city||street)+'</div>'
+     + '<div class="hp-eyebrow line">'+esc(gym)+' · '+esc(city)+'</div>'
      + '<h1 class="hp-h1">'+esc(ht('heroA'))+'<br><em>'+esc(ht('heroB'))+'</em> '+esc(ht('heroC'))+'</h1>'
      + '<p class="hp-lead">'+esc(ht('lead1'))+'<br>'+ht('lead2',V)+'</p>'
      + '<div class="hp-cta"><button class="hp-btn hp-btn-primary" data-action="hp-scroll" data-id="abonamente">'+esc(ht('btnPlans'))+' '+arrow+'</button><button class="hp-btn hp-btn-ghost" data-action="hp-scroll" data-id="despre">'+esc(ht('btnAbout'))+'</button></div>'
@@ -1706,7 +1707,7 @@ function renderLanding(){
      + '<div class="hp-eyebrow">'+ht('aboutEyebrow',V)+'</div><h2 class="hp-h2">'+esc(ht('aboutH1'))+'<br>'+esc(ht('aboutH2'))+'</h2>'
      + '<p class="hp-p">'+ht('aboutP1',V)+'</p><p class="hp-p">'+esc(ht('aboutP2'))+'</p>'
      + '<button class="hp-link" data-action="hp-scroll" data-id="contact">'+esc(ht('aboutLink'))+' '+arrow+'</button></div>'
-     + '<div class="hp-photo"'+(imgs.about? ' style="background-image:url('+imgs.about+');"' : '')+'><div class="hp-photo-cap"><div class="hp-eyebrow">'+esc(gym)+' / '+esc(city||street)+'</div><b>'+esc(ht('aboutCap1'))+'<br>'+esc(ht('aboutCap2'))+'</b></div></div>'
+     + '<div class="hp-photo"'+(imgs.about? ' style="background-image:url('+imgs.about+');"' : '')+'><div class="hp-photo-cap"><div class="hp-eyebrow">'+esc(gym)+' / '+esc(city)+'</div><b>'+esc(ht('aboutCap1'))+'<br>'+esc(ht('aboutCap2'))+'</b></div></div>'
    + '</div></section>'
    + '<section class="hp-sec alt" id="hp-ritm"><div class="hp-wrap">'
      + '<div class="hp-sec-head"><div><div class="hp-eyebrow">'+esc(ht('navRhythm'))+'</div><h2 class="hp-h2">'+esc(ht('rhythmH1'))+'<br>'+esc(ht('rhythmH2'))+'</h2></div><div class="hp-note">'+esc(ht('rhythmNote1'))+'<br>'+esc(ht('rhythmNote2'))+'</div></div>'
