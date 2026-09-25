@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; media-src 'self' blob:; connect-src 'self' https://*.googleapis.com https://script.google.com https://script.googleusercontent.com; object-src 'none'; base-uri 'self'; form-action 'self';">
 <title>Fitness Park</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#3A34E0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fitness Park">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap">
 <style>
@@ -144,13 +152,27 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .hp-btn-ghost:hover{border-color:var(--hp-text);}
 .hp .hp-btn-white{background:#fff;color:var(--hp-deep);}
 .hp-btn-sm{padding:11px 18px;font-size:14px;}
-.hp-hero{position:relative;min-height:calc(100vh - 78px);display:flex;align-items:center;overflow:hidden;}
-.hp-hero-img{position:absolute;inset:0 0 0 38%;background-size:cover;background-position:center;}
-.hp-hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,var(--hp-bg) 34%,rgba(var(--hp-bg-rgb),.72) 52%,rgba(var(--hp-bg-rgb),.25) 80%,rgba(var(--hp-bg-rgb),.35)),linear-gradient(0deg,var(--hp-bg) 0,transparent 22%);}
-.hp-hero .hp-wrap{position:relative;z-index:2;width:100%;padding-top:40px;padding-bottom:48px;}
+.hp-hero{padding:26px 0 10px;scroll-margin-top:78px;}
+.hp-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:24px;align-items:stretch;}
+.hp-hero-grid.solo{grid-template-columns:minmax(0,1fr);}
+/* The photo panel keeps light text in both themes, so it redefines the colour variables locally. */
+.hp-hero-main{position:relative;overflow:hidden;display:flex;align-items:flex-end;min-height:min(640px,calc(100vh - 130px));border-radius:26px;background:#0B0D14 center/cover no-repeat;color:#fff;box-shadow:var(--hp-shadow);
+  --hp-text:#fff;--hp-lead:#D5D8E5;--hp-muted:#C9CCDA;--hp-lav:#A9ADFF;--hp-line2:rgba(255,255,255,.28);--hp-ghost:rgba(255,255,255,.42);}
+.hp-hero-main::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,9,15,.9) 0%,rgba(8,9,15,.62) 50%,rgba(8,9,15,.3) 100%),linear-gradient(0deg,rgba(8,9,15,.8) 0%,transparent 55%);}
+.hp-hero-in{position:relative;z-index:1;padding:56px 52px 44px;}
+.hp-hero-side{display:flex;flex-direction:column;justify-content:center;}
+.hp-install{display:flex;flex-direction:column;gap:20px;padding:30px 28px;border:1px solid var(--hp-line);border-radius:24px;background:var(--hp-card);box-shadow:var(--hp-shadow);}
+.hp-install-top{display:flex;align-items:center;gap:16px;}
+.hp-app-ic{flex:none;width:64px;height:64px;border-radius:16px;background:#fff;box-shadow:0 12px 26px -12px rgba(58,52,224,.7),0 0 0 1px rgba(20,22,40,.06);}
+.hp-install b{display:block;font-family:var(--font-display);font-size:19px;line-height:1.25;letter-spacing:-.02em;}
+.hp-install-top span{display:block;margin-top:5px;font-size:14.5px;line-height:1.5;color:var(--hp-muted);}
+.hp-install ul{list-style:none;margin:0;padding:18px 0 0;border-top:1px solid var(--hp-line);display:flex;flex-direction:column;gap:12px;}
+.hp-install li{display:flex;align-items:center;gap:10px;font-size:14.5px;}
+.hp-install li .icon{flex:none;width:18px;height:18px;padding:3px;border-radius:50%;background:rgba(58,52,224,.12);color:var(--hp-lav);}
+.hp-install .hp-btn{width:100%;}
 .hp-eyebrow{display:flex;align-items:center;gap:14px;color:var(--hp-lav);font-size:13px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;}
 .hp-eyebrow.line::before{content:'';width:34px;height:2px;background:var(--hp-lav);}
-.hp-h1{font-family:var(--font-display);font-weight:800;font-size:clamp(46px,7.4vw,104px);line-height:.98;letter-spacing:-.045em;margin:22px 0 28px;}
+.hp-h1{font-family:var(--font-display);font-weight:800;font-size:clamp(42px,6.4vw,92px);line-height:.98;letter-spacing:-.045em;margin:22px 0 28px;}
 .hp-h1 em{font-style:normal;color:var(--hp-lav);}
 .hp-lead{max-width:600px;font-size:19px;line-height:1.65;color:var(--hp-lead);}
 .hp-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px;}
@@ -225,8 +247,9 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 @media(max-width:980px){
   .hp-links{display:none;}
   .hp-nav .hp-wrap{justify-content:space-between;}
-  .hp-hero-img{inset:0;opacity:.55;}
-  .hp-hero::before{background:linear-gradient(90deg,rgba(var(--hp-bg-rgb),.95) 20%,rgba(var(--hp-bg-rgb),.6)),linear-gradient(0deg,var(--hp-bg) 0,transparent 30%);}
+  .hp-hero-grid{grid-template-columns:minmax(0,1fr);}
+  .hp-hero-main{min-height:0;}
+  .hp-hero-in{padding:44px 30px 34px;}
   .hp-two,.hp-cards{grid-template-columns:1fr;gap:28px;}
   .hp-contact{grid-template-columns:1fr;padding:40px 28px;gap:28px;}
   .hp-divider{width:100%;height:1px;}
@@ -244,7 +267,10 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
   .hp-actions .hp-btn{padding:10px 14px;font-size:13px;}
   .hp-actions .hp-hide-sm{display:none;}
   .hp-actions .hp-show-sm{display:flex;}
-  .hp-hero{min-height:auto;}
+  .hp-hero{padding-top:14px;}
+  .hp-hero-main{border-radius:20px;}
+  .hp-hero-in{padding:34px 20px 26px;}
+  .hp-install{padding:22px 20px;}
   .hp-lead{font-size:16.5px;}
   .hp-cta .hp-btn{flex:1;}
   .hp-facts{margin-top:44px;gap:18px;}
@@ -778,6 +804,16 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .cp-trainer b{display:block;font-family:var(--font-display);font-size:16px;}
 .cp-trainer span:not(.pill):not(.cp-tr-ic){display:block;font-size:13.5px;color:var(--text-muted);margin-top:2px;}
 .cp-trainer .btn{min-width:130px;}
+.inst-sheet{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom));z-index:600;max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:12px;padding:18px;border:1px solid var(--border);border-radius:22px;background:var(--surface);box-shadow:0 -6px 40px -10px rgba(10,12,30,.35);animation:instUp .35s ease-out;}
+@keyframes instUp{from{transform:translateY(30px);opacity:0;}to{transform:none;opacity:1;}}
+.inst-sheet-top{display:flex;align-items:center;gap:14px;}
+.inst-sheet-top .hp-app-ic{width:56px;height:56px;border-radius:14px;}
+.inst-sheet-top b{display:block;font-family:var(--font-display);font-size:17px;}
+.inst-sheet-top span{display:block;margin-top:3px;font-size:13.5px;color:var(--text-muted);line-height:1.45;}
+.inst-later{padding:6px;border:none;background:none;color:var(--accent);font:inherit;font-size:14px;font-weight:600;cursor:pointer;}
+.inst-help{max-width:420px;}
+.inst-qr{align-self:center;padding:12px;border-radius:16px;background:#fff;border:1px solid var(--border);}
+.inst-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.5;}
 .cp-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;font-size:12px;color:var(--text-faint);}
 @media(max-width:560px){.client-body.cp{padding:18px 14px 24px;}.cp-hello h1{font-size:24px;}.cp-trainer .btn{width:100%;}.cp-tabs .client-tab{padding:10px 8px;font-size:12.5px;}}
 .rule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5;}
@@ -921,6 +957,10 @@ const I18N = {
     cpAccessCard:'Cardul tău de acces', cpScan:'Scanează la recepție', cpCopy:'Copiază', cpCardOptions:'Opțiuni card', cpDownload:'Descarcă cardul pe telefon',
     cpPrintedPending:'Cererea pentru card tipărit a fost trimisă.', cpTrainer:'Antrenor personal', cpTrainerDesc:'Te ajută să începi corect și în siguranță.',
     cpRequest:'Solicită', cpRequested:'Cerere trimisă', cpMap:'Vezi pe hartă', cpRights:'Toate drepturile rezervate.', cpSlogan:'Oameni mai puternici, în fiecare zi.',
+    instSheetTitle:'Fitness Park pe telefon', instSheetDesc:'Contul și cardul tău, la o atingere distanță.', instSheetBtn:'Adaugă pe ecranul principal', instLater:'Mai târziu', instOk:'Am înțeles',
+    instIos1:'Apasă butonul Partajează (pătratul cu săgeată în sus), jos în Safari.', instIos2:'Derulează și alege „Adaugă pe ecranul principal”.', instIos3:'Apasă „Adaugă”. Iconița Fitness Park apare pe ecranul telefonului.',
+    instAnd1:'Apasă meniul browserului (cele 3 puncte ⋮, sus în dreapta).', instAnd2:'Alege „Adaugă pe ecranul principal” sau „Instalează aplicația”.', instAnd3:'Confirmă cu „Adaugă”. Iconița apare pe ecranul telefonului.',
+    instDeskTitle:'Deschide pe telefon', instDesk1:'Scanează codul de mai sus cu camera telefonului.', instDesk2:'Pe telefon, apasă „Adaugă pe ecranul principal”.',
     noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția', unlimitedLabel:'Nelimitat',
     fromLabel:'De la', toLabel:'Până la',
     cardReqPending:'Cerere trimisă — se așteaptă aprobarea recepției.', lostCard:'Am pierdut cardul — solicită unul nou',
@@ -962,6 +1002,10 @@ const I18N = {
     cpAccessCard:'Твоя карта доступа', cpScan:'Покажи на ресепшн', cpCopy:'Копировать', cpCardOptions:'Действия с картой', cpDownload:'Скачать карту на телефон',
     cpPrintedPending:'Запрос на печатную карту отправлен.', cpTrainer:'Персональный тренер', cpTrainerDesc:'Поможет начать правильно и безопасно.',
     cpRequest:'Запросить', cpRequested:'Запрос отправлен', cpMap:'На карте', cpRights:'Все права защищены.', cpSlogan:'Сильнее с каждым днём.',
+    instSheetTitle:'Fitness Park в телефоне', instSheetDesc:'Кабинет и карта — в одно касание.', instSheetBtn:'Добавить на главный экран', instLater:'Позже', instOk:'Понятно',
+    instIos1:'Нажми кнопку «Поделиться» (квадрат со стрелкой вверх) внизу Safari.', instIos2:'Прокрути и выбери «На экран «Домой»».', instIos3:'Нажми «Добавить». Значок Fitness Park появится на экране телефона.',
+    instAnd1:'Открой меню браузера (три точки ⋮ вверху справа).', instAnd2:'Выбери «Добавить на главный экран» или «Установить приложение».', instAnd3:'Подтверди «Добавить». Значок появится на экране телефона.',
+    instDeskTitle:'Открой на телефоне', instDesk1:'Отсканируй код выше камерой телефона.', instDesk2:'На телефоне нажми «Добавить на главный экран».',
     noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн', unlimitedLabel:'Безлимит',
     fromLabel:'С', toLabel:'По',
     cardReqPending:'Заявка отправлена — ожидается одобрение ресепшн.', lostCard:'Я потерял карту — запросить новую',
@@ -1269,7 +1313,11 @@ async function logClientRequest(operation, c){ try{ await colMod().add({date:new
 
 /* ============ INIT & SUBSCRIPTIONS ============ */
 async function init(){
-  try{ if(/^#(admin|panou)$/i.test(location.hash) || new URLSearchParams(location.search).has('admin')) state.screen='admin-gate'; }catch(e){}
+  try{
+    if(/^#(admin|panou)$/i.test(location.hash) || new URLSearchParams(location.search).has('admin')) state.screen='admin-gate';
+    // The installed app opens on "Contul meu"; a remembered member code then goes straight to the account.
+    else if(new URLSearchParams(location.search).has('app') || isStandaloneApp()) state.screen='client-gate';
+  }catch(e){}
   render();
   try{
     if(typeof FIREBASE_CONFIG==='undefined' || !FIREBASE_CONFIG || !FIREBASE_CONFIG.apiKey) throw new Error('missing-config');
@@ -1512,6 +1560,7 @@ const HOME_TEXT={
     stepBadge:'Hai să ne cunoaștem', stepH1:'Primul tău pas', stepH2:'la {gym}.', stepP:'Alege un abonament online sau vino să vezi sala și află opțiunile direct de la echipa noastră.',
     stepBuy:'Cumpără online', stepMap:'Vezi cum ajungi', member:'Ești deja membru?', pick:'Alege', days:'zile', unlimited:'Nelimitat', entries:'intrări',
     contactEyebrow:'Ne vedem la sală', contactH1:'Mai aproape', contactH2:'de obiectivul tău.', country:'Republica Moldova', openNow:'Deschis acum', closedNow:'Acum e închis', closed:'Închis', map:'Deschide harta', call:'Sună',
+    instTitle:'Cardul tău, mereu la îndemână', instDesc:'Deschide {gym} direct de pe telefon.', instB1:'Codul QR la o singură atingere', instB2:'Abonamentul și zilele rămase, mereu la vedere', instB3:'Gratuit, fără magazin de aplicații', instBtn:'Adaugă pe ecranul principal',
     footerAdmin:'Recepție & administrare' },
   ru:{ navAbout:'О зале', navRhythm:'Твой ритм', navPlans:'Абонементы', navContact:'Контакты', cta:'В зал', myAccount:'Мой кабинет',
     heroA:'Твоя сила', heroB:'начинается', heroC:'здесь.', lead1:'Найди время для себя. Для движения. Для следующего шага.', lead2:'Ждём тебя в {gym}, {street}.',
@@ -1528,9 +1577,45 @@ const HOME_TEXT={
     stepBadge:'Давай знакомиться', stepH1:'Твой первый шаг', stepH2:'в {gym}.', stepP:'Выбери абонемент онлайн или приходи посмотреть зал — команда расскажет обо всех вариантах.',
     stepBuy:'Купить онлайн', stepMap:'Как добраться', member:'Уже клиент?', pick:'Выбрать', days:'дней', unlimited:'Безлимит', entries:'посещений',
     contactEyebrow:'Увидимся в зале', contactH1:'Ближе', contactH2:'к твоей цели.', country:'Республика Молдова', openNow:'Сейчас открыто', closedNow:'Сейчас закрыто', closed:'Закрыто', map:'Открыть карту', call:'Позвонить',
+    instTitle:'Твоя карта всегда под рукой', instDesc:'Открывай {gym} прямо с телефона.', instB1:'QR-код в одно касание', instB2:'Абонемент и оставшиеся дни всегда на виду', instB3:'Бесплатно, без магазина приложений', instBtn:'Добавить на главный экран',
     footerAdmin:'Ресепшн и управление' }
 };
 function ht(key, vars){ let s=(HOME_TEXT[state.lang]||HOME_TEXT.ro)[key]||HOME_TEXT.ro[key]||key; Object.keys(vars||{}).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; }
+/* ---- Add to home screen (installable web app) ---- */
+// Android browsers fire beforeinstallprompt and can install with one tap; iPhone only allows it from
+// Safari's Share menu, and on a computer we show a QR code so the phone can open the site.
+let installPromptEvent=null;
+window.addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); installPromptEvent=e; scheduleRender(); });
+window.addEventListener('appinstalled', ()=>{ installPromptEvent=null; try{ localStorage.setItem('fp_app_installed','1'); }catch(e){} state.installHelp=null; scheduleRender(); });
+function isStandaloneApp(){ try{ return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone===true; }catch(e){ return false; } }
+function isIOS(){ return /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1); }
+function isPhone(){ return isIOS() || /Android|Mobi/i.test(navigator.userAgent); }
+async function installApp(){
+  state.installSheetClosed=true;
+  if(installPromptEvent && isPhone()){
+    const ev=installPromptEvent; installPromptEvent=null;
+    try{ ev.prompt(); const choice=await ev.userChoice; if(choice && choice.outcome==='accepted'){ try{ localStorage.setItem('fp_app_installed','1'); }catch(e){} } }catch(e){}
+    scheduleRender(); return;
+  }
+  state.installHelp=isIOS()? 'ios' : isPhone()? 'android' : 'desktop'; scheduleRender();
+}
+function shouldShowInstallSheet(){
+  if(state.installSheetClosed || isStandaloneApp() || !isPhone()) return false;
+  try{ if(localStorage.getItem('fp_app_installed')==='1') return false; const later=Number(localStorage.getItem('fp_install_later')||0); if(later && Date.now()-later < 14*86400000) return false; }catch(e){}
+  return true;
+}
+function installSheetHtml(){
+  return '<div class="inst-sheet" role="dialog" aria-label="'+esc(tr('instSheetTitle'))+'"><div class="inst-sheet-top"><img class="hp-app-ic" src="icon-192.png" alt=""><div><b>'+esc(tr('instSheetTitle'))+'</b><span>'+esc(tr('instSheetDesc'))+'</span></div></div>'
+   + '<button class="btn btn-primary btn-block" data-action="install-app">'+esc(tr('instSheetBtn'))+'</button><button class="inst-later" data-action="install-later">'+esc(tr('instLater'))+'</button></div>';
+}
+function renderInstallHelp(){
+  const k=state.installHelp; const url=location.origin+location.pathname+'?app=1';
+  const steps=k==='ios'? [tr('instIos1'),tr('instIos2'),tr('instIos3')] : k==='android'? [tr('instAnd1'),tr('instAnd2'),tr('instAnd3')] : [tr('instDesk1'),tr('instDesk2')];
+  return '<div class="overlay" data-install-overlay="1"><div class="modal inst-help"><div class="modal-head"><div class="gate-title" style="font-size:19px;margin:0;">'+esc(k==='desktop'? tr('instDeskTitle') : tr('instSheetBtn'))+'</div><button class="modal-close" data-action="install-help-close">'+icon('x','icon-sm')+'</button></div>'
+   + (k==='desktop'? '<div class="inst-qr"><div data-qr="'+esc(url)+'"></div></div>' : '')
+   + '<ol class="inst-steps">'+steps.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ol>'
+   + '<button class="btn btn-primary btn-block" data-action="install-help-close">'+esc(tr('instOk'))+'</button></div></div>';
+}
 const HOME_DEFAULT_STREET='Strada Libertății 59', HOME_DEFAULT_CITY='Bălți';
 // "Strada Libertății 59, Bălți" → street + city; a missing or half-typed address falls back to the default.
 function gymAddress(s){
@@ -1572,12 +1657,18 @@ function renderLanding(){
      + '<nav class="hp-links">'+go('despre',ht('navAbout'))+go('ritm',ht('navRhythm'))+go('abonamente',ht('navPlans'))+go('contact',ht('navContact'))+'</nav>'
      + '<div class="hp-actions">'+langToggleBtn()+themeToggleBtn()+'<button class="modal-close hp-show-sm" data-action="go-client" title="'+esc(ht('myAccount'))+'" aria-label="'+esc(ht('myAccount'))+'">'+icon('user','icon-sm')+'</button><button class="hp-btn hp-btn-ghost hp-btn-sm hp-hide-sm" data-action="go-client">'+esc(ht('myAccount'))+'</button><button class="hp-btn hp-btn-primary hp-btn-sm hp-hide-sm" data-action="hp-scroll" data-id="abonamente">'+esc(ht('cta'))+' '+arrow+'</button></div>'
    + '</div></header>'
-   + '<section class="hp-hero" id="hp-top">'+(imgs.hero? '<div class="hp-hero-img" style="background-image:url('+imgs.hero+');"></div>' : '')
-     + '<div class="hp-wrap"><div class="hp-eyebrow line">'+esc(gym)+' · '+esc(city||street)+'</div>'
+   + '<section class="hp-hero" id="hp-top"><div class="hp-wrap hp-hero-grid'+(isStandaloneApp()?' solo':'')+'">'
+     + '<div class="hp-hero-main"'+(imgs.hero? ' style="background-image:url('+imgs.hero+');"' : '')+'><div class="hp-hero-in">'
+     + '<div class="hp-eyebrow line">'+esc(gym)+' · '+esc(city||street)+'</div>'
      + '<h1 class="hp-h1">'+esc(ht('heroA'))+'<br><em>'+esc(ht('heroB'))+'</em> '+esc(ht('heroC'))+'</h1>'
      + '<p class="hp-lead">'+esc(ht('lead1'))+'<br>'+ht('lead2',V)+'</p>'
      + '<div class="hp-cta"><button class="hp-btn hp-btn-primary" data-action="hp-scroll" data-id="abonamente">'+esc(ht('btnPlans'))+' '+arrow+'</button><button class="hp-btn hp-btn-ghost" data-action="hp-scroll" data-id="despre">'+esc(ht('btnAbout'))+'</button></div>'
      + '<div class="hp-facts"><div class="hp-fact"><b>'+esc(ht('f1t'))+'</b><span>'+esc(fullAddr)+'</span></div><div class="hp-fact"><b>'+esc(ht('f2t'))+'</b><span>'+esc(ht('f2d'))+'</span></div><div class="hp-fact"><b>'+esc(ht('f3t'))+'</b><span>'+esc(ht('f3d'))+'</span></div></div>'
+     + '</div></div>'
+     + (isStandaloneApp()? '' : '<aside class="hp-hero-side"><div class="hp-install">'
+         + '<div class="hp-install-top"><img class="hp-app-ic" src="icon-192.png" alt=""><div><b>'+esc(ht('instTitle'))+'</b><span>'+ht('instDesc',V)+'</span></div></div>'
+         + '<ul><li>'+icon('check')+esc(ht('instB1'))+'</li><li>'+icon('check')+esc(ht('instB2'))+'</li><li>'+icon('check')+esc(ht('instB3'))+'</li></ul>'
+         + '<button class="hp-btn hp-btn-primary" data-action="install-app">'+esc(ht('instBtn'))+'</button></div></aside>')
    + '</div></section>'
    + '<section class="hp-sec" id="hp-despre"><div class="hp-wrap hp-two"><div>'
      + '<div class="hp-eyebrow">'+ht('aboutEyebrow',V)+'</div><h2 class="hp-h2">'+esc(ht('aboutH1'))+'<br>'+esc(ht('aboutH2'))+'</h2>'
@@ -2859,7 +2950,9 @@ function renderClientPortal(){
    + '</div>'
    + '</div>'
    + '<div class="cp-foot"><span>© '+new Date().getFullYear()+' '+esc(gym)+'. '+tr('cpRights')+'</span><span>'+tr('cpSlogan')+'</span></div>'
-   + '</div></div>';
+   + '</div>'
+   + (shouldShowInstallSheet()? installSheetHtml() : '')
+   + '</div>';
 }
 // A request is "pending" until staff resolve it. Clients can't write their own record, so the time
 // of the request is also remembered in this browser to show the pending state right away.
@@ -2879,6 +2972,7 @@ function clientAccessCard(c){
      + '<button class="btn btn-soft btn-sm" data-action="copy-code" data-id="'+c.id+'">'+icon('copy','icon-sm')+' '+tr('cpCopy')+'</button></div>'
    + '<button class="cp-opts-toggle'+(open?' open':'')+'" data-action="toggle-card-opts" aria-expanded="'+open+'">'+tr('cpCardOptions')+' '+icon('chevronUp','icon-sm')+'</button>'
    + (open? '<div class="cp-opts">'
+       + (isStandaloneApp()? '' : '<button data-action="install-app">'+icon('phone','icon-sm')+' '+tr('instSheetBtn')+'</button>')
        + '<button data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' '+tr('cpDownload')+'</button>'
        + (c.cardRequestPending? '' : '<button data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' '+tr('lostCard')+'</button>')+cardNote
        + (printedPending? '<div class="cp-note warn">'+icon('printer','icon-sm')+' '+tr('cpPrintedPending')+'</div>' : '<button data-action="request-printed-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' '+tr('reqPrinted')+'</button>')
@@ -2963,6 +3057,7 @@ function render(){
   else{ state.screen='landing'; html=renderLanding(); }
   if(state.toast) html += '<div class="toast">'+esc(state.toast)+'</div>';
   if(state.confirmDialog) html += renderConfirmDialog();
+  if(state.installHelp) html += renderInstallHelp();
   root.innerHTML=html;
   bindEvents(root);
   afterRenderHooks();
@@ -2989,7 +3084,7 @@ function bindEvents(root){
   }); });
   root.querySelectorAll('[data-client-photo]').forEach(el=>{ el.addEventListener('change', ()=>{ const file=el.files&&el.files[0]; if(!file) return; if(!/^image\//.test(file.type)){ showToast(tr('photoBadFile')); return; } sendClientPhoto(file); }); });
   root.querySelectorAll('.modal').forEach(m=>m.addEventListener('click', e=>e.stopPropagation()));
-  root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.hasAttribute('data-confirm-overlay')){ state.confirmDialog=null; scheduleRender(); } else if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
+  root.querySelectorAll('.overlay, .mobile-nav-backdrop').forEach(ov=>{ let downSelf=false; ov.addEventListener('mousedown', e=>{ downSelf = e.target===ov; }); ov.addEventListener('click', e=>{ if(e.target===ov && downSelf){ if(ov.hasAttribute('data-confirm-overlay')){ state.confirmDialog=null; scheduleRender(); } else if(ov.hasAttribute('data-install-overlay')){ state.installHelp=null; scheduleRender(); } else if(ov.classList.contains('overlay')) closeModal(); else { state.mobileNavOpen=false; scheduleRender(); } } }); });
   root.querySelectorAll('[data-nav]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const key=el.getAttribute('data-nav');
@@ -3023,6 +3118,9 @@ function onAction(el){
     case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); window.scrollTo(0,0); break;
     case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); window.scrollTo(0,0); break;
     case 'toggle-card-opts': state.cardOptsOpen=!state.cardOptsOpen; break;
+    case 'install-app': installApp(); return;
+    case 'install-later': try{ localStorage.setItem('fp_install_later', String(Date.now())); }catch(e){} state.installSheetClosed=true; break;
+    case 'install-help-close': state.installHelp=null; break;
     case 'hp-scroll': { const target=id==='top'? null : document.getElementById('hp-'+id); if(target) target.scrollIntoView({behavior:'smooth', block:'start'}); else window.scrollTo({top:0, behavior:'smooth'}); return; }
     case 'hp-buy-plan': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:id}; state.screen='buy-gate'; window.scrollTo(0,0); break;
     case 'admin-login-submit': runOnce(adminLoginSubmit); return;
