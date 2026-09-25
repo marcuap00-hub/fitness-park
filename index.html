@@ -557,6 +557,10 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
 .scan-photo img{width:104px;height:104px;border-radius:50%;object-fit:cover;border:3px solid var(--surface);box-shadow:0 6px 18px rgba(0,0,0,.12);}
 .scan-badge{position:absolute;right:0;bottom:2px;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;border:3px solid var(--surface);}
 .scan-zone.ok .scan-badge{background:var(--success);} .scan-zone.bad .scan-badge{background:var(--danger);}
+/* Thin bar that empties while the scan result is shown. */
+.scan-timer{position:absolute;left:0;bottom:0;height:4px;width:100%;background:currentColor;opacity:.35;transform-origin:left;animation:scanTimer linear forwards;}
+.scan-zone.ok .scan-timer{color:var(--success);} .scan-zone.bad .scan-timer{color:var(--danger);}
+@keyframes scanTimer{from{transform:scaleX(1);}to{transform:scaleX(0);}}
 .desk-side{display:flex;flex-direction:column;gap:14px;min-width:0;}
 .desk-search{width:100%;margin-top:12px;}
 .desk-results{margin-top:8px;}
@@ -1703,9 +1707,13 @@ function formatGymCode(v){ v=(v||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(
       await colClients().doc(client.id).update(Object.assign({recentEntries}, result==='permis'? {lastEntryAt:now.toISOString(), 'subscription.entriesUsed':firebase.firestore.FieldValue.increment(1)} : {}));
     }
   }catch(e){}
-  state.lastResult={client, result, message, code}; state.scanInput='';
+  state.lastResult={client, result, message, code, shownAt:Date.now()}; state.scanInput='';
+  // The result stays on screen for 5 seconds, then the scanner goes back to "ready" for the next client.
+  const shown=state.lastResult; clearTimeout(lastResultTimer);
+  lastResultTimer=setTimeout(()=>{ if(state.lastResult===shown){ state.lastResult=null; scheduleRender(); } }, SCAN_RESULT_MS);
   scheduleRender();
 }
+const SCAN_RESULT_MS=5000; let lastResultTimer=null;
 
 /* ============ SMALL UI BUILDERS ============ */
 function brandBlock(name){ return '<div class="brand"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="'+esc(name)+'"><div><div class="brand-name">'+esc(name)+'</div><div class="brand-sub">'+tr('clubManagement')+'</div></div><div class="flex gap8" style="margin-left:auto;">'+langToggleBtn()+themeToggleBtn()+'</div></div>'; }
@@ -2130,7 +2138,7 @@ function scanCardHtml(){
   let zoneBody;
   if(state.cameraOn){ zoneBody='<video id="scanVideo" class="scan-video" autoplay playsinline muted></video><div class="small faint">'+ra('Îndreaptă camera spre codul QR')+'</div>'; }
   else if(r){ const ph=r.client? safeImg(r.client.photoDataUri) : '';
-    zoneBody=(ph? '<div class="scan-photo"><img src="'+ph+'" alt=""><span class="scan-badge">'+icon(r.result==='permis'?'check':'x','icon-sm')+'</span></div>' : '<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div>')+'<div class="scan-title">'+esc(r.client?r.client.name:ra('Cod: ')+r.code)+'</div><div class="scan-sub">'+esc(logMessage(r))+'</div>'; }
+    zoneBody=(ph? '<div class="scan-photo"><img src="'+ph+'" alt=""><span class="scan-badge">'+icon(r.result==='permis'?'check':'x','icon-sm')+'</span></div>' : '<div class="scan-ic-wrap">'+icon(r.result==='permis'?'check':'x','icon-lg')+'</div>')+'<div class="scan-title">'+esc(r.client?r.client.name:ra('Cod: ')+r.code)+'</div><div class="scan-sub">'+esc(logMessage(r))+'</div><div class="scan-timer" style="animation-duration:'+SCAN_RESULT_MS+'ms;animation-delay:-'+Math.min(SCAN_RESULT_MS, Date.now()-(r.shownAt||Date.now()))+'ms"></div>'; }
   else{ zoneBody='<div class="scan-ic-wrap">'+icon('qrcode','icon-lg')+'</div><div class="scan-title">'+ra('Pregătit de verificare')+'</div><div class="scan-sub">'+ra('Scanează cu cititorul QR, camera, sau scrie codul.')+'</div>'; }
   return '<div class="card scan-box"><div class="section-title" style="margin-bottom:14px;">'+ra('Verificare acces')+'</div>'
    + '<div class="scan-zone'+zoneClass+'">'+zoneBody+'</div>'
