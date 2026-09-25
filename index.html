@@ -107,6 +107,141 @@ label.field{display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:va
   radial-gradient(900px 500px at 110% 10%, var(--gold), transparent 35%),
   var(--bg);}
 :root[data-theme="dark"] .gate-wrap, @media (prefers-color-scheme:dark){.gate-wrap{opacity:1;}}
+/* ---- public homepage (always dark, brand look) ---- */
+.hp{--hp-bg:#0B0D14;--hp-bg2:#10131C;--hp-card:#141824;--hp-line:rgba(255,255,255,.09);--hp-text:#F1F2F8;--hp-muted:#A3A8BC;--hp-faint:#6E7389;--hp-accent:#3A34E0;--hp-accent-2:#4B45F0;--hp-lav:#8E93FF;--hp-deep:#1616B0;
+  background:var(--hp-bg);color:var(--hp-text);min-height:100vh;font-family:var(--font-body);overflow-x:hidden;}
+.hp a{color:inherit;text-decoration:none;}
+.hp-wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+.hp-nav{position:sticky;top:0;z-index:30;background:rgba(11,13,20,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--hp-line);}
+.hp-nav .hp-wrap{display:flex;align-items:center;gap:24px;height:78px;}
+.hp-logo{display:flex;align-items:center;gap:12px;background:none;border:none;color:var(--hp-text);cursor:pointer;padding:0;font:inherit;}
+.hp-logo img{width:46px;height:46px;border-radius:50%;background:#fff;object-fit:contain;padding:3px;box-shadow:0 0 0 2px rgba(142,147,255,.35);}
+.hp-logo-t{font-family:var(--font-display);font-weight:800;font-size:22px;letter-spacing:-.02em;}
+.hp-logo-t span{color:var(--hp-lav);}
+.hp-links{display:flex;gap:30px;margin:0 auto;}
+.hp-links button{background:none;border:none;color:var(--hp-muted);font:inherit;font-size:15px;font-weight:500;cursor:pointer;padding:6px 0;transition:color .15s;}
+.hp-links button:hover{color:var(--hp-text);}
+.hp-actions{display:flex;align-items:center;gap:10px;}
+.hp-actions .modal-close{background:rgba(255,255,255,.07);color:var(--hp-muted);}
+.hp-actions .hp-show-sm{display:none;}
+.hp-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 26px;border-radius:999px;border:1px solid transparent;font:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:transform .15s,background .15s,border-color .15s;white-space:nowrap;}
+.hp-btn:hover{transform:translateY(-1px);}
+.hp-btn .icon{width:15px;height:15px;}
+.hp-btn-primary{background:var(--hp-accent);color:#fff;box-shadow:0 12px 30px -12px rgba(58,52,224,.8);}
+.hp-btn-primary:hover{background:var(--hp-accent-2);}
+.hp-btn-ghost{background:transparent;color:var(--hp-text);border-color:rgba(255,255,255,.28);}
+.hp-btn-ghost:hover{border-color:#fff;}
+.hp .hp-btn-white{background:#fff;color:var(--hp-deep);}
+.hp-btn-sm{padding:11px 18px;font-size:14px;}
+.hp-hero{position:relative;min-height:calc(100vh - 78px);display:flex;align-items:center;overflow:hidden;}
+.hp-hero-img{position:absolute;inset:0 0 0 38%;background-size:cover;background-position:center;}
+.hp-hero::before{content:'';position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,var(--hp-bg) 34%,rgba(11,13,20,.72) 52%,rgba(11,13,20,.25) 80%,rgba(11,13,20,.35)),linear-gradient(0deg,var(--hp-bg) 0,transparent 22%);}
+.hp-hero .hp-wrap{position:relative;z-index:2;width:100%;padding-top:40px;padding-bottom:48px;}
+.hp-eyebrow{display:flex;align-items:center;gap:14px;color:var(--hp-lav);font-size:13px;font-weight:800;letter-spacing:.24em;text-transform:uppercase;}
+.hp-eyebrow.line::before{content:'';width:34px;height:2px;background:var(--hp-lav);}
+.hp-h1{font-family:var(--font-display);font-weight:800;font-size:clamp(46px,7.4vw,104px);line-height:.98;letter-spacing:-.045em;margin:22px 0 28px;}
+.hp-h1 em{font-style:normal;color:var(--hp-lav);}
+.hp-lead{max-width:600px;font-size:19px;line-height:1.65;color:#CDD0DD;}
+.hp-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px;}
+.hp-facts{display:flex;gap:0;margin-top:70px;flex-wrap:wrap;}
+.hp-fact{padding:2px 28px 2px 20px;border-left:1px solid rgba(255,255,255,.22);}
+.hp-fact b{display:block;font-size:16px;font-weight:700;}
+.hp-fact span{display:block;margin-top:5px;font-size:14px;color:var(--hp-muted);}
+.hp-sec{padding:110px 0;scroll-margin-top:78px;}
+.hp-sec.alt{background:var(--hp-bg2);}
+.hp-h2{font-family:var(--font-display);font-weight:800;font-size:clamp(36px,5vw,62px);line-height:1.04;letter-spacing:-.04em;margin:22px 0 28px;}
+.hp-p{font-size:17.5px;line-height:1.75;color:var(--hp-muted);max-width:560px;margin:0 0 22px;}
+.hp-link{display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:0;color:var(--hp-lav);font:inherit;font-weight:700;font-size:16px;cursor:pointer;}
+.hp-link .icon{width:15px;height:15px;}
+.hp-two{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+.hp-photo{position:relative;border-radius:18px;overflow:hidden;min-height:420px;background:var(--hp-card) center/cover no-repeat;box-shadow:0 30px 80px -30px rgba(0,0,0,.8);}
+.hp-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,9,15,.92) 0,rgba(8,9,15,.2) 55%,transparent);}
+.hp-photo-cap{position:absolute;left:34px;bottom:30px;right:34px;z-index:1;}
+.hp-photo-cap .hp-eyebrow{font-size:12px;}
+.hp-photo-cap b{display:block;margin-top:10px;font-family:var(--font-display);font-size:26px;line-height:1.35;letter-spacing:-.02em;}
+.hp-sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:46px;}
+.hp-sec-head .hp-h2{margin-bottom:0;}
+.hp-note{color:var(--hp-muted);font-size:17px;line-height:1.75;text-align:right;}
+.hp-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;}
+.hp-card{padding:40px 40px 44px;border:1px solid var(--hp-line);border-radius:16px;background:rgba(255,255,255,.015);transition:border-color .2s,transform .2s;}
+.hp-card:hover{border-color:rgba(142,147,255,.45);transform:translateY(-3px);}
+.hp-card-top{display:flex;justify-content:space-between;align-items:center;color:var(--hp-lav);}
+.hp-card-top .icon{width:36px;height:36px;stroke-width:1.5;}
+.hp-card-k{font-size:14px;letter-spacing:.02em;text-transform:uppercase;}
+.hp-card h3{font-family:var(--font-display);font-size:27px;letter-spacing:-.03em;margin:58px 0 16px;}
+.hp-card p{margin:0;color:var(--hp-muted);font-size:16.5px;line-height:1.75;}
+.hp-step{padding:48px;border:1px solid var(--hp-line);border-radius:18px;background:var(--hp-card);}
+.hp-badge{display:inline-block;padding:8px 14px;border-radius:999px;border:1px solid rgba(142,147,255,.45);color:var(--hp-lav);font-size:14px;font-weight:700;}
+.hp-step h3{font-family:var(--font-display);font-size:38px;line-height:1.15;letter-spacing:-.035em;margin:26px 0 18px;}
+.hp-step p{color:var(--hp-muted);font-size:17px;line-height:1.7;margin:0 0 28px;}
+.hp-step .hp-btn{width:100%;}
+.hp-step-row{display:flex;gap:12px;flex-wrap:wrap;}
+.hp-step-row .hp-btn{flex:1;min-width:180px;}
+.hp-member{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:30px;padding-top:26px;border-top:1px solid var(--hp-line);font-weight:700;}
+.hp-member .hp-link{color:var(--hp-lav);font-weight:500;text-decoration:underline;text-underline-offset:4px;}
+.hp-plans{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:18px;margin-top:56px;}
+.hp-plan{position:relative;display:flex;flex-direction:column;padding:28px;border:1px solid var(--hp-line);border-radius:16px;background:var(--hp-card);transition:border-color .2s,transform .2s;}
+.hp-plan:hover{border-color:rgba(142,147,255,.5);transform:translateY(-3px);}
+.hp-plan-k{font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--hp-lav);}
+.hp-plan h4{font-family:var(--font-display);font-size:21px;letter-spacing:-.02em;margin:12px 0 18px;line-height:1.25;}
+.hp-plan-price{font-family:var(--font-display);font-size:40px;font-weight:800;letter-spacing:-.03em;}
+.hp-plan-price span{font-size:15px;font-weight:600;color:var(--hp-muted);margin-left:6px;letter-spacing:0;}
+.hp-plan-meta{margin:8px 0 26px;color:var(--hp-muted);font-size:14.5px;}
+.hp-plan .hp-btn{margin-top:auto;}
+.hp-plan.gold{background:linear-gradient(160deg,#1D1A10,#141824 60%);border-color:rgba(217,182,94,.35);}
+.hp-plan.gold .hp-plan-k{color:#E6C469;}
+.hp-plan.unlimited{background:linear-gradient(140deg,#1B1035,#0F2A4A 55%,#1B1035);border-color:rgba(142,147,255,.45);}
+.hp-plan.unlimited .hp-plan-k{background:linear-gradient(90deg,#FFD86B,#FF8FD6,#6BD8FF);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hp-contact{display:grid;grid-template-columns:1fr auto 1fr;gap:56px;align-items:center;padding:72px;border-radius:18px;background:var(--hp-deep);background-image:radial-gradient(circle at 90% 0%,rgba(142,147,255,.3),transparent 45%);}
+.hp-contact .hp-eyebrow{color:#fff;opacity:.9;}
+.hp-contact .hp-h2{margin-bottom:0;}
+.hp-divider{width:1px;align-self:stretch;background:rgba(255,255,255,.22);}
+.hp-addr{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-size:30px;font-weight:700;letter-spacing:-.02em;}
+.hp-addr .icon{flex:none;width:26px;height:26px;color:#C9CCFF;}
+.hp-contact-p{margin:12px 0 0;color:rgba(255,255,255,.85);font-size:17px;line-height:1.7;}
+.hp-hours{margin:18px 0 26px;display:grid;grid-template-columns:auto auto;gap:6px 22px;font-size:15px;color:rgba(255,255,255,.88);justify-content:start;}
+.hp-hours b{font-weight:600;}
+.hp-open{display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);font-size:13px;font-weight:700;}
+.hp-open i{width:8px;height:8px;border-radius:50%;background:#3FCB8B;box-shadow:0 0 0 4px rgba(63,203,139,.2);}
+.hp-open.closed i{background:#F0A21F;box-shadow:0 0 0 4px rgba(240,162,31,.2);}
+.hp-foot{border-top:1px solid var(--hp-line);padding:40px 0;}
+.hp-foot .hp-wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.hp-foot-c{color:var(--hp-muted);font-size:14px;}
+.hp-foot-a{background:none;border:none;color:var(--hp-muted);font:inherit;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;}
+.hp-foot-a:hover{color:#fff;}
+.hp-foot-a .icon{width:13px;height:13px;}
+@media(max-width:980px){
+  .hp-links{display:none;}
+  .hp-nav .hp-wrap{justify-content:space-between;}
+  .hp-hero-img{inset:0;opacity:.55;}
+  .hp-hero::before{background:linear-gradient(90deg,rgba(11,13,20,.95) 20%,rgba(11,13,20,.6)),linear-gradient(0deg,var(--hp-bg) 0,transparent 30%);}
+  .hp-two,.hp-cards{grid-template-columns:1fr;gap:28px;}
+  .hp-contact{grid-template-columns:1fr;padding:40px 28px;gap:28px;}
+  .hp-divider{width:100%;height:1px;}
+  .hp-note{text-align:left;}
+  .hp-sec{padding:76px 0;}
+  .hp-step{padding:32px 26px;}
+  .hp-card{padding:30px;}
+  .hp-card h3{margin-top:34px;}
+}
+@media(max-width:560px){
+  .hp-wrap{padding:0 18px;}
+  .hp-nav .hp-wrap{height:66px;gap:10px;}
+  .hp-logo img{width:38px;height:38px;}
+  .hp-logo-t{font-size:18px;}
+  .hp-actions .hp-btn{padding:10px 14px;font-size:13px;}
+  .hp-actions .hp-hide-sm{display:none;}
+  .hp-actions .hp-show-sm{display:flex;}
+  .hp-hero{min-height:auto;}
+  .hp-lead{font-size:16.5px;}
+  .hp-cta .hp-btn{flex:1;}
+  .hp-facts{margin-top:44px;gap:18px;}
+  .hp-fact{padding-right:0;}
+  .hp-photo{min-height:300px;}
+  .hp-step h3{font-size:30px;}
+  .hp-addr{font-size:24px;}
+  .hp-foot .hp-wrap{flex-direction:column;align-items:flex-start;}
+}
 .gate-wrap{flex-direction:column;gap:16px;}
 .copyright{font-size:12px;font-weight:500;color:var(--text-faint);text-align:center;letter-spacing:.01em;}
 .gate-card{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--border);border-radius:22px;box-shadow:var(--shadow-lg);padding:34px 28px;}
@@ -599,6 +734,7 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="firebase-config.js"></script>
+<script src="home-images.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" integrity="sha384-3zSEDfvllQohrq0PHL1fOXJuC/jSOO34H46t6UQfobFOmxE5BpjjaIJY5F2/bMnU" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js" integrity="sha384-b5Ya4Bq3qCyz39m2ISh+4DxjAIljdeFwK/BsXLuj9gugaNwAcj/ia15fxNZL9Nlx" crossorigin="anonymous"></script>
 <script>
@@ -654,6 +790,10 @@ const ICONS = {
   chevronUp:'<path d="m6 15 6-6 6 6"/>',
   logIn:'<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="m9.5 16 4-4-4-4"/><path d="M13.5 12H3.5"/>',
   arrowUp:'<path d="M12 19V5M6 11l6-6 6 6"/>',
+  arrowUpRight:'<path d="M7 17 17 7"/><path d="M8 7h9v9"/>',
+  bolt:'<path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12l1-8Z"/>',
+  target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
+  mapPin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/>',
   arrowDown:'<path d="M12 5v14M6 13l6 6 6-6"/>',
   upload:'<path d="M12 16V4"/><path d="m7 9 5-5 5 5"/><path d="M4.5 20h15"/>',
   more:'<circle cx="5.5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="18.5" cy="12" r="1.2"/>',
@@ -1277,16 +1417,118 @@ function renderLoading(){
   }
   return '<div class="gate-wrap"><div class="flex" style="flex-direction:column;align-items:center;gap:12px;color:var(--text-muted);font-weight:600;font-size:13.5px;"><img class="brand-mark" src="'+LOGO_DATA_URI+'" alt="Fitness Park">'+(state.lang==='ru'?'Загрузка…':'Se încarcă…')+'</div></div>';
 }
+/* ---- Public homepage ---- */
+const HOME_TEXT={
+  ro:{ navAbout:'Despre sală', navRhythm:'Ritmul tău', navPlans:'Abonamente', navContact:'Contact', cta:'Hai la sală', myAccount:'Contul meu',
+    heroA:'Puterea ta', heroB:'începe', heroC:'aici.', lead1:'Fă timp pentru tine. Pentru mișcare. Pentru următorul pas.', lead2:'Ne vedem la {gym}, pe {street}.',
+    btnPlans:'Descoperă abonamentele', btnAbout:'Cunoaște sala', f1t:'În orașul tău', f2t:'În ritmul tău', f2d:'Fiecare pas contează', f3t:'Pentru obiectivele tale', f3d:'Începe cu tine',
+    aboutEyebrow:'Despre {gym}', aboutH1:'Un loc pentru', aboutH2:'energia ta.',
+    aboutP1:'Suntem {gym}, sala de fitness de pe {street} din {city}. Credem că mișcarea începe cu o alegere simplă: să faci timp pentru tine.',
+    aboutP2:'La început de drum sau deja într-o rutină, următorul pas îți aparține. Vino să cunoști sala și discută cu echipa de la recepție despre abonamentul potrivit pentru tine.',
+    aboutLink:'Află unde ne găsești', aboutCap1:'Mai multă mișcare.', aboutCap2:'Mai mult timp pentru tine.',
+    rhythmH1:'Obiectivul e al tău.', rhythmH2:'Primul pas, tot al tău.', rhythmNote1:'Nu trebuie să începi perfect.', rhythmNote2:'Trebuie doar să începi.',
+    c1k:'01 / Forță', c1t:'Devino mai puternic.', c1d:'Stabilește-ți un obiectiv și construiește-ți rutina pas cu pas. Progresul începe cu consecvență.',
+    c2k:'02 / Energie', c2t:'Fă loc mișcării.', c2d:'O pauză de la agitația zilei. Un moment pentru tine, pentru corpul tău și pentru un stil de viață activ.',
+    c3k:'03 / Echilibru', c3t:'Găsește‑ți ritmul.', c3d:'Alege obiective realiste și o rutină în care te regăsești. Fiecare antrenament este un pas înainte.',
+    plansH1:'Următorul capitol', plansH2:'începe cu tine.', plansP1:'Alege abonamentul potrivit și trimite cererea online — te contactăm pentru confirmare și plată.', plansP2:'Preferi să vorbim direct? Treci pe la recepție, pe {street}.',
+    stepBadge:'Hai să ne cunoaștem', stepH1:'Primul tău pas', stepH2:'la {gym}.', stepP:'Alege un abonament online sau vino să vezi sala și află opțiunile direct de la echipa noastră.',
+    stepBuy:'Cumpără online', stepMap:'Vezi cum ajungi', member:'Ești deja membru?', pick:'Alege', days:'zile', unlimited:'Nelimitat', entries:'intrări',
+    contactEyebrow:'Ne vedem la sală', contactH1:'Mai aproape', contactH2:'de obiectivul tău.', country:'Republica Moldova', openNow:'Deschis acum', closedNow:'Acum e închis', closed:'Închis', map:'Deschide harta', call:'Sună',
+    footerAdmin:'Recepție & administrare' },
+  ru:{ navAbout:'О зале', navRhythm:'Твой ритм', navPlans:'Абонементы', navContact:'Контакты', cta:'В зал', myAccount:'Мой кабинет',
+    heroA:'Твоя сила', heroB:'начинается', heroC:'здесь.', lead1:'Найди время для себя. Для движения. Для следующего шага.', lead2:'Ждём тебя в {gym}, {street}.',
+    btnPlans:'Смотреть абонементы', btnAbout:'Познакомиться с залом', f1t:'В твоём городе', f2t:'В твоём ритме', f2d:'Каждый шаг важен', f3t:'Для твоих целей', f3d:'Всё начинается с тебя',
+    aboutEyebrow:'О {gym}', aboutH1:'Место для', aboutH2:'твоей энергии.',
+    aboutP1:'Мы — {gym}, фитнес-зал на {street}, {city}. Мы верим, что движение начинается с простого выбора: найти время для себя.',
+    aboutP2:'Только начинаешь или уже в ритме — следующий шаг за тобой. Приходи познакомиться с залом и узнай на ресепшн, какой абонемент подходит именно тебе.',
+    aboutLink:'Как нас найти', aboutCap1:'Больше движения.', aboutCap2:'Больше времени для себя.',
+    rhythmH1:'Цель — твоя.', rhythmH2:'Первый шаг — тоже.', rhythmNote1:'Не нужно начинать идеально.', rhythmNote2:'Нужно просто начать.',
+    c1k:'01 / Сила', c1t:'Стань сильнее.', c1d:'Поставь цель и выстраивай тренировки шаг за шагом. Прогресс начинается с постоянства.',
+    c2k:'02 / Энергия', c2t:'Дай место движению.', c2d:'Пауза от суеты дня. Время для себя, для своего тела и активного образа жизни.',
+    c3k:'03 / Баланс', c3t:'Найди свой ритм.', c3d:'Выбирай реальные цели и режим, в котором тебе комфортно. Каждая тренировка — шаг вперёд.',
+    plansH1:'Следующая глава', plansH2:'начинается с тебя.', plansP1:'Выбери абонемент и отправь заявку онлайн — мы свяжемся с тобой для подтверждения и оплаты.', plansP2:'Хочешь поговорить лично? Заходи на ресепшн: {street}.',
+    stepBadge:'Давай знакомиться', stepH1:'Твой первый шаг', stepH2:'в {gym}.', stepP:'Выбери абонемент онлайн или приходи посмотреть зал — команда расскажет обо всех вариантах.',
+    stepBuy:'Купить онлайн', stepMap:'Как добраться', member:'Уже клиент?', pick:'Выбрать', days:'дней', unlimited:'Безлимит', entries:'посещений',
+    contactEyebrow:'Увидимся в зале', contactH1:'Ближе', contactH2:'к твоей цели.', country:'Республика Молдова', openNow:'Сейчас открыто', closedNow:'Сейчас закрыто', closed:'Закрыто', map:'Открыть карту', call:'Позвонить',
+    footerAdmin:'Ресепшн и управление' }
+};
+function ht(key, vars){ let s=(HOME_TEXT[state.lang]||HOME_TEXT.ro)[key]||HOME_TEXT.ro[key]||key; Object.keys(vars||{}).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; }
+const HOME_DEFAULT_STREET='Strada Libertății 59', HOME_DEFAULT_CITY='Bălți';
+// Groups consecutive days with the same hours: "Luni – Vineri 08:00–21:00".
+function homeHoursRows(s){
+  const w=weekScheduleOf(s); const rows=[];
+  SCHEDULE_DAY_ORDER.forEach(day=>{ const x=w[day]; const txt=(x.open && (x.intervals||[]).length)? x.intervals.map(v=>v.from+'–'+v.to).join(', ') : ht('closed');
+    const last=rows[rows.length-1]; if(last && last.txt===txt){ last.to=day; } else rows.push({from:day, to:day, txt}); });
+  return rows.map(r=>'<b>'+esc(dayLabel(r.from))+(r.from!==r.to? ' – '+esc(dayLabel(r.to)) : '')+'</b><span>'+esc(r.txt)+'</span>').join('');
+}
 function renderLanding(){
-  const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
-  return '<div class="gate-wrap"><div class="gate-card">'
-   + brandBlock(gymName)
-   + '<div class="gate-title">'+tr('welcomeTitle')+'</div>'
-   + '<div class="gate-desc">'+tr('welcomeDesc')+'</div>'
-   + choiceBtn('go-client','qrcode',tr('imClient'),tr('imClientDesc'))
-   + choiceBtn('go-buy','tag',tr('buySub'),tr('buySubDesc'))
-   + '<button class="back-link" data-action="go-admin" style="width:100%;justify-content:center;margin:18px 0 0;">'+icon('shield','icon-sm')+' '+tr('receptionAdmin')+'</button>'
-   + '</div>'+copyrightHtml()+'</div>';
+  const s=state.settings||{};
+  const gym=s.gymName||'Fitness Park';
+  // "Strada Libertății 59, Bălți" → street + city; a missing or half-typed address falls back to the default.
+  const rawAddr=(s.address||'').trim(); const addrOk=rawAddr.replace(/[^\p{L}\d]/gu,'').length>=6;
+  const cut=addrOk? rawAddr.lastIndexOf(',') : -1;
+  const street=!addrOk? HOME_DEFAULT_STREET : cut>0? rawAddr.slice(0,cut).trim() : rawAddr;
+  const city=!addrOk? HOME_DEFAULT_CITY : cut>0? rawAddr.slice(cut+1).trim() : '';
+  const fullAddr=city? street+', '+city : street;
+  const mapUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fullAddr+', Moldova');
+  const V={gym:esc(gym), street:esc(street), city:esc(city||street)};
+  const imgs=(typeof window.HOME_IMAGES==='object' && window.HOME_IMAGES) || {};
+  const words=gym.trim().split(/\s+/); const logoText=words.length>1? esc(words.slice(0,-1).join(' '))+' <span>'+esc(words[words.length-1])+'</span>' : esc(gym);
+  const go=(id,label)=>'<button data-action="hp-scroll" data-id="'+id+'">'+esc(label)+'</button>';
+  const arrow=icon('arrowUpRight');
+  const now=new Date(); const gs=gymScheduleFor(now, s); const openNow=!gs.closedToday && gs.intervals.some(iv=>inTimeWindow(now, iv.from, iv.to));
+  const plans=state.types.filter(t=>t.active!==false && t.tier!=='exclusiv').slice()
+    .sort((a,b)=>((a.unlimited?2:a.tier==='gold'?1:0)-(b.unlimited?2:b.tier==='gold'?1:0)) || ((a.price||0)-(b.price||0)));
+  const planCard=t=>{ const kind=t.unlimited? '∞ '+ht('unlimited') : t.tier==='gold'? 'Gold' : 'Fitness';
+    const meta=[t.unlimited? '∞' : ((t.durationDays||30)+' '+ht('days')), t.entryLimit? (t.entryLimit+' '+ht('entries')) : ''].filter(Boolean).join(' · ');
+    return '<div class="hp-plan'+(t.unlimited?' unlimited':t.tier==='gold'?' gold':'')+'"><div class="hp-plan-k">'+esc(kind)+'</div><h4>'+esc(typeDisplayName(t))+'</h4>'
+      + '<div class="hp-plan-price">'+esc(String(t.price))+'<span>'+esc(t.currency||'MDL')+'</span></div><div class="hp-plan-meta">'+esc(meta)+'</div>'
+      + '<button class="hp-btn '+(t.unlimited||t.tier==='gold'?'hp-btn-white':'hp-btn-primary')+' hp-btn-sm" data-action="hp-buy-plan" data-id="'+t.id+'">'+esc(ht('pick'))+' '+arrow+'</button></div>'; };
+
+  return '<div class="hp">'
+   + '<header class="hp-nav"><div class="hp-wrap">'
+     + '<button class="hp-logo" data-action="hp-scroll" data-id="top" aria-label="'+esc(gym)+'"><img src="'+gymLogoSrc()+'" alt=""><span class="hp-logo-t">'+logoText+'</span></button>'
+     + '<nav class="hp-links">'+go('despre',ht('navAbout'))+go('ritm',ht('navRhythm'))+go('abonamente',ht('navPlans'))+go('contact',ht('navContact'))+'</nav>'
+     + '<div class="hp-actions">'+langToggleBtn()+'<button class="modal-close hp-show-sm" data-action="go-client" title="'+esc(ht('myAccount'))+'" aria-label="'+esc(ht('myAccount'))+'">'+icon('user','icon-sm')+'</button><button class="hp-btn hp-btn-ghost hp-btn-sm hp-hide-sm" data-action="go-client">'+esc(ht('myAccount'))+'</button><button class="hp-btn hp-btn-primary hp-btn-sm" data-action="hp-scroll" data-id="abonamente">'+esc(ht('cta'))+' '+arrow+'</button></div>'
+   + '</div></header>'
+   + '<section class="hp-hero" id="hp-top">'+(imgs.hero? '<div class="hp-hero-img" style="background-image:url('+imgs.hero+');"></div>' : '')
+     + '<div class="hp-wrap"><div class="hp-eyebrow line">'+esc(gym)+' · '+esc(city||street)+'</div>'
+     + '<h1 class="hp-h1">'+esc(ht('heroA'))+'<br><em>'+esc(ht('heroB'))+'</em> '+esc(ht('heroC'))+'</h1>'
+     + '<p class="hp-lead">'+esc(ht('lead1'))+'<br>'+ht('lead2',V)+'</p>'
+     + '<div class="hp-cta"><button class="hp-btn hp-btn-primary" data-action="hp-scroll" data-id="abonamente">'+esc(ht('btnPlans'))+' '+arrow+'</button><button class="hp-btn hp-btn-ghost" data-action="hp-scroll" data-id="despre">'+esc(ht('btnAbout'))+'</button></div>'
+     + '<div class="hp-facts"><div class="hp-fact"><b>'+esc(ht('f1t'))+'</b><span>'+esc(fullAddr)+'</span></div><div class="hp-fact"><b>'+esc(ht('f2t'))+'</b><span>'+esc(ht('f2d'))+'</span></div><div class="hp-fact"><b>'+esc(ht('f3t'))+'</b><span>'+esc(ht('f3d'))+'</span></div></div>'
+   + '</div></section>'
+   + '<section class="hp-sec" id="hp-despre"><div class="hp-wrap hp-two"><div>'
+     + '<div class="hp-eyebrow">'+ht('aboutEyebrow',V)+'</div><h2 class="hp-h2">'+esc(ht('aboutH1'))+'<br>'+esc(ht('aboutH2'))+'</h2>'
+     + '<p class="hp-p">'+ht('aboutP1',V)+'</p><p class="hp-p">'+esc(ht('aboutP2'))+'</p>'
+     + '<button class="hp-link" data-action="hp-scroll" data-id="contact">'+esc(ht('aboutLink'))+' '+arrow+'</button></div>'
+     + '<div class="hp-photo"'+(imgs.about? ' style="background-image:url('+imgs.about+');"' : '')+'><div class="hp-photo-cap"><div class="hp-eyebrow">'+esc(gym)+' / '+esc(city||street)+'</div><b>'+esc(ht('aboutCap1'))+'<br>'+esc(ht('aboutCap2'))+'</b></div></div>'
+   + '</div></section>'
+   + '<section class="hp-sec alt" id="hp-ritm"><div class="hp-wrap">'
+     + '<div class="hp-sec-head"><div><div class="hp-eyebrow">'+esc(ht('navRhythm'))+'</div><h2 class="hp-h2">'+esc(ht('rhythmH1'))+'<br>'+esc(ht('rhythmH2'))+'</h2></div><div class="hp-note">'+esc(ht('rhythmNote1'))+'<br>'+esc(ht('rhythmNote2'))+'</div></div>'
+     + '<div class="hp-cards">'
+       + [['dumbbell','c1'],['bolt','c2'],['target','c3']].map(([ic,k])=>'<div class="hp-card"><div class="hp-card-top">'+icon(ic)+'<span class="hp-card-k">'+esc(ht(k+'k'))+'</span></div><h3>'+esc(ht(k+'t'))+'</h3><p>'+esc(ht(k+'d'))+'</p></div>').join('')
+     + '</div></div></section>'
+   + '<section class="hp-sec" id="hp-abonamente"><div class="hp-wrap">'
+     + '<div class="hp-two" style="align-items:start;"><div><div class="hp-eyebrow">'+esc(ht('navPlans'))+'</div><h2 class="hp-h2">'+esc(ht('plansH1'))+'<br>'+esc(ht('plansH2'))+'</h2>'
+       + '<p class="hp-p">'+esc(ht('plansP1'))+'</p><p class="hp-p">'+ht('plansP2',V)+'</p></div>'
+       + '<div class="hp-step"><span class="hp-badge">'+esc(ht('stepBadge'))+'</span><h3>'+esc(ht('stepH1'))+'<br>'+ht('stepH2',V)+'</h3><p>'+esc(ht('stepP'))+'</p>'
+         + '<div class="hp-step-row"><button class="hp-btn hp-btn-primary" data-action="go-buy">'+esc(ht('stepBuy'))+' '+arrow+'</button><a class="hp-btn hp-btn-ghost" href="'+esc(mapUrl)+'" target="_blank" rel="noopener">'+esc(ht('stepMap'))+' '+arrow+'</a></div>'
+         + '<div class="hp-member"><span>'+esc(ht('member'))+'</span><button class="hp-link" data-action="go-client">'+esc(ht('myAccount'))+' '+arrow+'</button></div></div></div>'
+     + (plans.length? '<div class="hp-plans">'+plans.map(planCard).join('')+'</div>' : '')
+   + '</div></section>'
+   + '<section class="hp-sec" id="hp-contact" style="padding-top:20px;"><div class="hp-wrap"><div class="hp-contact">'
+     + '<div><div class="hp-eyebrow">'+esc(ht('contactEyebrow'))+'</div><h2 class="hp-h2">'+esc(ht('contactH1'))+'<br>'+esc(ht('contactH2'))+'</h2><span class="hp-open'+(openNow?'':' closed')+'"><i></i>'+esc(openNow? ht('openNow') : ht('closedNow'))+'</span></div>'
+     + '<div class="hp-divider"></div>'
+     + '<div><div class="hp-addr">'+icon('mapPin')+' '+esc(street)+'</div>'+(city? '<p class="hp-contact-p">'+esc(city)+', '+esc(ht('country'))+'</p>' : '')
+       + '<div class="hp-hours">'+homeHoursRows(s)+'</div>'
+       + '<div class="hp-step-row"><a class="hp-btn hp-btn-white" href="'+esc(mapUrl)+'" target="_blank" rel="noopener">'+esc(ht('map'))+' '+arrow+'</a>'
+         + (s.phone? '<a class="hp-btn hp-btn-ghost" href="tel:'+esc(s.phone.replace(/[^\d+]/g,''))+'">'+icon('phone','icon-sm')+' '+esc(s.phone)+'</a>' : '')+'</div></div>'
+   + '</div></div></section>'
+   + '<footer class="hp-foot"><div class="hp-wrap"><button class="hp-logo" data-action="hp-scroll" data-id="top"><img src="'+gymLogoSrc()+'" alt=""><span class="hp-logo-t">'+logoText+'</span></button>'
+     + '<div class="hp-foot-c">© '+now.getFullYear()+' '+esc(gym)+(city? ' · '+esc(city) : '')+'</div>'
+     + '<button class="hp-foot-a" data-action="go-admin">'+esc(ht('footerAdmin'))+' '+arrow+'</button></div></footer>'
+   + '</div>';
 }
 function copyrightHtml(){ return '<div class="copyright">© '+new Date().getFullYear()+' '+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div>'; }
 function renderAdminGate(){
@@ -2662,9 +2904,11 @@ async function runOnce(fn){ if(busyAction) return; busyAction=true; try{ await f
 function onAction(el){
   const a=el.getAttribute('data-action'); const id=el.getAttribute('data-id');
   switch(a){
-    case 'go-admin': state.formErr=''; state.screen='admin-gate'; break;
-    case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); break;
-    case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); break;
+    case 'go-admin': state.formErr=''; state.screen='admin-gate'; window.scrollTo(0,0); break;
+    case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); window.scrollTo(0,0); break;
+    case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); window.scrollTo(0,0); break;
+    case 'hp-scroll': { const target=id==='top'? null : document.getElementById('hp-'+id); if(target) target.scrollIntoView({behavior:'smooth', block:'start'}); else window.scrollTo({top:0, behavior:'smooth'}); return; }
+    case 'hp-buy-plan': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:id}; state.screen='buy-gate'; window.scrollTo(0,0); break;
     case 'admin-login-submit': runOnce(adminLoginSubmit); return;
     case 'admin-setup-submit': runOnce(adminSetupSubmit); return;
     case 'client-login-submit': clientLoginSubmit(); return;
@@ -2687,7 +2931,7 @@ function onAction(el){
     case 'hist-page': state.historyPage=Math.max(1, Number(id)||1); break;
     case 'print-card': printCard(id); return; case 'replace-lost-card': replaceLostCard(id); return;
     case 'request-new-card': requestNewCard(id); return; case 'approve-card-request': approveCardRequest(id); return; case 'reject-card-request': rejectCardRequest(id); return; case 'request-trainer': requestTrainer(id); return; case 'request-printed-card': requestPrintedCard(id); return;
-    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': runOnce(submitBuyRequest); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
+    case 'go-buy': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:(state.types.find(t=>t.active!==false && t.tier!=='exclusiv')||{}).id||''}; state.screen='buy-gate'; window.scrollTo(0,0); break; case 'pick-buy-plan': state.buyForm.typeId=id; break; case 'pick-plan-type': state.form.typeId=id; if(state.modal&&state.modal.type==='newClient') applyTypeDefaultsNew(); if(state.modal&&(state.modal.type==='renew'||state.modal.type==='editSub')) applyTypeDefaultsRenew(); break; case 'submit-buy-request': runOnce(submitBuyRequest); return; case 'convert-buy-request': convertBuyRequest(id); return; case 'reject-buy-request': rejectBuyRequest(id); return;
     case 'download-card': downloadCardForPhone(id); return;
     case 'share-card': shareCard(id); return;
     case 'close-modal': closeModal(); return;
