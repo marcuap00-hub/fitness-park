@@ -814,6 +814,20 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .inst-help{max-width:420px;}
 .inst-qr{align-self:center;padding:12px;border-radius:16px;background:#fff;border:1px solid var(--border);}
 .inst-steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:10px;font-size:14.5px;line-height:1.5;}
+.ios-steps{display:flex;flex-direction:column;gap:16px;}
+.ios-step{display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:start;}
+.ios-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--accent);color:#fff;font-size:14px;font-weight:800;}
+.ios-vis{display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
+.ios-chip{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:42px;padding:0 10px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);color:#0A84FF;font-size:18px;font-weight:900;letter-spacing:1px;}
+.ios-chip .icon{width:24px;height:24px;}
+.ios-or{font-size:12.5px;color:var(--text-muted);}
+.ios-row{display:inline-flex;align-items:center;justify-content:space-between;gap:14px;min-width:230px;padding:11px 14px;border-radius:12px;border:1px solid var(--border);background:var(--surface-2);font-size:14.5px;font-weight:600;}
+.ios-row .icon{width:22px;height:22px;}
+.ios-add{display:inline-flex;padding:8px 16px;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);color:#0A84FF;font-size:15px;font-weight:700;}
+.ios-txt{font-size:14.5px;line-height:1.5;}
+.ios-arrow{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--accent);font-size:12.5px;font-weight:700;animation:iosBounce 1.2s ease-in-out infinite;}
+.ios-arrow .icon{width:28px;height:28px;}
+@keyframes iosBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(7px);}}
 .cp-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;font-size:12px;color:var(--text-faint);}
 @media(max-width:560px){.client-body.cp{padding:18px 14px 24px;}.cp-hello h1{font-size:24px;}.cp-trainer .btn{width:100%;}.cp-tabs .client-tab{padding:10px 8px;font-size:12.5px;}}
 .rule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5;}
@@ -896,6 +910,8 @@ const ICONS = {
   logIn:'<path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"/><path d="m9.5 16 4-4-4-4"/><path d="M13.5 12H3.5"/>',
   arrowUp:'<path d="M12 19V5M6 11l6-6 6 6"/>',
   arrowUpRight:'<path d="M7 17 17 7"/><path d="M8 7h9v9"/>',
+  share:'<path d="M12 3v12"/><path d="m8 7 4-4 4 4"/><path d="M8 10H6.5A2.5 2.5 0 0 0 4 12.5v6A2.5 2.5 0 0 0 6.5 21h11a2.5 2.5 0 0 0 2.5-2.5v-6a2.5 2.5 0 0 0-2.5-2.5H16"/>',
+  addSquare:'<rect x="4" y="4" width="16" height="16" rx="3.5"/><path d="M12 8.5v7M8.5 12h7"/>',
   bolt:'<path d="M13 2.5 4.5 13.5H12l-1 8 8.5-11H12l1-8Z"/>',
   target:'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/>',
   mapPin:'<path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/>',
@@ -961,6 +977,8 @@ const I18N = {
     instIos1:'Apasă butonul Partajează (pătratul cu săgeată în sus), jos în Safari.', instIos2:'Derulează și alege „Adaugă pe ecranul principal”.', instIos3:'Apasă „Adaugă”. Iconița Fitness Park apare pe ecranul telefonului.',
     instAnd1:'Apasă meniul browserului (cele 3 puncte ⋮, sus în dreapta).', instAnd2:'Alege „Adaugă pe ecranul principal” sau „Instalează aplicația”.', instAnd3:'Confirmă cu „Adaugă”. Iconița apare pe ecranul telefonului.',
     instDeskTitle:'Deschide pe telefon', instDesk1:'Scanează codul de mai sus cu camera telefonului.', instDesk2:'Pe telefon, apasă „Adaugă pe ecranul principal”.',
+    instOr:'sau', instIosS1:'Jos în Safari, apasă butonul Partajează. Dacă nu-l vezi, apasă întâi „•••”.', instIosRow:'Adaugă pe ecranul principal', instIosS2:'Derulează puțin în jos și apasă pe acest rând.',
+    instIosAdd:'Adaugă', instIosS3:'Apasă „Adaugă”, sus în dreapta. Gata — iconița Fitness Park apare pe ecran.', instIosHere:'Bara Safari este aici, jos',
     noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția', unlimitedLabel:'Nelimitat',
     fromLabel:'De la', toLabel:'Până la',
     cardReqPending:'Cerere trimisă — se așteaptă aprobarea recepției.', lostCard:'Am pierdut cardul — solicită unul nou',
@@ -1006,6 +1024,8 @@ const I18N = {
     instIos1:'Нажми кнопку «Поделиться» (квадрат со стрелкой вверх) внизу Safari.', instIos2:'Прокрути и выбери «На экран «Домой»».', instIos3:'Нажми «Добавить». Значок Fitness Park появится на экране телефона.',
     instAnd1:'Открой меню браузера (три точки ⋮ вверху справа).', instAnd2:'Выбери «Добавить на главный экран» или «Установить приложение».', instAnd3:'Подтверди «Добавить». Значок появится на экране телефона.',
     instDeskTitle:'Открой на телефоне', instDesk1:'Отсканируй код выше камерой телефона.', instDesk2:'На телефоне нажми «Добавить на главный экран».',
+    instOr:'или', instIosS1:'Внизу в Safari нажми «Поделиться». Если её не видно, сначала нажми «•••».', instIosRow:'На экран «Домой»', instIosS2:'Прокрути немного вниз и нажми на эту строку.',
+    instIosAdd:'Добавить', instIosS3:'Нажми «Добавить» вверху справа. Готово — значок Fitness Park появится на экране.', instIosHere:'Панель Safari — здесь, внизу',
     noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн', unlimitedLabel:'Безлимит',
     fromLabel:'С', toLabel:'По',
     cardReqPending:'Заявка отправлена — ожидается одобрение ресепшн.', lostCard:'Я потерял карту — запросить новую',
@@ -1610,6 +1630,18 @@ function installSheetHtml(){
 }
 function renderInstallHelp(){
   const k=state.installHelp; const url=location.origin+location.pathname+'?app=1';
+  if(k==='ios'){
+    // Draws the exact Safari controls to tap, since iPhone gives websites no install button of their own.
+    const step=(n, visual, text)=>'<div class="ios-step"><span class="ios-num">'+n+'</span><div><div class="ios-vis">'+visual+'</div><div class="ios-txt">'+esc(text)+'</div></div></div>';
+    return '<div class="overlay" data-install-overlay="1"><div class="modal inst-help"><div class="modal-head"><div class="gate-title" style="font-size:19px;margin:0;">'+esc(tr('instSheetBtn'))+'</div><button class="modal-close" data-action="install-help-close">'+icon('x','icon-sm')+'</button></div>'
+     + '<div class="ios-steps">'
+       + step(1, '<span class="ios-chip">'+icon('share')+'</span><span class="ios-or">'+esc(tr('instOr'))+'</span><span class="ios-chip">•••</span>', tr('instIosS1'))
+       + step(2, '<span class="ios-row">'+esc(tr('instIosRow'))+' '+icon('addSquare')+'</span>', tr('instIosS2'))
+       + step(3, '<span class="ios-add">'+esc(tr('instIosAdd'))+'</span>', tr('instIosS3'))
+     + '</div>'
+     + '<button class="btn btn-primary btn-block" data-action="install-help-close">'+esc(tr('instOk'))+'</button>'
+     + '<div class="ios-arrow">'+esc(tr('instIosHere'))+icon('arrowDown')+'</div></div></div>';
+  }
   const steps=k==='ios'? [tr('instIos1'),tr('instIos2'),tr('instIos3')] : k==='android'? [tr('instAnd1'),tr('instAnd2'),tr('instAnd3')] : [tr('instDesk1'),tr('instDesk2')];
   return '<div class="overlay" data-install-overlay="1"><div class="modal inst-help"><div class="modal-head"><div class="gate-title" style="font-size:19px;margin:0;">'+esc(k==='desktop'? tr('instDeskTitle') : tr('instSheetBtn'))+'</div><button class="modal-close" data-action="install-help-close">'+icon('x','icon-sm')+'</button></div>'
    + (k==='desktop'? '<div class="inst-qr"><div data-qr="'+esc(url)+'"></div></div>' : '')
