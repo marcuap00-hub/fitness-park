@@ -731,6 +731,55 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .client-tabs{display:flex;gap:8px;background:var(--surface-2);padding:4px;border-radius:12px;}
 .client-tab{flex:1;text-align:center;padding:9px;border-radius:9px;font-size:13px;font-weight:700;cursor:pointer;color:var(--text-muted);}
 .client-tab.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow);}
+/* client portal ("Contul meu") */
+.client-top.cp-top{padding:14px 20px;}
+.cp-top .client-header-row{max-width:1100px;margin:0 auto;}
+.client-body.cp{max-width:1100px;margin:0 auto;padding:26px 20px 30px;gap:20px;}
+.cp-hello h1{margin:0;font-family:var(--font-display);font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.15;}
+.cp-hello p{margin:6px 0 0;color:var(--text-muted);font-size:14.5px;}
+.cp-grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);grid-template-rows:auto 1fr;grid-template-areas:"top side" "rest side";gap:18px 20px;align-items:start;}
+.cp-col{display:flex;flex-direction:column;gap:16px;min-width:0;}
+.cp-area-top{grid-area:top;} .cp-area-side{grid-area:side;} .cp-area-rest{grid-area:rest;}
+@media(max-width:900px){.cp-grid{grid-template-columns:minmax(0,1fr);grid-template-rows:none;grid-template-areas:"top" "side" "rest";}}
+.cp-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px 20px;min-width:0;}
+.cp-card-h{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;font-size:16px;margin-bottom:10px;}
+.cp-card-h .icon{color:var(--accent);}
+.cp-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-top:1px solid var(--border);font-size:14px;}
+.cp-card-h+.cp-row{border-top:none;}
+.cp-row span{color:var(--text-muted);}
+.cp-row b{font-weight:700;text-align:right;}
+.cp-row b.ok{color:var(--success);} .cp-row b.bad{color:var(--danger);}
+.cp-tabs{background:transparent;padding:0;gap:4px;border-bottom:1px solid var(--border);border-radius:0;}
+.cp-tabs .client-tab{flex:none;padding:10px 14px;border-radius:0;border-bottom:2px solid transparent;margin-bottom:-1px;}
+.cp-tabs .client-tab.active{background:transparent;box-shadow:none;color:var(--accent);border-bottom-color:var(--accent);}
+.cp-access{display:flex;flex-direction:column;}
+.cp-qr{align-self:center;padding:12px;margin:4px 0 8px;border-radius:16px;background:#fff;border:1px solid var(--border);}
+.cp-qr-note{text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;}
+.cp-code-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--border);}
+.cp-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);}
+.cp-code{font-family:var(--font-mono);font-weight:800;font-size:20px;letter-spacing:.06em;margin-top:2px;}
+.cp-opts-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:12px;background:var(--surface-2);color:var(--text);font:inherit;font-size:14px;font-weight:600;cursor:pointer;}
+.cp-opts-toggle .icon{transform:rotate(180deg);transition:transform .15s;color:var(--text-muted);}
+.cp-opts-toggle.open .icon{transform:none;}
+.cp-opts{display:flex;flex-direction:column;gap:6px;margin-top:8px;}
+.cp-opts button{display:flex;align-items:center;gap:10px;width:100%;padding:11px 12px;border:none;border-radius:10px;background:transparent;color:var(--text);font:inherit;font-size:14px;font-weight:500;text-align:left;cursor:pointer;}
+.cp-opts button:hover{background:var(--surface-2);}
+.cp-opts button .icon{color:var(--accent);}
+.cp-note{display:flex;align-items:center;gap:6px;padding:8px 12px;border-radius:10px;font-size:12.5px;font-weight:600;}
+.cp-note.warn{background:var(--warning-bg);color:var(--warning);} .cp-note.ok{background:var(--success-bg);color:var(--success);} .cp-note.bad{background:var(--danger-bg);color:var(--danger);}
+.cp-loc{display:flex;align-items:center;gap:14px;}
+.cp-loc-ic{flex:none;width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);}
+.cp-loc b{display:block;font-size:14.5px;}
+.cp-loc b+span{display:block;font-size:13px;color:var(--text-muted);margin-top:2px;}
+.cp-loc-phone{display:inline-flex;align-items:center;gap:5px;margin-top:4px;font-size:13px;color:var(--text-muted);text-decoration:none;}
+.cp-link{flex:none;display:inline-flex;align-items:center;gap:2px;font-size:13.5px;font-weight:700;color:var(--accent);text-decoration:none;white-space:nowrap;}
+.cp-trainer{display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.cp-tr-ic{flex:none;width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);}
+.cp-trainer b{display:block;font-family:var(--font-display);font-size:16px;}
+.cp-trainer span:not(.pill):not(.cp-tr-ic){display:block;font-size:13.5px;color:var(--text-muted);margin-top:2px;}
+.cp-trainer .btn{min-width:130px;}
+.cp-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding-top:10px;font-size:12px;color:var(--text-faint);}
+@media(max-width:560px){.client-body.cp{padding:18px 14px 24px;}.cp-hello h1{font-size:24px;}.cp-trainer .btn{width:100%;}.cp-tabs .client-tab{padding:10px 8px;font-size:12.5px;}}
 .rule-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5;}
 .rule-item:last-child{border-bottom:none;}
 [hidden]{display:none!important;}
@@ -867,7 +916,11 @@ const I18N = {
     photoTitle:'Poza ta de profil', photoHint:'Obligatorie — după ea te recunoaște recepția la intrare.', photoUpload:'Încarcă poza', photoChange:'Schimbă poza',
     errPhoto:'Adaugă poza ta de profil — este obligatorie.', photoReqTitle:'Adaugă poza ta de profil', photoSent:'Poza a fost trimisă recepției. Apare în cont după ce o confirmă.',
     photoPending:'Poza ta așteaptă confirmarea recepției.', photoError:'Nu am putut trimite poza. Încearcă din nou.', photoBadFile:'Alege o imagine (JPG sau PNG).', photoSendOther:'Trimite altă poză', errBirthDate:'Completează data nașterii.',
-    tabSub:'Abonamentul meu', tabNews:'Noutăți & reguli', tabHistory:'Istoricul meu',
+    tabSub:'Abonament și plăți', tabNews:'Informații sală', tabHistory:'Vizitele mele', logout:'Ieși din cont',
+    cpHello:'Salut, {name}!', cpSub:'Tot ce ai nevoie pentru următorul antrenament.', cpDetails:'Detalii abonament', cpPlan:'Abonament', cpPeriod:'Perioadă',
+    cpAccessCard:'Cardul tău de acces', cpScan:'Scanează la recepție', cpCopy:'Copiază', cpCardOptions:'Opțiuni card', cpDownload:'Descarcă cardul pe telefon',
+    cpPrintedPending:'Cererea pentru card tipărit a fost trimisă.', cpTrainer:'Antrenor personal', cpTrainerDesc:'Te ajută să începi corect și în siguranță.',
+    cpRequest:'Solicită', cpRequested:'Cerere trimisă', cpMap:'Vezi pe hartă', cpRights:'Toate drepturile rezervate.', cpSlogan:'Oameni mai puternici, în fiecare zi.',
     noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția', unlimitedLabel:'Nelimitat',
     fromLabel:'De la', toLabel:'Până la',
     cardReqPending:'Cerere trimisă — se așteaptă aprobarea recepției.', lostCard:'Am pierdut cardul — solicită unul nou',
@@ -904,7 +957,11 @@ const I18N = {
     photoTitle:'Ваше фото профиля', photoHint:'Обязательно — по нему ресепшн узнаёт вас на входе.', photoUpload:'Загрузить фото', photoChange:'Сменить фото',
     errPhoto:'Добавьте фото профиля — это обязательно.', photoReqTitle:'Добавьте фото профиля', photoSent:'Фото отправлено на ресепшн. Оно появится после подтверждения.',
     photoPending:'Ваше фото ждёт подтверждения ресепшн.', photoError:'Не удалось отправить фото. Попробуйте ещё раз.', photoBadFile:'Выберите изображение (JPG или PNG).', photoSendOther:'Отправить другое фото', errBirthDate:'Укажите дату рождения.',
-    tabSub:'Мой абонемент', tabNews:'Новости и правила', tabHistory:'Моя история',
+    tabSub:'Абонемент и оплата', tabNews:'О зале', tabHistory:'Мои посещения', logout:'Выйти',
+    cpHello:'Привет, {name}!', cpSub:'Всё, что нужно для следующей тренировки.', cpDetails:'Детали абонемента', cpPlan:'Абонемент', cpPeriod:'Период',
+    cpAccessCard:'Твоя карта доступа', cpScan:'Покажи на ресепшн', cpCopy:'Копировать', cpCardOptions:'Действия с картой', cpDownload:'Скачать карту на телефон',
+    cpPrintedPending:'Запрос на печатную карту отправлен.', cpTrainer:'Персональный тренер', cpTrainerDesc:'Поможет начать правильно и безопасно.',
+    cpRequest:'Запросить', cpRequested:'Запрос отправлен', cpMap:'На карте', cpRights:'Все права защищены.', cpSlogan:'Сильнее с каждым днём.',
     noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн', unlimitedLabel:'Безлимит',
     fromLabel:'С', toLabel:'По',
     cardReqPending:'Заявка отправлена — ожидается одобрение ресепшн.', lostCard:'Я потерял карту — запросить новую',
@@ -1016,7 +1073,7 @@ const RO_RU = {
   'Avertizarea trebuie să fie între 0 și 60 de zile.':'Предупреждение должно быть от 0 до 60 дней.', 'Intervalul minim trebuie să fie între 0 și 600 de minute.':'Минимальный интервал должен быть от 0 до 600 минут.',
   'Dată greșită: ':'Неверная дата: ', 'folosește formatul AAAA-LL-ZZ.':'используйте формат ГГГГ-ММ-ДД.',
   'Identitatea sălii':'Данные зала', 'Apare pe ecranul de start, în panou și în contul clienților.':'Показывается на стартовом экране, в панели и в кабинете клиента.',
-  'Logo (opțional)':'Логотип (необязательно)', 'Încarcă logo':'Загрузить логотип', 'Logo implicit':'Стандартный логотип', 'Adresă':'Адрес', 'Salvează identitatea':'Сохранить данные',
+  'Preț antrenor personal (apare în contul clientului)':'Цена персонального тренера (видна в кабинете клиента)', 'Logo (opțional)':'Логотип (необязательно)', 'Încarcă logo':'Загрузить логотип', 'Logo implicit':'Стандартный логотип', 'Adresă':'Адрес', 'Salvează identitatea':'Сохранить данные',
   'Numele sălii nu poate fi gol.':'Название зала не может быть пустым.', 'Alege o imagine (PNG sau JPG).':'Выберите изображение (PNG или JPG).', 'Imaginea e prea mare (maxim 2 MB).':'Изображение слишком большое (макс. 2 МБ).', 'Nu am putut citi imaginea.':'Не удалось прочитать изображение.',
   'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
@@ -1475,6 +1532,15 @@ const HOME_TEXT={
 };
 function ht(key, vars){ let s=(HOME_TEXT[state.lang]||HOME_TEXT.ro)[key]||HOME_TEXT.ro[key]||key; Object.keys(vars||{}).forEach(k=>{ s=s.split('{'+k+'}').join(vars[k]); }); return s; }
 const HOME_DEFAULT_STREET='Strada Libertății 59', HOME_DEFAULT_CITY='Bălți';
+// "Strada Libertății 59, Bălți" → street + city; a missing or half-typed address falls back to the default.
+function gymAddress(s){
+  const rawAddr=((s&&s.address)||'').trim(); const addrOk=rawAddr.replace(/[^\p{L}\d]/gu,'').length>=6;
+  const cut=addrOk? rawAddr.lastIndexOf(',') : -1;
+  const street=!addrOk? HOME_DEFAULT_STREET : cut>0? rawAddr.slice(0,cut).trim() : rawAddr;
+  const city=!addrOk? HOME_DEFAULT_CITY : cut>0? rawAddr.slice(cut+1).trim() : '';
+  const fullAddr=city? street+', '+city : street;
+  return {street, city, fullAddr, mapUrl:'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fullAddr+', Moldova')};
+}
 // Groups consecutive days with the same hours: "Luni – Vineri 08:00–21:00".
 function homeHoursRows(s){
   const w=weekScheduleOf(s); const rows=[];
@@ -1485,13 +1551,7 @@ function homeHoursRows(s){
 function renderLanding(){
   const s=state.settings||{};
   const gym=s.gymName||'Fitness Park';
-  // "Strada Libertății 59, Bălți" → street + city; a missing or half-typed address falls back to the default.
-  const rawAddr=(s.address||'').trim(); const addrOk=rawAddr.replace(/[^\p{L}\d]/gu,'').length>=6;
-  const cut=addrOk? rawAddr.lastIndexOf(',') : -1;
-  const street=!addrOk? HOME_DEFAULT_STREET : cut>0? rawAddr.slice(0,cut).trim() : rawAddr;
-  const city=!addrOk? HOME_DEFAULT_CITY : cut>0? rawAddr.slice(cut+1).trim() : '';
-  const fullAddr=city? street+', '+city : street;
-  const mapUrl='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fullAddr+', Moldova');
+  const {street, city, fullAddr, mapUrl}=gymAddress(s);
   const V={gym:esc(gym), street:esc(street), city:esc(city||street)};
   const imgs=(typeof window.HOME_IMAGES==='object' && window.HOME_IMAGES) || {};
   const words=gym.trim().split(/\s+/); const logoText=words.length>1? esc(words.slice(0,-1).join(' '))+' <span>'+esc(words[words.length-1])+'</span>' : esc(gym);
@@ -2019,8 +2079,9 @@ async function deleteClient(id){
   try{ await colClients().doc(id).delete(); await logMod('Client șters', c.name); closeModal(); showToast(ra('Client șters.')); }
   catch(e){ showToast(ra('Eroare la ștergere.')); }
 }
-function requestTrainer(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmTrainer'), async ()=>{ try{ await logClientRequest('Cerere antrenor personal', c); colClients().doc(id).update({trainerRequestAt:new Date().toISOString()}).catch(()=>{}); showToast(tr('toastTrainerSent')); }catch(e){ showToast(tr('toastReqError')); } }); }
-function requestPrintedCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmPrinted'), async ()=>{ try{ await logClientRequest('Cerere card tipărit', c); colClients().doc(id).update({printedRequestAt:new Date().toISOString()}).catch(()=>{}); showToast(tr('toastPrintedSent')); }catch(e){ showToast(tr('toastReqError')); } }); }
+function rememberClientRequest(kind, id){ try{ localStorage.setItem('fp_'+kind+'_req_'+id, new Date().toISOString()); }catch(e){} scheduleRender(); }
+function requestTrainer(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmTrainer'), async ()=>{ try{ await logClientRequest('Cerere antrenor personal', c); colClients().doc(id).update({trainerRequestAt:new Date().toISOString()}).catch(()=>{}); rememberClientRequest('trainer', id); showToast(tr('toastTrainerSent')); }catch(e){ showToast(tr('toastReqError')); } }); }
+function requestPrintedCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmPrinted'), async ()=>{ try{ await logClientRequest('Cerere card tipărit', c); colClients().doc(id).update({printedRequestAt:new Date().toISOString()}).catch(()=>{}); rememberClientRequest('printed', id); showToast(tr('toastPrintedSent')); }catch(e){ showToast(tr('toastReqError')); } }); }
 function requestNewCard(id){ const c=state.clients.find(x=>x.id===id); if(!c) return; askConfirm(tr('confirmNewCard'), async ()=>{ try{ await colClients().doc(id).update({cardRequestPending:true, cardRequestAt:new Date().toISOString()}); showToast(tr('toastNewCardSent')); } catch(e){ showToast(tr('toastReqError')); } }); }
 async function resolveRequest(id){
   try{
@@ -2547,7 +2608,7 @@ function draftFromSettings(s){
   s=s||DEFAULT_SETTINGS; const et=s.emailTexts||{};
   return { gymName:s.gymName, warnDays:s.warnDays, minMinutesBetweenEntries:s.minMinutesBetweenEntries,
     weekSchedule:JSON.parse(JSON.stringify(weekScheduleOf(s))), closedDatesText:(s.closedDates||[]).join('\n'), newsText:s.newsText, currency:s.currency||'MDL',
-    address:s.address||'', phone:s.phone||'', logoDataUri:s.logoDataUri||'',
+    address:s.address||'', phone:s.phone||'', logoDataUri:s.logoDataUri||'', trainerPrice:s.trainerPrice||'',
     emailTexts:{activated:et.activated||DEFAULT_EMAIL_TEXTS.activated, expiring:et.expiring||DEFAULT_EMAIL_TEXTS.expiring} };
 }
 const TIME_OPTIONS=(()=>{ const a=[]; for(let h=0;h<24;h++){ a.push(String(h).padStart(2,'0')+':00', String(h).padStart(2,'0')+':30'); } a.push('23:59'); return a; })();
@@ -2638,7 +2699,8 @@ function renderSettings(){
           + (d.logoDataUri? '<button class="btn btn-ghost btn-sm" data-action="remove-logo" style="color:var(--danger);">'+icon('trash','icon-sm')+' '+ra('Logo implicit')+'</button>' : '')
           + '<span class="hint">PNG / JPG, max 2 MB</span></div></div>'
         + field(ra('Adresă'),'text','settingsDraft.address',d.address,'str. Independenței 25, Chișinău')
-        + field(ra('Telefon'),'text','settingsDraft.phone',d.phone,'060 000 000')+'</div>'
+        + field(ra('Telefon'),'text','settingsDraft.phone',d.phone,'060 000 000')
+        + field(ra('Preț antrenor personal (apare în contul clientului)'),'text','settingsDraft.trainerPrice',d.trainerPrice,'250 MDL / oră')+'</div>'
       + '<button class="btn btn-primary" style="align-self:flex-start;" data-action="save-identity">'+icon('check','icon-sm')+' '+ra('Salvează identitatea')+'</button>')
    + (canManageTeam? card('users', ra('Echipă și roluri'), ra('Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte.'),
       '<button class="btn btn-primary" data-action="open-add-team">'+icon('plus','icon-sm')+' '+ra('Adaugă membru')+'</button>',
@@ -2676,7 +2738,7 @@ async function saveSettingsGeneral(){
 async function saveIdentity(){
   const d=state.settingsDraft;
   if(!(d.gymName||'').trim()){ showToast(ra('Numele sălii nu poate fi gol.')); return; }
-  try{ await saveSettingsDoc({gymName:d.gymName.trim(), address:(d.address||'').trim(), phone:(d.phone||'').trim(), logoDataUri:d.logoDataUri||''}); await logMod('Identitatea sălii actualizată', d.gymName); showToast(ra('Salvat.')); }
+  try{ await saveSettingsDoc({gymName:d.gymName.trim(), address:(d.address||'').trim(), phone:(d.phone||'').trim(), logoDataUri:d.logoDataUri||'', trainerPrice:(d.trainerPrice||'').trim()}); await logMod('Identitatea sălii actualizată', d.gymName); showToast(ra('Salvat.')); }
   catch(e){ showToast(ra('Eroare la salvare.')); }
 }
 async function saveMessages(){
@@ -2767,11 +2829,16 @@ function renderClientPortal(){
   const tone = (sub.unlimited && st.tone==='success') ? 'unlimited' : (st.tone==='success'?'success' : st.tone==='warning'?'warning' : st.tone==='danger'?'danger' : (sub.tier==='gold'?'gold':'muted'));
   const tab=state.clientTab||'sub';
   const myLog=(c.recentEntries||[]).map(e=>({clientName:c.name, timestamp:e.t, result:e.r}));
-  return '<div class="client-shell"><div class="client-top"><div class="client-header-row">'
-   + '<div class="brand" style="margin:0;"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="Fitness Park"><div><div class="brand-name">'+esc((state.settings&&state.settings.gymName)||'Fitness Park')+'</div><div class="brand-sub" style="color:var(--text-muted);">'+tr('myAccount')+'</div></div></div>'
-   + '<div class="flex gap8 items-center">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="client-logout">'+icon('logOut','icon-sm')+'</button></div>'
+  const s=state.settings||{}; const gym=s.gymName||'Fitness Park'; const addr=gymAddress(s);
+  const tabBtn=(key,label)=>'<div class="client-tab'+(tab===key?' active':'')+'" data-action="client-tab" data-tab="'+key+'">'+label+'</div>';
+  return '<div class="client-shell"><div class="client-top cp-top"><div class="client-header-row">'
+   + '<div class="brand" style="margin:0;"><img class="brand-mark" src="'+gymLogoSrc()+'" alt="Fitness Park"><div><div class="brand-name">'+esc(gym)+'</div><div class="brand-sub" style="color:var(--text-muted);">'+tr('myAccount')+'</div></div></div>'
+   + '<div class="flex gap8 items-center">'+langToggleBtn()+themeToggleBtn()+'<button class="btn btn-ghost btn-sm" data-action="client-logout" title="'+esc(tr('logout'))+'">'+icon('logOut','icon-sm')+'</button></div>'
    + '</div></div>'
-   + '<div class="client-body">'
+   + '<div class="client-body cp">'
+   + '<div class="cp-hello"><h1>'+esc(tr('cpHello').replace('{name}', c.name))+'</h1><p>'+tr('cpSub')+'</p></div>'
+   + '<div class="cp-grid">'
+   + '<div class="cp-col cp-area-top">'
      + '<div class="sub-card tone-'+tone+'"><div class="sub-top"><div class="flex items-center" style="gap:12px;min-width:0;">'
        + '<label class="sub-av" title="'+esc(c.photoDataUri? tr('photoChange') : tr('photoUpload'))+'">'+(c.photoDataUri? '<img src="'+c.photoDataUri+'" alt="">' : icon('camera'))+'<span class="sub-av-edit">'+icon(c.photoDataUri?'edit':'plus')+'</span><input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label>'
        + '<div style="min-width:0;"><div class="small" style="opacity:.85;">'+esc(subTypeDisplayName(c)||tr('noActiveSub'))+'</div><div style="font-weight:800;font-family:var(--font-display);font-size:18px;margin-top:2px;">'+esc(c.name)+'</div></div></div><span class="pill" style="background:rgba(255,255,255,.18);color:#fff;">'+esc(st.label)+'</span></div>'
@@ -2780,49 +2847,76 @@ function renderClientPortal(){
      + (c.photoDataUri? '' : clientPhotoPending(c)
         ? '<div class="photo-req pending"><span class="photo-av">'+icon('clock')+'</span><div style="flex:1;min-width:180px;"><div class="photo-t">'+tr('photoPending')+'</div></div><label class="btn btn-ghost btn-sm">'+icon('camera','icon-sm')+' '+tr('photoSendOther')+'<input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label></div>'
         : '<div class="photo-req"><span class="photo-av">'+icon('camera')+'</span><div style="flex:1;min-width:180px;"><div class="photo-t">'+tr('photoReqTitle')+' *</div><div class="photo-d">'+tr('photoHint')+'</div></div><label class="btn btn-primary btn-sm">'+icon('upload','icon-sm')+' '+tr('photoUpload')+'<input type="file" accept="image/*" data-client-photo="1" style="display:none;"></label></div>')
-     + '<div class="client-tabs">'
-       + '<div class="client-tab'+(tab==='sub'?' active':'')+'" data-action="client-tab" data-tab="sub">'+tr('tabSub')+'</div>'
-       + '<div class="client-tab'+(tab==='news'?' active':'')+'" data-action="client-tab" data-tab="news">'+tr('tabNews')+'</div>'
-       + '<div class="client-tab'+(tab==='history'?' active':'')+'" data-action="client-tab" data-tab="history">'+tr('tabHistory')+'</div></div>'
+   + '</div>'
+   + '<div class="cp-col cp-area-side">'+clientAccessCard(c)
+     + '<div class="cp-card cp-loc"><span class="cp-loc-ic">'+icon('mapPin')+'</span><div style="min-width:0;flex:1;"><b>'+esc(gym)+(addr.city? ' · '+esc(addr.city) : '')+'</b><span>'+esc(addr.street)+'</span>'
+       + (s.phone? '<a class="cp-loc-phone" href="tel:'+esc(s.phone.replace(/[^\d+]/g,''))+'">'+icon('phone','icon-sm')+' '+esc(s.phone)+'</a>' : '')+'</div>'
+       + '<a class="cp-link" href="'+esc(addr.mapUrl)+'" target="_blank" rel="noopener">'+tr('cpMap')+' '+icon('chevronRight','icon-sm')+'</a></div>'
+   + '</div>'
+   + '<div class="cp-col cp-area-rest">'
+     + '<div class="client-tabs cp-tabs">'+tabBtn('sub',tr('tabSub'))+tabBtn('history',tr('tabHistory'))+tabBtn('news',tr('tabNews'))+'</div>'
      + (tab==='sub'? clientTabSub(c) : tab==='news'? clientTabNews() : clientTabHistory(myLog))
-     + copyrightHtml()
+     + clientTrainerCard(c)
+   + '</div>'
+   + '</div>'
+   + '<div class="cp-foot"><span>© '+new Date().getFullYear()+' '+esc(gym)+'. '+tr('cpRights')+'</span><span>'+tr('cpSlogan')+'</span></div>'
    + '</div></div>';
+}
+// A request is "pending" until staff resolve it. Clients can't write their own record, so the time
+// of the request is also remembered in this browser to show the pending state right away.
+function clientRequestPending(c, kind){
+  const askedServer=c[kind+'RequestAt']||''; let askedLocal=''; try{ askedLocal=localStorage.getItem('fp_'+kind+'_req_'+c.id)||''; }catch(e){}
+  const asked=[askedServer, askedLocal].sort().pop();
+  if(!asked || (Date.now()-new Date(asked).getTime())>14*86400000) return false;
+  const done=c[kind+'ResolvedAt']||''; return !(done && done>=asked);
+}
+function clientAccessCard(c){
+  const open=!!state.cardOptsOpen;
+  const printedPending=clientRequestPending(c,'printed');
+  const cardNote=c.cardRequestPending? '<div class="cp-note warn">'+tr('cardReqPending')+'</div>' : c.cardRequestStatus==='approved'? '<div class="cp-note ok">'+tr('cardReqApproved')+'</div>' : c.cardRequestStatus==='rejected'? '<div class="cp-note bad">'+tr('cardReqRejected')+'</div>' : '';
+  return '<div class="cp-card cp-access"><div class="cp-card-h">'+tr('cpAccessCard')+'</div>'
+   + '<div class="cp-qr"><div data-qr="'+esc(c.code)+'"></div></div><div class="cp-qr-note">'+tr('cpScan')+'</div>'
+   + '<div class="cp-code-row"><div><div class="cp-label">'+tr('memberCode')+'</div><div class="cp-code">'+esc(c.code)+'</div></div>'
+     + '<button class="btn btn-soft btn-sm" data-action="copy-code" data-id="'+c.id+'">'+icon('copy','icon-sm')+' '+tr('cpCopy')+'</button></div>'
+   + '<button class="cp-opts-toggle'+(open?' open':'')+'" data-action="toggle-card-opts" aria-expanded="'+open+'">'+tr('cpCardOptions')+' '+icon('chevronUp','icon-sm')+'</button>'
+   + (open? '<div class="cp-opts">'
+       + '<button data-action="download-card" data-id="'+c.id+'">'+icon('download','icon-sm')+' '+tr('cpDownload')+'</button>'
+       + (c.cardRequestPending? '' : '<button data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' '+tr('lostCard')+'</button>')+cardNote
+       + (printedPending? '<div class="cp-note warn">'+icon('printer','icon-sm')+' '+tr('cpPrintedPending')+'</div>' : '<button data-action="request-printed-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' '+tr('reqPrinted')+'</button>')
+     + '</div>' : '')
+   + '</div>';
+}
+function clientTrainerCard(c){
+  const price=((state.settings&&state.settings.trainerPrice)||'').trim();
+  const pending=clientRequestPending(c,'trainer');
+  return '<div class="cp-card cp-trainer"><span class="cp-tr-ic">'+icon('dumbbell')+'</span><div style="flex:1;min-width:0;"><b>'+tr('cpTrainer')+'</b><span>'+(price? esc(price) : tr('cpTrainerDesc'))+'</span></div>'
+   + (pending? '<span class="pill pill-warning">'+icon('clock','icon-sm')+' '+tr('cpRequested')+'</span>' : '<button class="btn btn-primary" data-action="request-trainer" data-id="'+c.id+'">'+tr('cpRequest')+'</button>')
+   + '</div>';
 }
 function clientTabSub(c){
   const sub=c.subscription||{}; const due=(sub.totalDue||0)-(sub.totalPaid||0);
   const entryLimit=Number(((typeById(sub.typeId)||{}).entryLimit)||sub.entryLimit||0);
-  const reqDone=(askedAt, doneAt)=> !!(askedAt && doneAt && doneAt>=askedAt);
-  const trainerDoneNote=reqDone(c.trainerRequestAt, c.trainerResolvedAt);
-  const trainerPending=!!c.trainerRequestAt && !trainerDoneNote;
-  const printedDoneNote=reqDone(c.printedRequestAt, c.printedResolvedAt);
-  const printedPending=!!c.printedRequestAt && !printedDoneNote;
-  return '<div class="card" style="padding:20px;display:flex;flex-direction:column;gap:14px;">'
-   + renderMemberCard(c)
-   + (c.cardRequestPending? '<div class="small center" style="color:var(--warning);font-weight:600;">'+tr('cardReqPending')+'</div>'
-      : c.cardRequestStatus==='approved'? ('<div class="small center" style="color:var(--success);font-weight:600;">'+tr('cardReqApproved')+'</div><button class="btn btn-ghost btn-sm btn-block" data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' '+tr('lostCard')+'</button>')
-      : c.cardRequestStatus==='rejected'? ('<div class="small center" style="color:var(--danger);font-weight:600;">'+tr('cardReqRejected')+'</div><button class="btn btn-ghost btn-sm btn-block" data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' '+tr('lostCard')+'</button>')
-      : ('<button class="btn btn-ghost btn-sm btn-block" data-action="request-new-card" data-id="'+c.id+'">'+icon('qrcode','icon-sm')+' '+tr('lostCard')+'</button>'))
-   + (trainerPending? ('<div class="small center" style="color:var(--warning);font-weight:600;">'+tr('cardReqPending')+'</div>') : ('<button class="btn btn-ghost btn-sm btn-block" data-action="request-trainer" data-id="'+c.id+'">'+icon('users','icon-sm')+' '+tr('reqTrainer')+'</button>'+(trainerDoneNote?('<div class="small center" style="color:var(--success);margin-top:-8px;">'+tr('reqResolved')+'</div>'):'')))
-   + (printedPending? ('<div class="small center" style="color:var(--warning);font-weight:600;">'+tr('cardReqPending')+'</div>') : ('<button class="btn btn-ghost btn-sm btn-block" data-action="request-printed-card" data-id="'+c.id+'">'+icon('printer','icon-sm')+' '+tr('reqPrinted')+'</button>'+(printedDoneNote?('<div class="small center" style="color:var(--success);margin-top:-8px;">'+tr('reqResolved')+'</div>'):'')))
-   + '<hr class="hairline">'
-   + '<div class="flex justify-between small"><span class="muted">'+tr('subPrice')+'</span><span class="mono">'+money(sub.price,sub.currency)+'</span></div>'
-   + '<div class="flex justify-between small"><span class="muted">'+tr('paidAmt')+'</span><span class="mono">'+money(sub.totalPaid,sub.currency)+'</span></div>'
-   + (due>0.5? ('<div class="flex justify-between small"><span class="muted">'+tr('dueAmt')+'</span><span class="mono" style="color:var(--danger);font-weight:700;">'+money(due,sub.currency)+'</span></div>') : '')
-   + (entryLimit? ('<div class="flex justify-between small"><span class="muted">'+tr('entriesLeft')+'</span><span class="mono">'+Math.max(0, entryLimit-Number(sub.entriesUsed||0))+' / '+entryLimit+'</span></div>') : '')
-   + (c.phone? ('<div class="flex justify-between small"><span class="muted">'+tr('phoneLabel')+'</span><span class="mono">'+esc(c.phone)+'</span></div>') : '')
+  const row=(label, value, cls)=>'<div class="cp-row"><span>'+label+'</span><b'+(cls?' class="'+cls+'"':'')+'>'+value+'</b></div>';
+  const period=!sub.validFrom? '—' : sub.unlimited? (fmtDate(sub.validFrom)+' → ∞') : (fmtDate(sub.validFrom)+' → '+fmtDate(sub.validTo));
+  return '<div class="cp-card"><div class="cp-card-h">'+tr('cpDetails')+'</div>'
+   + row(tr('cpPlan'), esc(subTypeDisplayName(c)||tr('noActiveSub')))
+   + row(tr('cpPeriod'), period)
+   + (entryLimit? row(tr('entriesLeft'), Math.max(0, entryLimit-Number(sub.entriesUsed||0))+' / '+entryLimit) : '')
+   + (sub.price!=null? row(tr('subPrice'), money(sub.price,sub.currency)) : '')
+   + (sub.price!=null? row(tr('paidAmt'), money(sub.totalPaid,sub.currency), due>0.5? '' : 'ok') : '')
+   + (due>0.5? row(tr('dueAmt'), money(due,sub.currency), 'bad') : '')
+   + (c.phone? row(tr('phoneLabel'), esc(c.phone)) : '')
    + '</div>';
 }
 function clientTabNews(){
   const s=state.settings||{}; const text=s.newsText||'';
-  const contact=[s.address? '<div class="flex items-center gap8">'+icon('home','icon-sm')+'<span>'+esc(s.address)+'</span></div>' : '', s.phone? '<div class="flex items-center gap8">'+icon('phone','icon-sm')+'<a href="tel:'+esc(s.phone.replace(/[^\d+]/g,''))+'">'+esc(s.phone)+'</a></div>' : ''].join('');
   const w=weekScheduleOf(s);
-  const hours=SCHEDULE_DAY_ORDER.map(day=>{ const x=w[day]; const iv=(x.intervals||[]).map(v=>v.from+'–'+v.to).join(', '); return '<div class="flex justify-between small" style="padding:3px 0;"><span class="muted">'+esc(dayLabel(day))+'</span><span class="mono">'+(x.open&&iv? esc(iv) : esc(tr('closedDay')))+'</span></div>'; }).join('');
-  return '<div class="card" style="padding:20px;"><div class="flex items-center gap8" style="margin-bottom:10px;">'+icon('news')+'<b>'+tr('newsRules')+'</b></div><div class="news-preview">'+esc(text).replace(/\n/g,'<br>')+'</div>'
-   + '<hr class="hairline" style="margin:16px 0;"><div class="flex items-center gap8" style="margin-bottom:8px;">'+icon('clock')+'<b>'+tr('openingHours')+'</b></div>'+hours
-   + (contact? '<hr class="hairline" style="margin:16px 0;"><div class="small" style="display:flex;flex-direction:column;gap:8px;">'+contact+'</div>' : '')+'</div>';
+  const hours=SCHEDULE_DAY_ORDER.map(day=>{ const x=w[day]; const iv=(x.intervals||[]).map(v=>v.from+'–'+v.to).join(', '); return '<div class="cp-row"><span>'+esc(dayLabel(day))+'</span><b>'+(x.open&&iv? esc(iv) : esc(tr('closedDay')))+'</b></div>'; }).join('');
+  return '<div class="cp-card"><div class="cp-card-h">'+icon('clock','icon-sm')+' '+tr('openingHours')+'</div>'+hours+'</div>'
+   + (text? '<div class="cp-card"><div class="cp-card-h">'+icon('news','icon-sm')+' '+tr('newsRules')+'</div><div class="news-preview">'+esc(text).replace(/\n/g,'<br>')+'</div></div>' : '');
 }
 function clientTabHistory(log){
-  return '<div class="card" style="padding:10px 16px 4px;">'+(log.length? log.map(logRowHtmlClient).join('') : '<div class="empty-state small">'+tr('noHistoryYet')+'</div>')+'</div>';
+  return '<div class="cp-card"><div class="cp-card-h">'+tr('tabHistory')+'</div>'+(log.length? log.map(logRowHtmlClient).join('') : '<div class="empty-state small">'+tr('noHistoryYet')+'</div>')+'</div>';
 }
 
 /* ============ MODAL DISPATCH ============ */
@@ -2929,6 +3023,7 @@ function onAction(el){
     case 'go-admin': state.formErr=''; state.screen='admin-gate'; window.scrollTo(0,0); break;
     case 'go-client': state.formErr=''; state.screen='client-gate'; stopCamera(); window.scrollTo(0,0); break;
     case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); window.scrollTo(0,0); break;
+    case 'toggle-card-opts': state.cardOptsOpen=!state.cardOptsOpen; break;
     case 'hp-scroll': { const target=id==='top'? null : document.getElementById('hp-'+id); if(target) target.scrollIntoView({behavior:'smooth', block:'start'}); else window.scrollTo({top:0, behavior:'smooth'}); return; }
     case 'hp-buy-plan': state.formErr=''; state.buySubmitted=false; state.buyForm={typeId:id}; state.screen='buy-gate'; window.scrollTo(0,0); break;
     case 'admin-login-submit': runOnce(adminLoginSubmit); return;
