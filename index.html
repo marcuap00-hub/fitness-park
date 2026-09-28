@@ -1050,8 +1050,8 @@ const I18N = {
     instIos1:'Apasă butonul Partajează (pătratul cu săgeată în sus), jos în Safari.', instIos2:'Derulează și alege „Adaugă pe ecranul principal”.', instIos3:'Apasă „Adaugă”. Iconița Fitness Park apare pe ecranul telefonului.',
     instAnd1:'Apasă meniul browserului (cele 3 puncte ⋮, sus în dreapta).', instAnd2:'Alege „Adaugă pe ecranul principal” sau „Instalează aplicația”.', instAnd3:'Confirmă cu „Adaugă”. Iconița apare pe ecranul telefonului.',
     instDeskTitle:'Deschide pe telefon', instDesk1:'Scanează codul de mai sus cu camera telefonului.', instDesk2:'Pe telefon, apasă „Adaugă pe ecranul principal”.',
-    profTitle:'Completează-ți profilul', profDesc:'Înainte să vezi abonamentul și codul QR, completează datele de mai jos. Durează un minut, iar recepția le confirmă.', profSend:'Trimite datele',
-    profileSent:'Mulțumim! Datele au fost trimise recepției.', profilePending:'Datele tale așteaptă confirmarea recepției.',
+    profTitle:'Completează-ți profilul', profDesc:'Înainte să vezi abonamentul și codul QR, completează datele de mai jos. Durează un minut.', profSend:'Salvează datele',
+    profileSent:'Mulțumim! Datele au fost trimise recepției.', profileSaved:'Mulțumim! Datele au fost salvate.', photoSaved:'Poza a fost salvată.', profilePending:'Datele tale așteaptă confirmarea recepției.',
     instOr:'sau',instIosS1:'Jos în Safari, apasă butonul Partajează. Dacă nu-l vezi, apasă întâi „•••”.', instIosRow:'Adaugă pe ecranul principal', instIosS2:'Derulează puțin în jos și apasă pe acest rând.',
     instIosAdd:'Adaugă', instIosS3:'Apasă „Adaugă”, sus în dreapta. Gata — iconița Fitness Park apare pe ecran.', instIosHere:'Bara Safari este aici, jos',
     noActiveSub:'Fără abonament activ', daysLeft:'zile rămase', subExpired:'abonament expirat', noSubShort:'Niciun abonament activ', contactReception:'Contactează recepția', unlimitedLabel:'Nelimitat',
@@ -1112,8 +1112,8 @@ const I18N = {
     instIos1:'Нажми кнопку «Поделиться» (квадрат со стрелкой вверх) внизу Safari.', instIos2:'Прокрути и выбери «На экран «Домой»».', instIos3:'Нажми «Добавить». Значок Fitness Park появится на экране телефона.',
     instAnd1:'Открой меню браузера (три точки ⋮ вверху справа).', instAnd2:'Выбери «Добавить на главный экран» или «Установить приложение».', instAnd3:'Подтверди «Добавить». Значок появится на экране телефона.',
     instDeskTitle:'Открой на телефоне', instDesk1:'Отсканируй код выше камерой телефона.', instDesk2:'На телефоне нажми «Добавить на главный экран».',
-    profTitle:'Заполни профиль', profDesc:'Прежде чем увидеть абонемент и QR-код, заполни данные ниже. Это займёт минуту, ресепшн их подтвердит.', profSend:'Отправить данные',
-    profileSent:'Спасибо! Данные отправлены на ресепшн.', profilePending:'Твои данные ждут подтверждения ресепшн.',
+    profTitle:'Заполни профиль', profDesc:'Прежде чем увидеть абонемент и QR-код, заполни данные ниже. Это займёт минуту.', profSend:'Сохранить данные',
+    profileSent:'Спасибо! Данные отправлены на ресепшн.', profileSaved:'Спасибо! Данные сохранены.', photoSaved:'Фото сохранено.', profilePending:'Твои данные ждут подтверждения ресепшн.',
     instOr:'или',instIosS1:'Внизу в Safari нажми «Поделиться». Если её не видно, сначала нажми «•••».', instIosRow:'На экран «Домой»', instIosS2:'Прокрути немного вниз и нажми на эту строку.',
     instIosAdd:'Добавить', instIosS3:'Нажми «Добавить» вверху справа. Готово — значок Fitness Park появится на экране.', instIosHere:'Панель Safari — здесь, внизу',
     noActiveSub:'Нет активного абонемента', daysLeft:'дней осталось', subExpired:'абонемент истёк', noSubShort:'Нет активного абонемента', contactReception:'Свяжитесь с ресепшн', unlimitedLabel:'Безлимит',
@@ -2551,20 +2551,21 @@ async function approvePhotoRequest(id){
   catch(e){ showToast(ra('Eroare.')); }
 }
 async function rejectPhotoRequest(id){ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Poză respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }
-// Clients can't write their own record (Firestore rules), so a photo from the client portal goes
-// to reception as a request and is applied only once staff approve it.
+// A client without a photo adds it directly. Replacing an existing photo goes to reception for approval,
+// because reception recognises the member at the door by this photo.
 async function sendClientPhoto(file){
   const c=state.clients.find(x=>x.id===state.clientSession); if(!c) return;
   try{
     const dataUri=await readImageResized(file, 320, 0.62);
+    if(!c.photoDataUri){ const now=new Date().toISOString(); await colClients().doc(c.id).update({photoDataUri:dataUri, photoUpdatedAt:now, profileUpdatedAt:now}); showToast(tr('photoSaved')); return; }
     await colBuyReq().add({kind:'photo', clientId:c.id, clientName:c.name, code:c.code, photoDataUri:dataUri, status:'pending', date:new Date().toISOString()});
     try{ localStorage.setItem('fp_photo_sent_'+c.id, new Date().toISOString()); }catch(e){}
     showToast(tr('photoSent')); scheduleRender();
   }catch(e){ showToast(tr('photoError')); }
 }
-// Clients saved without phone / email / birth year / photo must complete them before using "Contul meu".
-// Like the photo, the data goes to reception as a request and is written to the client only after approval.
-function clientMissingFields(c){ const m=[]; if(!(c.phone||'').trim()) m.push('phone'); if(!isValidEmail(c.email)) m.push('email'); if(!c.birthDate) m.push('birth'); if(!c.photoDataUri) m.push('photo'); return m; }
+// Clients saved without phone / birth year / photo complete them before using "Contul meu"; the data is saved
+// straight into their record (the rules only allow filling in empty fields). The e-mail is set at activation.
+function clientMissingFields(c){ const m=[]; if(!(c.phone||'').trim()) m.push('phone'); if(!c.birthDate) m.push('birth'); if(!c.photoDataUri) m.push('photo'); return m; }
 function clientProfilePending(c){
   let at=''; try{ at=localStorage.getItem('fp_profile_sent_'+c.id)||''; }catch(e){}
   if(!at || Date.now()-new Date(at).getTime() > 14*86400000) return false;
@@ -2581,7 +2582,7 @@ function clientProfileFormHtml(c, missing){
      + (missing.includes('birth')? birthDateRowHtml('profileForm', f.birthYear) : '')
    + '</div>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
-   + '<button class="btn btn-primary btn-block" data-action="submit-client-profile">'+icon('send','icon-sm')+' '+tr('profSend')+'</button></div>';
+   + '<button class="btn btn-primary btn-block" data-action="submit-client-profile">'+icon('check','icon-sm')+' '+tr('profSend')+'</button></div>';
 }
 async function submitClientProfile(){
   const c=state.clients.find(x=>x.id===state.clientSession); if(!c) return;
@@ -2591,13 +2592,12 @@ async function submitClientProfile(){
   if(missing.includes('phone')){ if(!(f.phone||'').trim()) return err(tr('errEnterPhone')); if(!isValidMdPhone(f.phone)) return err(tr('errPhoneInvalid')); }
   if(missing.includes('email')){ if(!(f.email||'').trim()) return err(tr('errEnterEmail')); if(!isValidEmail(f.email)) return err(tr('errEmailInvalid')); }
   if(missing.includes('birth') && !f.birthYear) return err(tr('errBirthDate'));
-  try{
-    await colBuyReq().add({kind:'profile', clientId:c.id, clientName:c.name, code:c.code,
-      phone: missing.includes('phone')? f.phone.trim() : '', email: missing.includes('email')? f.email.trim().toLowerCase() : '', birthDate: missing.includes('birth')? combineBirthDate(f.birthYear) : '',
-      photoDataUri: missing.includes('photo')? f.photoDataUri : '', status:'pending', date:new Date().toISOString()});
-    try{ localStorage.setItem('fp_profile_sent_'+c.id, new Date().toISOString()); }catch(e){}
-    state.formErr=''; showToast(tr('profileSent')); scheduleRender();
-  }catch(e){ err(tr('toastReqError')); }
+  const now=new Date().toISOString(); const upd={profileUpdatedAt:now};
+  if(missing.includes('phone')) upd.phone=f.phone.trim();
+  if(missing.includes('birth')) upd.birthDate=combineBirthDate(f.birthYear);
+  if(missing.includes('photo')){ upd.photoDataUri=f.photoDataUri; upd.photoUpdatedAt=now; }
+  try{ await colClients().doc(c.id).update(upd); state.formErr=''; state.profileFormFor=null; showToast(tr('profileSaved')); scheduleRender(); }
+  catch(e){ err(tr('toastReqError')); }
 }
 async function approveProfileRequest(id){
   const r=(state.buyRequests||[]).find(x=>x.id===id); if(!r) return;
