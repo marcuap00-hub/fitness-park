@@ -577,6 +577,9 @@ html.scroll-lock{overflow:hidden;}
 .scan-timer{position:absolute;left:0;bottom:0;height:4px;width:100%;background:currentColor;opacity:.35;transform-origin:left;animation:scanTimer linear forwards;}
 .scan-zone.ok .scan-timer{color:var(--success);} .scan-zone.bad .scan-timer{color:var(--danger);}
 @keyframes scanTimer{from{transform:scaleX(1);}to{transform:scaleX(0);}}
+.gate-note{background:var(--success-bg);color:var(--success);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;line-height:1.45;margin:4px 0 10px;}
+.cd-link{margin-top:6px;display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+.cd-link:hover{text-decoration:underline;}
 .desk-side{display:flex;flex-direction:column;gap:14px;min-width:0;}
 .desk-search{width:100%;margin-top:12px;}
 .desk-results{margin-top:8px;}
@@ -1013,9 +1016,10 @@ const I18N = {
     caNoAccount:'Nu ai cont? Creează-l acum', caHaveAccount:'Ai deja cont? Intră', caRegTitle:'Creează-ți contul', caRegDesc:'Scrie emailul pe care l-ai dat la recepție și alege o parolă. Îți trimitem un email de confirmare.', caRegister:'Creează contul',
     caVerifyTitle:'Confirmă emailul', caVerifyDesc:'Ți-am trimis un email la {email}. Deschide-l și apasă linkul de confirmare. Contul se deschide singur imediat după.', caVerifySpam:'Nu-l găsești? Uită-te și în Spam sau Promoții.', caVerified:'Am confirmat — intră', caResend:'Retrimite emailul', caOther:'Folosește alt email',
     caNoMatchTitle:'Nu am găsit abonamentul', caNoMatchDesc:'Emailul {email} nu apare încă la niciun abonat. Roagă recepția să-l treacă în fișa ta, apoi apasă „Verifică din nou”.', caRetry:'Verifică din nou', caLoading:'Se încarcă contul…',
-    caWrong:'Email sau parolă greșită.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
+    caFirstTime:'Prima dată aici? Parola ți-o alegi din linkul pe care ți-l trimite recepția pe email.', caPwRequested:'Cererea a fost trimisă recepției. Vei primi pe email un link pentru parola nouă (verifică și dosarul Spam).',
+    caWrong:'Email sau parolă greșită. Dacă nu ai încă parolă, apasă „Am uitat parola”.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
     caStaff:'Acesta este un cont de recepție. Intră din „Recepție & administrare”.', caNotYet:'Emailul nu e confirmat încă. Apasă linkul din email, apoi încearcă din nou.', caResent:'Emailul de confirmare a fost retrimis.', caForgotHint:'Scrie emailul mai sus, apoi apasă „Am uitat parola”.', caResetSent:'Dacă există un cont cu acest email, ți-am trimis un link pentru parolă nouă.',
-    buySentTitle:'Cerere trimisă!', buySentDesc:'Te contactăm în curând pentru a finaliza plata și a-ți activa abonamentul. După activare, intră în „Contul meu” și creează-ți contul cu același email.', backToStart:'Înapoi la start',
+    buySentTitle:'Cerere trimisă!', buySentDesc:'Te contactăm în curând pentru a finaliza plata și a-ți activa abonamentul. După activare, recepția îți trimite pe email un link ca să-ți alegi parola pentru „Contul meu”.', backToStart:'Înapoi la start',
     buyTitle:'Cumpără un abonament', buyDesc:'Alege abonamentul dorit — te contactăm pentru plată. Plata online directă va fi disponibilă în curând.',
     fullName:'Nume și prenume', fullNamePh:'Ex: Popescu Ion', phone:'Telefon', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Introdu adresa de email — pe ea primești confirmarea abonamentului.', errEmailInvalid:'Adresa de email nu este validă (ex: nume@gmail.com).',
     desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal (250 MDL / oră)', wantsPrinted:'Vreau și abonamentul în format tipărit',
@@ -1067,9 +1071,10 @@ const I18N = {
     caNoAccount:'Нет аккаунта? Создайте его', caHaveAccount:'Уже есть аккаунт? Войти', caRegTitle:'Создайте аккаунт', caRegDesc:'Укажите email, который вы дали на ресепшн, и придумайте пароль. Мы отправим письмо для подтверждения.', caRegister:'Создать аккаунт',
     caVerifyTitle:'Подтвердите email', caVerifyDesc:'Мы отправили письмо на {email}. Откройте его и нажмите ссылку подтверждения. Аккаунт откроется сам сразу после этого.', caVerifySpam:'Не нашли письмо? Проверьте папки «Спам» и «Промоакции».', caVerified:'Я подтвердил — войти', caResend:'Отправить письмо ещё раз', caOther:'Использовать другой email',
     caNoMatchTitle:'Абонемент не найден', caNoMatchDesc:'Email {email} пока не указан ни у одного клиента. Попросите ресепшн добавить его в вашу карточку, затем нажмите «Проверить снова».', caRetry:'Проверить снова', caLoading:'Загружаем аккаунт…',
-    caWrong:'Неверный email или пароль.', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
+    caFirstTime:'Впервые здесь? Пароль вы зададите по ссылке, которую ресепшн отправит вам на email.', caPwRequested:'Запрос отправлен на ресепшн. Вы получите на email ссылку для нового пароля (проверьте и папку «Спам»).',
+    caWrong:'Неверный email или пароль. Если у вас ещё нет пароля, нажмите «Забыли пароль?».', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
     caStaff:'Это аккаунт ресепшн. Войдите через «Ресепшн и администрирование».', caNotYet:'Email ещё не подтверждён. Нажмите ссылку в письме и попробуйте снова.', caResent:'Письмо для подтверждения отправлено ещё раз.', caForgotHint:'Введите email выше, затем нажмите «Забыли пароль?».', caResetSent:'Если аккаунт с этим email существует, мы отправили ссылку для нового пароля.',
-    buySentTitle:'Заявка отправлена!', buySentDesc:'Мы скоро свяжемся с вами, чтобы завершить оплату и активировать абонемент. После активации зайдите в «Мой аккаунт» и создайте аккаунт с тем же email.', backToStart:'Назад на главную',
+    buySentTitle:'Заявка отправлена!', buySentDesc:'Мы скоро свяжемся с вами, чтобы завершить оплату и активировать абонемент. После активации ресепшн отправит вам на email ссылку, чтобы задать пароль для «Мой аккаунт».', backToStart:'Назад на главную',
     buyTitle:'Купить абонемент', buyDesc:'Выберите нужный абонемент — мы свяжемся с вами для оплаты. Прямая онлайн-оплата скоро будет доступна.',
     fullName:'Имя и фамилия', fullNamePh:'Напр.: Иван Попеску', phone:'Телефон', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Введите email — на него придёт подтверждение абонемента.', errEmailInvalid:'Неверный адрес email (напр.: name@gmail.com).',
     desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера (250 MDL / час)', wantsPrinted:'Также хочу абонемент в печатном виде',
@@ -1216,7 +1221,7 @@ const RO_RU = {
   'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов. Сотрудники ресепшн только сканируют входы.',
   'Recepționer':'Ресепшн', 'Recepționer — doar scanează':'Ресепшн — только сканирует', 'Administratorii pot adăuga doar recepționeri.':'Администраторы могут добавлять только сотрудников ресепшн.', 'Administratorii pot gestiona doar recepționerii.':'Администраторы могут управлять только сотрудниками ресепшн.',
   'Caută client':'Поиск клиента', 'Pentru clienții care și-au uitat cardul.':'Для клиентов, которые забыли карту.', 'Nume sau email (cel puțin 2 litere)':'Имя или email (минимум 2 буквы)', 'Caută după nume, email, telefon sau cod':'Поиск по имени, email, телефону или коду',
-  'Fără abonament activ':'Нет активного абонемента', 'Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.':'Список команды ещё загружается. Попробуйте через несколько секунд.', 'Se încarcă echipa…':'Загружаем команду…','activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
+  'Fără abonament activ':'Нет активного абонемента', 'Trimite link pentru parolă':'Отправить ссылку для пароля', 'Linkul pentru parolă a fost trimis pe ':'Ссылка для пароля отправлена на ', 'Nu am putut trimite linkul.':'Не удалось отправить ссылку.', 'Trimite linkul':'Отправить ссылку', 'niciun client cu acest email':'нет клиента с этим email', 'Cereri de parolă':'Запросы пароля', 'Clienți care au uitat parola. „Trimite linkul” le trimite pe email un link de unică folosință pentru parola nouă.':'Клиенты, которые забыли пароль. «Отправить ссылку» пришлёт им на email одноразовую ссылку для нового пароля.','Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.':'Список команды ещё загружается. Попробуйте через несколько секунд.', 'Se încarcă echipa…':'Загружаем команду…','activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
   'Au date incomplete (se importă, completezi apoi în fișa clientului):':'С неполными данными (импортируются, дополните потом в карточке клиента):', 'cu date incomplete':'с неполными данными', 'Importat din evidența veche':'Импортирован из старого учёта', 'Fără acces':'Нет доступа', 'Valabil':'Действителен','Verifică intrarea':'Проверить вход', 'Nicio scanare azi.':'Сегодня сканирований нет.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
   'Modifică membrul echipei':'Изменить сотрудника', 'Colegul va intra în panou cu acest email și parola de mai jos.':'Коллега будет входить с этим email и паролем ниже.', 'Trebuie să rămână cel puțin un proprietar.':'Должен остаться хотя бы один владелец.',
@@ -1986,21 +1991,17 @@ function renderClientGate(){
       + '<button class="btn btn-primary btn-block" data-action="client-check-verified">'+icon('refresh','icon-sm')+' '+tr('caRetry')+'</button>'
       + link('client-other', tr('caOther')));
   }
+  // Accounts are never created here: the client sets the password from a single-use link e-mailed by reception.
   if(!state.clientForm) state.clientForm={};
-  const f=state.clientForm; const reg=state.clientAuthMode==='register';
-  const emailIn='<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="'+(reg?'client-signup':'client-signin')+'"></label>';
-  if(reg) return wrap('<div class="gate-title">'+tr('caRegTitle')+'</div>'
-    + '<div class="gate-desc">'+tr('caRegDesc')+'</div>' + emailIn
-    + '<label class="field">'+tr('caPassNew')+'<input type="password" autocomplete="new-password" data-bind="clientForm.password" value="'+esc(f.password||'')+'" data-enter="client-signup"></label>'
-    + '<label class="field">'+tr('caPassword2')+'<input type="password" autocomplete="new-password" data-bind="clientForm.password2" value="'+esc(f.password2||'')+'" data-enter="client-signup"></label>'
-    + err + '<button class="btn btn-primary btn-block" data-action="client-signup">'+icon('user','icon-sm')+' '+tr('caRegister')+'</button>'
-    + link('client-auth-mode', tr('caHaveAccount'), ' data-mode="login"'));
+  const f=state.clientForm;
   return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div>'
-    + '<div class="gate-desc">'+tr('clientGateDesc')+'</div>' + emailIn
+    + '<div class="gate-desc">'+tr('clientGateDesc')+'</div>'
+    + '<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="client-signin"></label>'
     + '<label class="field">'+tr('caPassword')+'<input type="password" autocomplete="current-password" data-bind="clientForm.password" value="'+esc(f.password||'')+'" data-enter="client-signin"></label>'
     + '<button type="button" class="back-link" data-action="client-forgot" style="margin:-8px 0 2px;">'+tr('caForgot')+'</button>'
+    + (state.clientNotice? '<div class="gate-note">'+esc(state.clientNotice)+'</div>' : '')
     + err + '<button class="btn btn-primary btn-block" data-action="client-signin">'+icon('lock','icon-sm')+' '+tr('caSignIn')+'</button>'
-    + '<button class="btn btn-ghost btn-block mt4" data-action="client-auth-mode" data-mode="register">'+icon('user','icon-sm')+' '+tr('caNoAccount')+'</button>'
+    + '<div class="gate-desc small center" style="margin:14px 0 0;">'+tr('caFirstTime')+'</div>'
     + '<div class="gate-admin-row"><button class="gate-admin-link" data-action="go-admin">'+esc(ht('footerAdmin'))+'</button></div>');
 }
 function renderBuyGate(){
@@ -2189,6 +2190,7 @@ function renderRequests(){
   const pendingBuys=(state.buyRequests||[]).filter(r=>r.status==='pending' && !r.kind);
   const pendingPhotos=(state.buyRequests||[]).filter(r=>r.status==='pending' && r.kind==='photo');
   const pendingProfiles=(state.buyRequests||[]).filter(r=>r.status==='pending' && r.kind==='profile');
+  const pendingPasswords=(state.buyRequests||[]).filter(r=>r.status==='pending' && r.kind==='password');
   const cardPending=state.clients.filter(c=>c.cardRequestPending);
   const allReqOps=(state.modLog||[]).filter(l=>l.operation==='Cerere antrenor personal' || l.operation==='Cerere card tipărit');
   const pendingOps=allReqOps.filter(l=>l.resolved!==true).slice(0,30);
@@ -2238,6 +2240,15 @@ function renderRequests(){
       + (c? '<button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+icon('user','icon-sm')+' '+esc(ra('Vezi fișa'))+'</button>' : ''), r.photoDataUri);
   }).join('');
 
+  // Only reception sends the link, and only to an address that belongs to a client; nobody sees the new password.
+  const passwordRows=pendingPasswords.map(r=>{
+    const c=state.clients.find(x=>(x.email||'').toLowerCase()===(r.email||'').toLowerCase());
+    return row('lock', (c? esc(c.name)+sep : '')+esc(r.email||'')+(c? '' : '<span class="rq-chip">'+icon('x','icon-sm')+' '+esc(ra('niciun client cu acest email'))+'</span>'), r.date,
+      (c? '<button class="btn btn-primary btn-sm" data-action="send-password-request" data-id="'+r.id+'">'+icon('send','icon-sm')+' '+esc(ra('Trimite linkul'))+'</button>' : '')
+      + '<button class="btn btn-ghost btn-sm rq-reject" data-action="reject-password-request" data-id="'+r.id+'">'+icon('x','icon-sm')+' '+esc(ra('Respinge'))+'</button>'
+      + (c? '<button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+icon('user','icon-sm')+' '+esc(ra('Vezi fișa'))+'</button>' : ''));
+  }).join('');
+
   const cardRows=cardPending.length? cardPending.map(c=>row('card',
       esc(c.name)+sep+esc(c.phone)+sep+esc(ra('cod curent'))+' <span class="mono">'+esc(c.code)+'</span>',
       c.cardRequestAt,
@@ -2253,6 +2264,7 @@ function renderRequests(){
   return '<div class="section-sub">'+ra('Toate cererile clienților, într-un singur loc')+'</div>'
    + section('buy', 'rq-buy', 'cart', ra('Cereri de cumpărare abonament'), ra('Clienți care doresc să achiziționeze un abonament.'), pendingBuys.length, buyRows)
    + (pendingProfiles.length? section('profile', 'rq-photo', 'user', ra('Date completate de clienți'), ra('Telefon, email, anul nașterii și poza, trimise din „Contul meu”.'), pendingProfiles.length, profileRows) : '')
+   + (pendingPasswords.length? section('password', 'rq-photo', 'lock', ra('Cereri de parolă'), ra('Clienți care au uitat parola. „Trimite linkul” le trimite pe email un link de unică folosință pentru parola nouă.'), pendingPasswords.length, passwordRows) : '')
    + (pendingPhotos.length? section('photo', 'rq-photo', 'camera', ra('Poze de profil de la clienți'), ra('Clienți care și-au trimis poza din contul lor.'), pendingPhotos.length, photoRows) : '')
    + section('card', 'rq-card', 'card', ra('Cereri card pierdut'), ra('Clienți care au raportat pierderea cardului de acces.'), cardPending.length, cardRows)
    + section('ops', 'rq-ops', 'dumbbell', ra('Cereri antrenor personal / card tipărit'), ra('Solicitări pentru antrenor personal sau card tipărit.'), pendingOps.length, pendingOpsRows)
@@ -2364,7 +2376,7 @@ async function saveNewClient(){
   const subErr=subFormError(f,t); if(subErr){ state.formErr=subErr; scheduleRender(); return; }
   const code=generateUniqueCode();
   const paid=f.paidFull? Number(f.price||0) : Number(f.amountPaid||0);
-  const doc={ name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthYear), code, createdAt:new Date().toISOString(), notes:f.notes||'', paused:false, lastEntryAt:null,
+  const doc={ name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim().toLowerCase(), birthDate:combineBirthDate(f.birthYear), code, createdAt:new Date().toISOString(), notes:f.notes||'', paused:false, lastEntryAt:null,
     subscription:{ typeId:f.typeId, typeName:t?t.name:'', tier:t?t.tier:'fitness', unlimited:t?!!t.unlimited:false, accessFrom:t?t.accessFrom:null, accessTo:t?t.accessTo:null,
       entryLimit:(t&&t.entryLimit)||null, entriesUsed:0,
       validFrom:f.validFrom, validTo:f.validTo, price:Number(f.price||0), currency:f.currency, totalDue:Number(f.price||0), totalPaid:paid, paymentMethod:f.method } };
@@ -2411,7 +2423,7 @@ function modalClientDetail(){
    + cardHead('users', ra('Informații personale'), '<button class="btn btn-ghost btn-sm" data-action="open-edit-client" data-id="'+c.id+'">'+icon('edit','icon-sm')+' '+ra('Editează datele')+'</button>')
    + '<div class="cd-tiles">'
      + tile('phone', ra('Telefon'), c.phone)
-     + tile('mail', ra('Email'), c.email)
+     + '<div class="cd-tile"><div class="cd-tile-ic">'+icon('mail','icon-sm')+'</div><div style="min-width:0;"><div class="cd-label">'+esc(ra('Email'))+'</div><div class="cd-value">'+esc(c.email||'—')+'</div>'+(isValidEmail(c.email)? '<button class="cd-link" data-action="send-password-link" data-id="'+esc(c.id)+'">'+icon('lock','icon-sm')+' '+esc(ra('Trimite link pentru parolă'))+'</button>' : '')+'</div></div>'
      + tile('calendar', ra('Anul nașterii'), c.birthDate? (splitBirthDate(c.birthDate).birthYear+(age!=null? (' ('+age+' '+(state.lang==='ru'?'лет':'ani')+')') : '')) : '')
      + tile('history', ra('Client din'), c.createdAt? fmtDate(localDay(c.createdAt)) : '')
      + tile('note', ra('Observații'), c.notes, 'cd-tile-wide')
@@ -2460,7 +2472,7 @@ function modalEditClient(){
 async function saveEditClient(){
   const f=state.form; if(!f.name||!f.name.trim()){ state.formErr=ra('Numele nu poate fi gol.'); scheduleRender(); return; }
   const contactErr=clientContactError(f); if(contactErr){ state.formErr=contactErr; scheduleRender(); return; }
-  try{ await colClients().doc(f.id).update({name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim(), birthDate:combineBirthDate(f.birthYear), notes:f.notes||''}); await logMod('Date client actualizate', f.name); openModal('clientDetail',{id:f.id}); showToast(ra('Date actualizate.')); }
+  try{ await colClients().doc(f.id).update({name:f.name.trim(), phone:(f.phone||'').trim(), email:(f.email||'').trim().toLowerCase(), birthDate:combineBirthDate(f.birthYear), notes:f.notes||''}); await logMod('Date client actualizate', f.name); openModal('clientDetail',{id:f.id}); showToast(ra('Date actualizate.')); }
   catch(e){ state.formErr=ra('Eroare la salvare.'); scheduleRender(); }
 }
 async function togglePauseClient(id){
@@ -3594,15 +3606,16 @@ function onAction(el){
     case 'admin-login-submit': runOnce(adminLoginSubmit); return;
     case 'admin-setup-submit': runOnce(adminSetupSubmit); return;
     case 'client-signin': clientSignIn(); return;
-    case 'client-signup': clientSignUp(); return;
     case 'client-check-verified': clientCheckVerified(); return;
     case 'client-resend': clientResendVerification(); return;
     case 'client-forgot': clientForgotPassword(); return;
-    case 'client-auth-mode': state.formErr=''; state.clientAuthMode=el.getAttribute('data-mode')||'login'; break;
     case 'client-switch': state.clientSession=el.getAttribute('data-id'); state.clientTab='sub'; break;
     case 'admin-lock': lockAdminPanel(); return;
     case 'client-logout': state.screen='landing'; clientSignOut(); break;
-    case 'client-other': state.formErr=''; state.clientAuthMode='login'; clientSignOut(); break;
+    case 'client-other': state.formErr=''; state.clientNotice=''; clientSignOut(); break;
+    case 'send-password-link': runOnce(()=>sendClientPasswordLink(id)); return;
+    case 'send-password-request': runOnce(()=>sendPasswordRequestLink(id)); return;
+    case 'reject-password-request': runOnce(async ()=>{ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }); return;
     case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
     case 'open-client-detail': openModal('clientDetail', {id}); return;
     case 'open-renew': openRenew(id); return; case 'open-edit-sub': openEditSub(id); return;
@@ -3735,23 +3748,17 @@ async function clientSignIn(){
   catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
   await afterClientAuth();
 }
-async function clientSignUp(){
-  const f=state.clientForm||{}; const email=(f.email||'').trim().toLowerCase(); const pass=f.password||'';
-  if(!isValidEmail(email)){ state.formErr=tr('errEmailInvalid'); scheduleRender(); return; }
-  if(pass.length<8){ state.formErr=tr('caWeak'); scheduleRender(); return; }
-  if(pass!==(f.password2||'')){ state.formErr=tr('caMismatch'); scheduleRender(); return; }
-  state.formErr='';
-  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); await firebase.auth().createUserWithEmailAndPassword(email, pass); }
-  catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
-  await sendVerifyEmail();
-  await afterClientAuth();
-}
 async function afterClientAuth(){
   const user=firebase.auth().currentUser; if(!user) return;
-  state.clientForm={};
+  state.clientForm={}; state.clientNotice='';
   // A staff account is not a member account: send it to the staff login instead.
   if(await staffMemberFor(user.email)){ await clientSignOut(); state.formErr=tr('caStaff'); scheduleRender(); return; }
-  if(!user.emailVerified){ state.clientAuth={mode:'verify', email:user.email}; scheduleRender(); return; }
+  if(!user.emailVerified){
+    // Send the confirmation e-mail by itself, at most once every 10 minutes per address.
+    let last=0; try{ last=Number(localStorage.getItem('fp_verify_'+user.email)||0); }catch(e){}
+    if(Date.now()-last > 10*60000){ await sendVerifyEmail(); try{ localStorage.setItem('fp_verify_'+user.email, String(Date.now())); }catch(e){} }
+    state.clientAuth={mode:'verify', email:user.email}; scheduleRender(); return;
+  }
   startClientSession(user);
 }
 async function clientCheckVerified(){
@@ -3778,11 +3785,46 @@ setInterval(async ()=>{
   try{ await u.reload(); }catch(e){ return; }
   if(firebase.auth().currentUser && firebase.auth().currentUser.emailVerified && state.clientAuth && state.clientAuth.mode==='verify'){ try{ await firebase.auth().currentUser.getIdToken(true); }catch(e){} state.formErr=''; startClientSession(firebase.auth().currentUser); }
 }, 4000);
+// "Am uitat parola" only files a request with reception; reception then sends the password link (see sendPasswordLink).
 async function clientForgotPassword(){
   const email=((state.clientForm||{}).email||'').trim().toLowerCase();
-  if(!isValidEmail(email)){ state.formErr=tr('caForgotHint'); scheduleRender(); return; }
-  try{ await firebase.auth().sendPasswordResetEmail(email); }catch(e){}
-  state.formErr=''; showToast(tr('caResetSent'));
+  if(!isValidEmail(email)){ state.formErr=tr('caForgotHint'); state.clientNotice=''; scheduleRender(); return; }
+  let last=0; try{ last=Number(localStorage.getItem('fp_pwreq_'+email)||0); }catch(e){}
+  if(Date.now()-last > 30*60000){
+    try{ await colBuyReq().add({kind:'password', email, status:'pending', date:new Date().toISOString()}); }
+    catch(e){ state.formErr=tr('caError'); state.clientNotice=''; scheduleRender(); return; }
+    try{ localStorage.setItem('fp_pwreq_'+email, String(Date.now())); }catch(e){}
+  }
+  state.formErr=''; state.clientNotice=tr('caPwRequested'); scheduleRender();
+}
+
+/* ---- Client passwords (staff side) ---- */
+// Makes sure the client has a sign-in account (created with a random password nobody knows), then Firebase
+// e-mails the client a single-use link to choose the password. Nobody at the gym ever sees or sets it.
+async function sendPasswordLink(email){
+  email=String(email||'').trim().toLowerCase(); if(!isValidEmail(email)) throw new Error('invalid-email');
+  let app=null;
+  try{
+    app=firebase.initializeApp(firebase.app().options, 'pwLink'+Date.now());
+    await app.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
+    const a=new Uint8Array(24); crypto.getRandomValues(a);
+    await app.auth().createUserWithEmailAndPassword(email, btoa(String.fromCharCode.apply(null, a))+'aA1!');
+  }catch(e){ if(!(e && e.code==='auth/email-already-in-use')) throw e; }
+  finally{ if(app){ try{ await app.auth().signOut(); }catch(_){} try{ await app.delete(); }catch(_){} } }
+  firebase.auth().languageCode='ro';
+  try{ await firebase.auth().sendPasswordResetEmail(email, {url:'https://fitart.online/?app=1'}); }
+  catch(e){ if(e && /continue-uri|unauthorized-domain/.test(e.code||'')) await firebase.auth().sendPasswordResetEmail(email); else throw e; }
+}
+async function sendClientPasswordLink(clientId){
+  const c=state.clients.find(x=>x.id===clientId); if(!c || !isValidEmail(c.email)) return;
+  try{ await sendPasswordLink(c.email); await logMod('Link pentru parolă trimis', c.name); showToast(ra('Linkul pentru parolă a fost trimis pe ')+c.email); }
+  catch(e){ showToast(ra('Nu am putut trimite linkul.')+' ('+((e&&e.code)||'eroare')+')'); }
+}
+async function sendPasswordRequestLink(reqId){
+  const r=(state.buyRequests||[]).find(x=>x.id===reqId); if(!r) return;
+  const c=state.clients.find(x=>(x.email||'').toLowerCase()===(r.email||'').toLowerCase()); if(!c) return;
+  try{ await sendPasswordLink(r.email); await colBuyReq().doc(reqId).update({status:'approved'}); await logMod('Link pentru parolă trimis', c.name); showToast(ra('Linkul pentru parolă a fost trimis pe ')+r.email); }
+  catch(e){ showToast(ra('Nu am putut trimite linkul.')+' ('+((e&&e.code)||'eroare')+')'); }
 }
 async function clientSignOut(){
   stopClientSession(); state.clientAuth=null; state.clientForm={};
