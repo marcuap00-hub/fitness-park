@@ -584,6 +584,13 @@ html.scroll-lock{overflow:hidden;}
 .crow-ok{color:var(--success);display:inline-flex;}
 .hmore.hdel{color:var(--danger);}
 .hmore.hdel:hover{background:var(--danger-bg);}
+.pw-wrap{position:relative;display:block;}
+.pw-wrap input{width:100%;padding-right:46px;}
+.pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:34px;height:34px;border:0;background:none;border-radius:9px;color:var(--text-muted);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.pw-eye:hover{background:var(--surface-2);color:var(--text);}
+.gate-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:-6px 0 8px;flex-wrap:wrap;}
+.remember-line{margin:0;font-size:13px;}
+.gate-row .back-link{margin:0;}
 .act-input{font-size:20px;letter-spacing:.14em;text-transform:uppercase;text-align:center;}
 .act-code{font-size:clamp(22px,7.5vw,34px);white-space:nowrap;font-weight:700;letter-spacing:.1em;text-align:center;padding:20px 12px;border:2px dashed var(--border);border-radius:16px;background:var(--surface-2);user-select:all;}
 .cd-link{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
@@ -926,6 +933,8 @@ const ICONS = {
   chart:'<path d="M4 20V10"/><path d="M11 20V4"/><path d="M18 20v-7"/><path d="M2.5 20h19"/>',
   settings:'<circle cx="12" cy="12" r="3"/><path d="M19.4 13a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.9 2.9l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V19a2 2 0 1 1-4 0v-.2a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.9-2.9l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.6-1H4a2 2 0 1 1 0-4h.2a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.9-2.9l.1.1a1.7 1.7 0 0 0 1.9.3H10a1.7 1.7 0 0 0 1-1.6V4a2 2 0 1 1 4 0v.2a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.9 2.9l-.1.1a1.7 1.7 0 0 0-.3 1.9V10a1.7 1.7 0 0 0 1.6 1H20a2 2 0 1 1 0 4h-.2a1.7 1.7 0 0 0-1.6 1Z"/>',
   lock:'<rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.2a4 4 0 0 1 8 0v3.3"/>',
+  eye:'<path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeOff:'<path d="M3 3l18 18"/><path d="M10.6 5.6c.46-.07.92-.1 1.4-.1 6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.9 3.7M6.4 6.4A16.5 16.5 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.6 0 3-.4 4.3-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
   qrcode:'<rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><path d="M14 14h3.5v3.5"/><path d="M20.5 14v.01"/><path d="M14 20.5h.01"/><path d="M17.5 20.5h3"/><path d="M20.5 17.5v.01"/>',
   camera:'<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.2-2h5.6L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="13" r="3.4"/>',
   search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.4-4.4"/>',
@@ -1029,7 +1038,7 @@ const I18N = {
     spBadTitle:'Linkul nu mai este valabil', spBadDesc:'Linkul a expirat sau a fost deja folosit. Scrie emailul pe ecranul de intrare și apasă „Am uitat parola” ca să primești unul nou.', spBack:'Înapoi la intrare',
     spEmailConfirmed:'Emailul a fost confirmat. Intră cu emailul și parola ta.', spSaved:'Parola a fost salvată. Intră cu emailul și parola nouă.',
     acHave:'Am un cod de activare', acTitle:'Activează contul', acDesc:'Scrie codul de activare primit la recepție.', acCode:'Cod de activare', acCodePh:'ex: K7PM-3QXD', acContinue:'Continuă',
-    acBad:'Codul nu este valid, a expirat sau a fost deja folosit. Cere la recepție un cod nou.', acWelcome:'Bun venit, {name}!', acSetupDesc:'Alege emailul (Gmail) și parola cu care vei intra de acum în „Contul meu”.',
+    acBad:'Codul nu este valid, a expirat sau a fost deja folosit. Cere la recepție un cod nou.', acWelcome:'Bun venit, {name}!', acSetupDesc:'Alege emailul (Gmail) și parola cu care vei intra de acum în „Contul meu”.', acSetupDescMail:'Emailul tău e deja completat. Alege o parolă (minim 8 caractere) și apasă „Salvează și intră”.', caRemember:'Ține-mă minte', caShowPw:'Arată parola',
     acSave:'Salvează și intră', acEmailTaken:'Acest email are deja un cont. Scrie parola acelui cont sau folosește alt email.', acFailTitle:'Activarea nu a reușit', acFailDesc:'Codul a expirat sau a fost deja folosit. Cere la recepție un cod nou.',
     caFirstTime:'Prima dată aici? Cere la recepție un cod de activare.', caPwRequested:'Cererea a fost trimisă recepției. Recepția îți va da un cod nou, cu care îți alegi altă parolă.',
     caWrong:'Email sau parolă greșită.', caWrongOld:'„Am uitat parola”.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
@@ -1091,7 +1100,7 @@ const I18N = {
     spBadTitle:'Ссылка больше не действительна', spBadDesc:'Ссылка устарела или уже была использована. Введите email на экране входа и нажмите «Забыли пароль?», чтобы получить новую.', spBack:'Назад ко входу',
     spEmailConfirmed:'Email подтверждён. Войдите со своим email и паролем.', spSaved:'Пароль сохранён. Войдите с email и новым паролем.',
     acHave:'У меня есть код активации', acTitle:'Активация аккаунта', acDesc:'Введите код активации, полученный на ресепшн.', acCode:'Код активации', acCodePh:'напр.: K7PM-3QXD', acContinue:'Продолжить',
-    acBad:'Код недействителен, истёк или уже использован. Попросите новый код на ресепшн.', acWelcome:'Добро пожаловать, {name}!', acSetupDesc:'Укажите email (Gmail) и пароль, с которыми вы будете входить в «Мой аккаунт».',
+    acBad:'Код недействителен, истёк или уже использован. Попросите новый код на ресепшн.', acWelcome:'Добро пожаловать, {name}!', acSetupDesc:'Укажите email (Gmail) и пароль, с которыми вы будете входить в «Мой аккаунт».', acSetupDescMail:'Ваш email уже заполнен. Придумайте пароль (минимум 8 символов) и нажмите «Сохранить и войти».', caRemember:'Запомнить меня', caShowPw:'Показать пароль',
     acSave:'Сохранить и войти', acEmailTaken:'Для этого email уже есть аккаунт. Введите пароль этого аккаунта или укажите другой email.', acFailTitle:'Активация не удалась', acFailDesc:'Код истёк или уже использован. Попросите новый код на ресепшн.',
     caFirstTime:'Впервые здесь? Попросите код активации на ресепшн.', caPwRequested:'Запрос отправлен на ресепшн. Вам дадут новый код, с которым вы зададите другой пароль.',
     caWrong:'Неверный email или пароль.', caWrongOld:'«Забыли пароль?».', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
@@ -1454,6 +1463,18 @@ async function init(){
   }catch(e){}
   // Old links from Firebase e-mails are no longer used: just open the sign-in, without the code in the address bar.
   try{ const p=new URLSearchParams(location.search); if(p.has('oobCode') || p.has('pwset')){ state.screen='client-gate'; history.replaceState(null, '', location.pathname+'?app=1'); } }catch(e){}
+  // The "activated" e-mail links to …#act=CODE&e=GMAIL: code and Gmail are filled in, the client only chooses a
+  // password. The part after # never reaches a server and is removed from the address bar right away.
+  let pendingActivation=null;
+  try{
+    const h=new URLSearchParams((location.hash||'').replace(/^#/,''));
+    const code=cleanActCode(h.get('act')||'');
+    if(code.length===8){
+      pendingActivation={code, email:(h.get('e')||'').trim().toLowerCase().slice(0,120)};
+      state.screen='client-gate'; state.clientAuth={mode:'loading'}; state.clientForm={code};
+      history.replaceState(null, '', location.pathname+'?app=1');
+    }
+  }catch(e){}
   render();
   let user=null;
   try{
@@ -1467,6 +1488,14 @@ async function init(){
   state.dbOk = !!db;
   if(!db){ state.ready=true; scheduleRender(); return; }
   subscribeAll();
+  if(pendingActivation){
+    state.clientAuth={mode:'activate-code'};
+    await clientActivateCheck(isValidEmail(pendingActivation.email)? pendingActivation.email : '');
+    if(state.clientAuth && state.clientAuth.mode==='activate-setup') return;
+    // Code already used or expired: someone already signed in simply stays in the account.
+    if(user && !user.isAnonymous){ state.formErr=''; try{ await restoreSignedInUser(user); }catch(e){} }
+    return;
+  }
   if(user && !user.isAnonymous){ try{ await restoreSignedInUser(user); }catch(e){} }
 }
 // What can be read is decided by the Firestore rules: staff see everything, a client only their own
@@ -2010,8 +2039,12 @@ function adminSetupForm(){
 function renderClientGate(){
   const wrap=body=>'<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')+body+'</div>'+copyrightHtml()+'</div>';
   const err='<div class="err-text">'+esc(state.formErr||'')+'</div>';
-  const link=(action, label)=>'<button type="button" class="back-link" data-action="'+action+'" style="margin:10px auto 0;">'+esc(label)+'</button>';
+  const link=(action, label)=>'<button type="button" class="back-link" data-action="'+action+'" style="margin:12px auto 0;display:flex;">'+esc(label)+'</button>';
   const a=state.clientAuth; const f=state.clientForm||(state.clientForm={});
+  // Password field with a show/hide button, and the "remember me" box (ticked unless the client unticks it).
+  const pwField=(label, path, autocomplete, enter)=>'<label class="field">'+label+'<span class="pw-wrap"><input type="'+(state.showPw?'text':'password')+'" autocomplete="'+autocomplete+'" data-bind="'+path+'" value="'+esc(f[path.split('.')[1]]||'')+'" data-enter="'+enter+'">'
+    + '<button type="button" class="pw-eye" data-action="toggle-pw" title="'+esc(tr('caShowPw'))+'" aria-label="'+esc(tr('caShowPw'))+'">'+icon(state.showPw?'eyeOff':'eye','icon-sm')+'</button></span></label>';
+  const remember='<label class="checkline remember-line"><input type="checkbox" data-bind="clientForm.remember" '+(f.remember===false?'':'checked')+'> '+tr('caRemember')+'</label>';
   if(a && a.mode==='loading') return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div><div class="gate-desc">'+tr('caLoading')+'</div>');
   // Step 1 of the activation: the code from reception (typed without the dash, it is added by itself).
   if(a && a.mode==='activate-code') return wrap('<div class="gate-title">'+tr('acTitle')+'</div>'
@@ -2019,12 +2052,12 @@ function renderClientGate(){
       + '<label class="field">'+tr('acCode')+'<input type="text" class="mono act-input" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="9" data-actcode="1" value="'+esc(formatActCode(f.code))+'" placeholder="'+tr('acCodePh')+'" data-enter="client-activate-check"></label>'
       + err + '<button class="btn btn-primary btn-block" data-action="client-activate-check">'+icon('check','icon-sm')+' '+tr('acContinue')+'</button>'
       + link('client-other', tr('spBack')));
-  // Step 2: the client chooses the Gmail and password for "Contul meu".
+  // Step 2: the Gmail (already filled in when the client came from the e-mail) and a password.
   if(a && a.mode==='activate-setup') return wrap('<div class="gate-title">'+esc(tr('acWelcome').replace('{name}', a.name||''))+'</div>'
-      + '<div class="gate-desc">'+tr('acSetupDesc')+'</div>'
+      + '<div class="gate-desc">'+(a.prefilled? tr('acSetupDescMail') : tr('acSetupDesc'))+'</div>'
       + '<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="client-activate-save"></label>'
-      + '<label class="field">'+tr('caPassNew')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword" value="'+esc(f.newPassword||'')+'" data-enter="client-activate-save"></label>'
-      + '<label class="field">'+tr('caPassword2')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword2" value="'+esc(f.newPassword2||'')+'" data-enter="client-activate-save"></label>'
+      + pwField(tr('caPassNew'), 'clientForm.newPassword', 'new-password', 'client-activate-save')
+      + remember
       + err + '<button class="btn btn-primary btn-block" data-action="client-activate-save">'+icon('check','icon-sm')+' '+tr('acSave')+'</button>'
       + link('client-other', tr('spBack')));
   // Signed in, but no subscription is linked to this account any more (e.g. it was re-activated with a new code).
@@ -2034,8 +2067,8 @@ function renderClientGate(){
   return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div>'
     + '<div class="gate-desc">'+tr('clientGateDesc')+'</div>'
     + '<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="client-signin"></label>'
-    + '<label class="field">'+tr('caPassword')+'<input type="password" autocomplete="current-password" data-bind="clientForm.password" value="'+esc(f.password||'')+'" data-enter="client-signin"></label>'
-    + '<button type="button" class="back-link" data-action="client-forgot" style="margin:-8px 0 2px;">'+tr('caForgot')+'</button>'
+    + pwField(tr('caPassword'), 'clientForm.password', 'current-password', 'client-signin')
+    + '<div class="gate-row">'+remember+'<button type="button" class="back-link" data-action="client-forgot">'+tr('caForgot')+'</button></div>'
     + (state.clientNotice? '<div class="gate-note">'+esc(state.clientNotice)+'</div>' : '')
     + err + '<button class="btn btn-primary btn-block" data-action="client-signin">'+icon('lock','icon-sm')+' '+tr('caSignIn')+'</button>'
     + '<button class="btn btn-ghost btn-block mt4" data-action="client-activate-start">'+icon('user','icon-sm')+' '+tr('acHave')+'</button>'
@@ -3686,6 +3719,7 @@ function onAction(el){
     case 'create-activation-code': runOnce(()=>createActivationCode(id)); return;
     case 'copy-activation-code': { const code=(state.form&&state.form.code)||''; try{ navigator.clipboard.writeText(code).then(()=>showToast(ra('Cod copiat.')), ()=>showToast(code)); }catch(e){ showToast(code); } return; }
     case 'password-request-code': runOnce(()=>passwordRequestCode(id)); return;
+    case 'toggle-pw': state.showPw=!state.showPw; break;
     case 'delete-payment': deletePayment(id); return;
     case 'reject-password-request': runOnce(async ()=>{ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }); return;
     case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
@@ -3830,30 +3864,31 @@ async function clientSignIn(){
   try{ const s=await colLogins().doc(email).get(); if(s.exists) authEmail=s.data().authEmail||''; }
   catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
   if(!authEmail){ state.formErr=tr('caWrong'); scheduleRender(); return; }
-  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); await firebase.auth().signInWithEmailAndPassword(authEmail, pass); }
+  try{ await firebase.auth().setPersistence(clientPersistence()); await firebase.auth().signInWithEmailAndPassword(authEmail, pass); }
   catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
-  state.clientForm={};
+  state.clientForm={}; state.showPw=false;
   startClientSession(firebase.auth().currentUser);
 }
 
 /* ---- Activation code: first sign-in or a new password ---- */
-async function clientActivateCheck(){
+// Ticked (default): stay signed in on this device; unticked: signed out when the browser is closed.
+function clientPersistence(){ const P=firebase.auth.Auth.Persistence; return (state.clientForm&&state.clientForm.remember===false)? P.SESSION : P.LOCAL; }
+async function clientActivateCheck(prefillEmail){
   const code=cleanActCode((state.clientForm||{}).code);
   if(code.length!==8){ state.formErr=tr('acShort'); scheduleRender(); return; }
   state.formErr='';
   try{
     const s=await db.collection('activation').doc(code).get();
     if(!s.exists) throw new Error('missing');
-    const d=s.data(); state.clientAuth={mode:'activate-setup', code, clientId:d.clientId, name:d.name||''}; state.clientForm={};
+    const d=s.data(); state.clientAuth={mode:'activate-setup', code, clientId:d.clientId, name:d.name||'', prefilled:!!prefillEmail}; state.clientForm={email:prefillEmail||''};
   }catch(e){ state.formErr=(e && e.code==='unavailable')? tr('caNetwork') : tr('acBad'); }
   scheduleRender();
 }
 async function clientActivateSave(){
   const a=state.clientAuth; if(!a || a.mode!=='activate-setup') return;
-  const f=state.clientForm||{}; const email=(f.email||'').trim().toLowerCase(); const p1=f.newPassword||'', p2=f.newPassword2||'';
+  const f=state.clientForm||{}; const email=(f.email||'').trim().toLowerCase(); const p1=f.newPassword||'';
   if(!isValidEmail(email)){ state.formErr=tr('errEmailInvalid'); scheduleRender(); return; }
   if(p1.length<8){ state.formErr=tr('caWeak'); scheduleRender(); return; }
-  if(p1!==p2){ state.formErr=tr('caMismatch'); scheduleRender(); return; }
   state.formErr='';
   const auth=firebase.auth();
   // A Gmail already in use belongs either to this same client (a new password) or to another member, e.g. family.
@@ -3863,7 +3898,7 @@ async function clientActivateSave(){
   const shared=!!(login && login.authEmail && !(login.clientIds||[]).includes(a.clientId));
   let clientIds;
   try{
-    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    await auth.setPersistence(clientPersistence());
     if(shared){
       // Join the account that already uses this Gmail, with its password.
       try{ await auth.signInWithEmailAndPassword(login.authEmail, p1); }
@@ -3893,7 +3928,7 @@ async function clientActivateSave(){
     state.formErr=(lastErr && lastErr.code==='permission-denied')? tr('acBad') : clientAuthError(lastErr);
     scheduleRender(); return;
   }
-  state.clientAuth=null; state.clientForm={}; state.clientNotice='';
+  state.clientAuth=null; state.clientForm={}; state.clientNotice=''; state.showPw=false;
   startClientSession(user);
 }
 
