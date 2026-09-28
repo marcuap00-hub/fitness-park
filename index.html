@@ -1337,6 +1337,7 @@ const RO_RU = {
   'Ștergi poza acestui client?':'Удалить фото этого клиента?', 'Fotografia a fost ștearsă.':'Фото удалено.',
   'Trimiterea emailurilor nu este configurată încă.':'Отправка писем ещё не настроена.',
   'Email trimis clientului: ':'Письмо отправлено клиенту: ', 'Emailul către client nu a fost trimis':'Письмо клиенту не отправлено',
+  'Email trimis, dar codul de activare NU a fost creat: ':'Письмо отправлено, но код активации НЕ создан: ',
   'Informații personale':'Личные данные', 'Tip abonament':'Тип абонемента', 'Perioadă':'Период', 'Valoare':'Стоимость',
   'Adaugă poză de profil':'Добавить фото профиля', 'Șterge poza':'Удалить фото', 'Reînnoiește abonamentul':'Продлить абонемент', 'Rest de plată: ':'Осталось оплатить: ',
   'Alege data de început.':'Выберите дату начала.', 'Data de sfârșit nu poate fi înaintea datei de început.':'Дата окончания не может быть раньше даты начала.',
@@ -2124,14 +2125,20 @@ async function notifyClientByEmail(client, kind, silent){
     const idToken=await user.getIdToken();
     const payload={ idToken, clientId:client.id, kind:kind||'activated' };
     // A member without an online account gets an activation code (24 h, single use) in the "activated" e-mail.
+    let actErr=null;
     if(payload.kind==='activated' && !client.authUid){
-      try{ const act=await makeActivationCode(client); payload.activationCode=act.code; payload.activationExpires=act.expires; }catch(e){}
+      try{ const act=await makeActivationCode(client); payload.activationCode=act.code; payload.activationExpires=act.expires; }
+      catch(e){ actErr=(e&&e.code)||(e&&e.message)||'eroare necunoscută'; console.error('Nu am putut crea codul de activare:', e); }
     }
     // text/plain avoids a CORS preflight, which Apps Script web apps don't answer.
     const res=await fetch(EMAIL_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload) });
     const data=await res.json();
     if(silent) return;
-    if(data.ok) showToast((payload.activationCode? ra('Email cu codul de activare trimis clientului: ') : ra('Email trimis clientului: '))+client.email);
+    if(data.ok){
+      if(payload.activationCode) showToast(ra('Email cu codul de activare trimis clientului: ')+client.email);
+      else if(actErr) showToast(ra('Email trimis, dar codul de activare NU a fost creat: ')+actErr);
+      else showToast(ra('Email trimis clientului: ')+client.email);
+    }
     else showToast(ra('Emailul către client nu a fost trimis')+' ('+data.error+').');
   }catch(e){ if(!silent) showToast(ra('Emailul către client nu a fost trimis')+' (network).'); }
 }
