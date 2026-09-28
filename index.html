@@ -2124,19 +2124,15 @@ async function notifyClientByEmail(client, kind, silent){
     const user=firebase.auth().currentUser; if(!user || user.isAnonymous) return;
     const idToken=await user.getIdToken();
     const payload={ idToken, clientId:client.id, kind:kind||'activated' };
-    // A member without an online account gets an activation code (24 h, single use) in the "activated" e-mail.
-    let actErr=null;
-    if(payload.kind==='activated' && !client.authUid){
-      try{ const act=await makeActivationCode(client); payload.activationCode=act.code; payload.activationExpires=act.expires; }
-      catch(e){ actErr=(e&&e.code)||(e&&e.message)||'eroare necunoscută'; console.error('Nu am putut crea codul de activare:', e); }
-    }
+    // The activation code (client without an online account) is now created by the Apps Script itself, with
+    // this same staff token — not by this browser first — so there is no separate step that can fail silently.
     // text/plain avoids a CORS preflight, which Apps Script web apps don't answer.
     const res=await fetch(EMAIL_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(payload) });
     const data=await res.json();
     if(silent) return;
     if(data.ok){
-      if(payload.activationCode) showToast(ra('Email cu codul de activare trimis clientului: ')+client.email);
-      else if(actErr) showToast(ra('Email trimis, dar codul de activare NU a fost creat: ')+actErr);
+      if(data.hasCode) showToast(ra('Email cu codul de activare trimis clientului: ')+client.email);
+      else if(data.actErr) showToast(ra('Email trimis, dar codul de activare NU a fost creat: ')+data.actErr);
       else showToast(ra('Email trimis clientului: ')+client.email);
     }
     else showToast(ra('Emailul către client nu a fost trimis')+' ('+data.error+').');
