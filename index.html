@@ -1241,7 +1241,7 @@ const RO_RU = {
   'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов. Сотрудники ресепшн только сканируют входы.',
   'Recepționer':'Ресепшн', 'Recepționer — doar scanează':'Ресепшн — только сканирует', 'Administratorii pot adăuga doar recepționeri.':'Администраторы могут добавлять только сотрудников ресепшн.', 'Administratorii pot gestiona doar recepționerii.':'Администраторы могут управлять только сотрудниками ресепшн.',
   'Caută client':'Поиск клиента', 'Pentru clienții care și-au uitat cardul.':'Для клиентов, которые забыли карту.', 'Nume sau email (cel puțin 2 litere)':'Имя или email (минимум 2 буквы)', 'Caută după nume, email, telefon sau cod':'Поиск по имени, email, телефону или коду',
-  'Fără abonament activ':'Нет активного абонемента', 'Clientul are cont online: intră cu emailul ales la activare. Ca să intre cu alt email, dă-i un cod de activare nou.':'У клиента есть онлайн-аккаунт: он входит с email, выбранным при активации. Чтобы входить с другим email, дайте ему новый код активации.','Cod de activare':'Код активации', 'Cont online activat':'Онлайн-аккаунт активирован', 'Nu am putut crea codul.':'Не удалось создать код.', 'se poate folosi o singură dată':'можно использовать один раз', 'Copiază codul':'Копировать код', 'Cod copiat.':'Код скопирован.', 'Gata':'Готово',
+  'Fără abonament activ':'Нет активного абонемента', 'rezultate pentru':'результатов по запросу','Clientul are cont online: intră cu emailul ales la activare. Ca să intre cu alt email, dă-i un cod de activare nou.':'У клиента есть онлайн-аккаунт: он входит с email, выбранным при активации. Чтобы входить с другим email, дайте ему новый код активации.','Cod de activare':'Код активации', 'Cont online activat':'Онлайн-аккаунт активирован', 'Nu am putut crea codul.':'Не удалось создать код.', 'se poate folosi o singură dată':'можно использовать один раз', 'Copiază codul':'Копировать код', 'Cod copiat.':'Код скопирован.', 'Gata':'Готово',
   'Dă-i clientului codul. El deschide fitart.online → „Contul meu” → „Am un cod de activare”, scrie codul și își alege emailul și parola.':'Передайте код клиенту. Он открывает fitart.online → «Мой аккаунт» → «У меня есть код активации», вводит код и задаёт email и пароль.','Trimite link pentru parolă':'Отправить ссылку для пароля', 'Linkul pentru parolă a fost trimis pe ':'Ссылка для пароля отправлена на ', 'Nu am putut trimite linkul.':'Не удалось отправить ссылку.', 'Trimite linkul':'Отправить ссылку', 'niciun client cu acest email':'нет клиента с этим email', 'Cereri de parolă':'Запросы пароля', 'Clienți care au uitat parola. Apasă „Cod de activare” și dă-i clientului codul nou (la telefon sau pe mesaj).':'Клиенты, которые забыли пароль. Нажмите «Код активации» и передайте клиенту новый код (по телефону или сообщением).','Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.':'Список команды ещё загружается. Попробуйте через несколько секунд.', 'Se încarcă echipa…':'Загружаем команду…','activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
   'Au date incomplete (se importă, completezi apoi în fișa clientului):':'С неполными данными (импортируются, дополните потом в карточке клиента):', 'cu date incomplete':'с неполными данными', 'Importat din evidența veche':'Импортирован из старого учёта', 'Fără acces':'Нет доступа', 'Valabil':'Действителен','Verifică intrarea':'Проверить вход', 'Nicio scanare azi.':'Сегодня сканирований нет.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
@@ -1634,6 +1634,8 @@ function typeDisplayName(t){ if(!t) return ''; return (state.lang==='ru' && t.na
 function subTypeDisplayName(c){ const sub=(c&&c.subscription)||{}; const t=typeById(sub.typeId); if(t) return typeDisplayName(t); return sub.typeName||''; }
 // Moldovan mobile or landline (0XX XXX XXX), the same with 373, or a foreign number in international form (e.g. 380…).
 function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[2-7]\d{7}$/.test(digits) || /^373[2-7]\d{7}$/.test(digits) || /^[1-9]\d{10,14}$/.test(digits); }
+// Digits of a search are compared with phone numbers only when the search is a number (not a name or an e-mail).
+function phoneQueryDigits(q){ q=String(q||''); if(/[a-zăâîșțа-я@]/i.test(q)) return ''; const d=q.replace(/\D/g,''); return d.length>=3? d : ''; }
 function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((email||'').trim()); }
 function pastelForClient(c){
   const sub=(c&&c.subscription)||{};
@@ -2310,12 +2312,14 @@ function renderClients(){
   const q=(state.clientQuery||'').toLowerCase().trim();
   const sortBy=state.clientSort||'name'; const sortDir=state.clientSortDir||'asc'; const dirMul=sortDir==='desc'?-1:1;
   let list=state.clients.slice();
-  const qDigits=q.replace(/\D/g,'');
+  const qDigits=phoneQueryDigits(q);
   if(q) list=list.filter(c=>(c.name||'').toLowerCase().includes(q) || (c.email||'').toLowerCase().includes(q) || (qDigits && (c.phone||'').replace(/\D/g,'').includes(qDigits)) || (c.code||'').toLowerCase().includes(q));
   list.sort((a,b)=>{ if(sortBy==='created') return dirMul*((a.createdAt||'').localeCompare(b.createdAt||'')); if(sortBy==='expiry') return dirMul*(((a.subscription&&a.subscription.validTo)||'').localeCompare((b.subscription&&b.subscription.validTo)||'')); return dirMul*(a.name||'').localeCompare(b.name||'','ro'); });
   // Long lists are shown in pages of 100 so the panel stays fast with thousands of clients.
   const limit=state.clientLimit||100; const shown=list.slice(0,limit);
-  const rows=list.length? '<div class="crow-list">'+shown.map(clientRowHtml).join('')+'</div>'+(list.length>limit? '<button class="btn btn-ghost btn-block" style="margin-top:12px;" data-action="clients-more">'+ra('Arată mai mulți')+' ('+(list.length-limit)+' '+ra('rămași')+')</button>' : '') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
+  const n=list.length; const qShown='„'+esc(state.clientQuery.trim())+'”';
+  const found=q? '<div class="small faint" style="margin:0 0 10px;">'+(state.lang==='ru'? ('Найдено: '+n+' · '+qShown) : (n+' '+(n===1? 'rezultat' : 'rezultate')+' pentru '+qShown))+'</div>' : '';
+  const rows=list.length? found+'<div class="crow-list">'+shown.map(clientRowHtml).join('')+'</div>'+(list.length>limit? '<button class="btn btn-ghost btn-block" style="margin-top:12px;" data-action="clients-more">'+ra('Arată mai mulți')+' ('+(list.length-limit)+' '+ra('rămași')+')</button>' : '') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
   return '<div class="pg-card">'
    + '<div class="pg-head"><div class="pg-ic">'+icon('users')+'</div>'
      + '<div style="min-width:0;"><div class="pg-title">'+state.clients.length+' '+ra('clienți înregistrați')+'</div><div class="pg-sub">'+ra('Gestionează rapid clienții și abonamentele acestora.')+'</div></div>'
@@ -2731,7 +2735,7 @@ async function saveRenew(){
 const HISTORY_PAGE_SIZE=25;
 function historyFiltersActive(){ return !!((state.historyQuery||'').trim() || (state.historyPeriod||'all')!=='all' || (state.historyTime||'all')!=='all' || (state.historyResult||'all')!=='all'); }
 function filteredHistory(){
-  const q=(state.historyQuery||'').toLowerCase().trim(); const qDigits=q.replace(/\D/g,'');
+  const q=(state.historyQuery||'').toLowerCase().trim(); const qDigits=phoneQueryDigits(q);
   const period=state.historyPeriod||'all', time=state.historyTime||'all', res=state.historyResult||'all';
   const today=todayStr();
   let from='', to='';
@@ -2743,7 +2747,7 @@ function filteredHistory(){
   const hourRange={morning:[6,12], afternoon:[12,18], evening:[18,24], night:[0,6]}[time];
   const byId={}; state.clients.forEach(c=>{ byId[c.id]=c; });
   return state.log.filter(l=>{
-    if(q){ const c=byId[l.clientId]; const hit=(l.clientName||'').toLowerCase().includes(q) || (l.code||'').toLowerCase().includes(q) || (qDigits && c && (c.phone||'').replace(/\D/g,'').includes(qDigits)); if(!hit) return false; }
+    if(q){ const c=byId[l.clientId]; const hit=(l.clientName||'').toLowerCase().includes(q) || (l.code||'').toLowerCase().includes(q) || (c && (c.email||'').toLowerCase().includes(q)) || (qDigits && c && (c.phone||'').replace(/\D/g,'').includes(qDigits)); if(!hit) return false; }
     const day=localDay(l.timestamp);
     if(from && day<from) return false;
     if(to && day>to) return false;
