@@ -1604,7 +1604,8 @@ async function migrateStaffList(){
 
 /* ---- Sessions ---- */
 async function restoreSignedInUser(user){
-  const member=await staffMemberFor(user.email);
+  // On page load the sign-in is already settled, so one check is enough (no waiting for clients).
+  const member=await staffMemberFor(user.email, 1);
   if(member){ unlockAdmin(member); return; }
   if(!user.emailVerified){ try{ await user.reload(); await user.getIdToken(true); }catch(e){} user=firebase.auth().currentUser||user; }
   startClientSession(user);
@@ -1675,7 +1676,8 @@ function lockAdminPanel(message){
 function typeById(id){ return state.types.find(t=>t.id===id); }
 function typeDisplayName(t){ if(!t) return ''; return (state.lang==='ru' && t.nameRu) ? t.nameRu : t.name; }
 function subTypeDisplayName(c){ const sub=(c&&c.subscription)||{}; const t=typeById(sub.typeId); if(t) return typeDisplayName(t); return sub.typeName||''; }
-function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[67]\d{7}$/.test(digits) || /^373[67]\d{7}$/.test(digits); }
+// Moldovan mobile or landline (0XX XXX XXX), the same with 373, or a foreign number in international form (e.g. 380…).
+function isValidMdPhone(phone){ const digits=(phone||'').replace(/\D/g,''); return /^0[2-7]\d{7}$/.test(digits) || /^373[2-7]\d{7}$/.test(digits) || /^[1-9]\d{10,14}$/.test(digits); }
 function isValidEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test((email||'').trim()); }
 function pastelForClient(c){
   const sub=(c&&c.subscription)||{};
@@ -3630,7 +3632,7 @@ function afterRenderHooks(){
 
 /* ============ EVENTS ============ */
 function bindEvents(root){
-  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('input[type="tel"]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=el.value.replace(/\D/g,'').slice(0,11); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
+  root.querySelectorAll('[data-action]').forEach(el=>{ el.addEventListener('click', ()=>onAction(el)); }); root.querySelectorAll('[data-gymcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=formatGymCode(el.value); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-numeric]').forEach(el=>{ el.addEventListener('input', ()=>{ let f=el.value.replace(/,/g,'.').replace(/[^0-9.]/g,''); const firstDot=f.indexOf('.'); if(firstDot!==-1) f=f.slice(0,firstDot+1)+f.slice(firstDot+1).replace(/\./g,''); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('input[type="tel"]').forEach(el=>{ el.addEventListener('input', ()=>{ const f=el.value.replace(/\D/g,'').slice(0,15); if(f!==el.value) el.value=f; }); }); root.querySelectorAll('[data-photo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const id=el.getAttribute('data-photo-upload'); const file=el.files&&el.files[0]; if(file) uploadClientPhoto(id, file); }); });
   root.querySelectorAll('[data-logo-upload]').forEach(el=>{ el.addEventListener('change', ()=>{ const file=el.files&&el.files[0]; if(file) uploadGymLogo(file); }); });
   // Photo pickers inside forms (buy request, new client) keep the resized image in the form state until it is saved.
   root.querySelectorAll('[data-photo-target]').forEach(el=>{ el.addEventListener('change', async ()=>{
