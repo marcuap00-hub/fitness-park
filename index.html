@@ -580,6 +580,9 @@ html.scroll-lock{overflow:hidden;}
 .gate-note{background:var(--success-bg);color:var(--success);border-radius:12px;padding:10px 12px;font-size:13px;font-weight:600;line-height:1.45;margin:4px 0 10px;}
 .cd-links{margin-top:6px;display:flex;flex-direction:column;align-items:flex-start;gap:4px;}
 .cd-ok{display:inline-flex;align-items:center;gap:6px;color:var(--success);font-size:12.5px;font-weight:700;}
+.crow-mail{margin-top:3px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.crow-ok{color:var(--success);display:inline-flex;}
+.act-input{font-size:20px;letter-spacing:.14em;text-transform:uppercase;text-align:center;}
 .act-code{font-size:clamp(22px,7.5vw,34px);white-space:nowrap;font-weight:700;letter-spacing:.1em;text-align:center;padding:20px 12px;border:2px dashed var(--border);border-radius:16px;background:var(--surface-2);user-select:all;}
 .cd-link{display:inline-flex;align-items:center;gap:6px;background:none;border:0;padding:0;color:var(--accent);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
 .cd-link:hover{text-decoration:underline;}
@@ -1018,15 +1021,16 @@ const I18N = {
     caEmail:'Email', caPassword:'Parolă', caPassNew:'Parolă nouă (minim 8 caractere)', caPassword2:'Repetă parola', caSignIn:'Intră în cont', caForgot:'Am uitat parola',
     caNoAccount:'Nu ai cont? Creează-l acum', caHaveAccount:'Ai deja cont? Intră', caRegTitle:'Creează-ți contul', caRegDesc:'Scrie emailul pe care l-ai dat la recepție și alege o parolă. Îți trimitem un email de confirmare.', caRegister:'Creează contul',
     caVerifyTitle:'Confirmă emailul', caVerifyDesc:'Ți-am trimis un email la {email}. Deschide-l și apasă linkul de confirmare. Contul se deschide singur imediat după.', caVerifySpam:'Nu-l găsești? Uită-te și în Spam sau Promoții.', caVerified:'Am confirmat — intră', caResend:'Retrimite emailul', caOther:'Folosește alt email',
-    caNoMatchTitle:'Nu am găsit abonamentul', caNoMatchDesc:'Emailul {email} nu apare încă la niciun abonat. Roagă recepția să-l treacă în fișa ta, apoi apasă „Verifică din nou”.', caRetry:'Verifică din nou', caLoading:'Se încarcă contul…',
+    caNoMatchTitle:'Contul nu are abonamente', caNoMatchDesc:'Contul tău nu mai este legat de niciun abonament. Cere la recepție un cod de activare.',
+    acShort:'Codul are 8 caractere (ex: K7PM-3QXD).', acSharedPw:'Acest email este deja folosit de alt abonat (de ex. din familie). Ca să adaugi și acest abonament în același cont, scrie parola acelui cont. Altfel folosește alt email.', caRetry:'Verifică din nou', caLoading:'Se încarcă contul…',
     spTitle:'Setează-ți parola', spDesc:'Pentru contul {email}. Alege o parolă de minim 8 caractere — cu ea intri în „Contul meu”.', spSave:'Salvează parola și intră',
     spBadTitle:'Linkul nu mai este valabil', spBadDesc:'Linkul a expirat sau a fost deja folosit. Scrie emailul pe ecranul de intrare și apasă „Am uitat parola” ca să primești unul nou.', spBack:'Înapoi la intrare',
     spEmailConfirmed:'Emailul a fost confirmat. Intră cu emailul și parola ta.', spSaved:'Parola a fost salvată. Intră cu emailul și parola nouă.',
     acHave:'Am un cod de activare', acTitle:'Activează contul', acDesc:'Scrie codul de activare primit la recepție.', acCode:'Cod de activare', acCodePh:'ex: K7PM-3QXD', acContinue:'Continuă',
-    acBad:'Codul nu este valid, a expirat sau a fost deja folosit. Cere la recepție un cod nou.', acWelcome:'Bun venit, {name}!', acSetupDesc:'Alege emailul și parola cu care vei intra de acum în „Contul meu”. Fără ele contul nu se deschide.',
+    acBad:'Codul nu este valid, a expirat sau a fost deja folosit. Cere la recepție un cod nou.', acWelcome:'Bun venit, {name}!', acSetupDesc:'Alege emailul (Gmail) și parola cu care vei intra de acum în „Contul meu”.',
     acSave:'Salvează și intră', acEmailTaken:'Acest email are deja un cont. Scrie parola acelui cont sau folosește alt email.', acFailTitle:'Activarea nu a reușit', acFailDesc:'Codul a expirat sau a fost deja folosit. Cere la recepție un cod nou.',
-    caFirstTime:'Prima dată aici? Cere la recepție un cod de activare.', caPwRequested:'Cererea a fost trimisă recepției. Vei primi pe email un link pentru parola nouă (verifică și dosarul Spam).',
-    caWrong:'Email sau parolă greșită. Dacă nu ai încă parolă, apasă „Am uitat parola”.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
+    caFirstTime:'Prima dată aici? Cere la recepție un cod de activare.', caPwRequested:'Cererea a fost trimisă recepției. Recepția îți va da un cod nou, cu care îți alegi altă parolă.',
+    caWrong:'Email sau parolă greșită.', caWrongOld:'„Am uitat parola”.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
     caStaff:'Acesta este un cont de recepție. Intră din „Recepție & administrare”.', caNotYet:'Emailul nu e confirmat încă. Apasă linkul din email, apoi încearcă din nou.', caResent:'Emailul de confirmare a fost retrimis.', caForgotHint:'Scrie emailul mai sus, apoi apasă „Am uitat parola”.', caResetSent:'Dacă există un cont cu acest email, ți-am trimis un link pentru parolă nouă.',
     buySentTitle:'Cerere trimisă!', buySentDesc:'Te contactăm în curând pentru a finaliza plata și a-ți activa abonamentul. După activare, recepția îți trimite pe email un link ca să-ți alegi parola pentru „Contul meu”.', backToStart:'Înapoi la start',
     buyTitle:'Cumpără un abonament', buyDesc:'Alege abonamentul dorit — te contactăm pentru plată. Plata online directă va fi disponibilă în curând.',
@@ -1079,15 +1083,16 @@ const I18N = {
     caEmail:'Email', caPassword:'Пароль', caPassNew:'Новый пароль (минимум 8 символов)', caPassword2:'Повторите пароль', caSignIn:'Войти', caForgot:'Забыли пароль?',
     caNoAccount:'Нет аккаунта? Создайте его', caHaveAccount:'Уже есть аккаунт? Войти', caRegTitle:'Создайте аккаунт', caRegDesc:'Укажите email, который вы дали на ресепшн, и придумайте пароль. Мы отправим письмо для подтверждения.', caRegister:'Создать аккаунт',
     caVerifyTitle:'Подтвердите email', caVerifyDesc:'Мы отправили письмо на {email}. Откройте его и нажмите ссылку подтверждения. Аккаунт откроется сам сразу после этого.', caVerifySpam:'Не нашли письмо? Проверьте папки «Спам» и «Промоакции».', caVerified:'Я подтвердил — войти', caResend:'Отправить письмо ещё раз', caOther:'Использовать другой email',
-    caNoMatchTitle:'Абонемент не найден', caNoMatchDesc:'Email {email} пока не указан ни у одного клиента. Попросите ресепшн добавить его в вашу карточку, затем нажмите «Проверить снова».', caRetry:'Проверить снова', caLoading:'Загружаем аккаунт…',
+    caNoMatchTitle:'В аккаунте нет абонементов', caNoMatchDesc:'Ваш аккаунт больше не связан ни с одним абонементом. Попросите код активации на ресепшн.',
+    acShort:'Код состоит из 8 символов (напр.: K7PM-3QXD).', acSharedPw:'Этот email уже использует другой клиент (например, из семьи). Чтобы добавить этот абонемент в тот же аккаунт, введите пароль того аккаунта. Иначе укажите другой email.', caRetry:'Проверить снова', caLoading:'Загружаем аккаунт…',
     spTitle:'Задайте пароль', spDesc:'Для аккаунта {email}. Придумайте пароль не короче 8 символов — с ним вы будете входить в «Мой аккаунт».', spSave:'Сохранить пароль и войти',
     spBadTitle:'Ссылка больше не действительна', spBadDesc:'Ссылка устарела или уже была использована. Введите email на экране входа и нажмите «Забыли пароль?», чтобы получить новую.', spBack:'Назад ко входу',
     spEmailConfirmed:'Email подтверждён. Войдите со своим email и паролем.', spSaved:'Пароль сохранён. Войдите с email и новым паролем.',
     acHave:'У меня есть код активации', acTitle:'Активация аккаунта', acDesc:'Введите код активации, полученный на ресепшн.', acCode:'Код активации', acCodePh:'напр.: K7PM-3QXD', acContinue:'Продолжить',
-    acBad:'Код недействителен, истёк или уже использован. Попросите новый код на ресепшн.', acWelcome:'Добро пожаловать, {name}!', acSetupDesc:'Укажите email и пароль, с которыми вы будете входить в «Мой аккаунт». Без них аккаунт не откроется.',
+    acBad:'Код недействителен, истёк или уже использован. Попросите новый код на ресепшн.', acWelcome:'Добро пожаловать, {name}!', acSetupDesc:'Укажите email (Gmail) и пароль, с которыми вы будете входить в «Мой аккаунт».',
     acSave:'Сохранить и войти', acEmailTaken:'Для этого email уже есть аккаунт. Введите пароль этого аккаунта или укажите другой email.', acFailTitle:'Активация не удалась', acFailDesc:'Код истёк или уже использован. Попросите новый код на ресепшн.',
-    caFirstTime:'Впервые здесь? Попросите код активации на ресепшн.', caPwRequested:'Запрос отправлен на ресепшн. Вы получите на email ссылку для нового пароля (проверьте и папку «Спам»).',
-    caWrong:'Неверный email или пароль. Если у вас ещё нет пароля, нажмите «Забыли пароль?».', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
+    caFirstTime:'Впервые здесь? Попросите код активации на ресепшн.', caPwRequested:'Запрос отправлен на ресепшн. Вам дадут новый код, с которым вы зададите другой пароль.',
+    caWrong:'Неверный email или пароль.', caWrongOld:'«Забыли пароль?».', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
     caStaff:'Это аккаунт ресепшн. Войдите через «Ресепшн и администрирование».', caNotYet:'Email ещё не подтверждён. Нажмите ссылку в письме и попробуйте снова.', caResent:'Письмо для подтверждения отправлено ещё раз.', caForgotHint:'Введите email выше, затем нажмите «Забыли пароль?».', caResetSent:'Если аккаунт с этим email существует, мы отправили ссылку для нового пароля.',
     buySentTitle:'Заявка отправлена!', buySentDesc:'Мы скоро свяжемся с вами, чтобы завершить оплату и активировать абонемент. После активации ресепшн отправит вам на email ссылку, чтобы задать пароль для «Мой аккаунт».', backToStart:'Назад на главную',
     buyTitle:'Купить абонемент', buyDesc:'Выберите нужный абонемент — мы свяжемся с вами для оплаты. Прямая онлайн-оплата скоро будет доступна.',
@@ -1236,8 +1241,8 @@ const RO_RU = {
   'Echipă și roluri':'Команда и роли', 'Fiecare coleg intră cu emailul lui. Administratorii văd tot panoul, în afară de Rapoarte. Recepționerii doar scanează intrările.':'Каждый коллега входит со своим email. Администраторы видят всю панель, кроме Отчётов. Сотрудники ресепшн только сканируют входы.',
   'Recepționer':'Ресепшн', 'Recepționer — doar scanează':'Ресепшн — только сканирует', 'Administratorii pot adăuga doar recepționeri.':'Администраторы могут добавлять только сотрудников ресепшн.', 'Administratorii pot gestiona doar recepționerii.':'Администраторы могут управлять только сотрудниками ресепшн.',
   'Caută client':'Поиск клиента', 'Pentru clienții care și-au uitat cardul.':'Для клиентов, которые забыли карту.', 'Nume sau email (cel puțin 2 litere)':'Имя или email (минимум 2 буквы)', 'Caută după nume, email, telefon sau cod':'Поиск по имени, email, телефону или коду',
-  'Fără abonament activ':'Нет активного абонемента', 'Cod de activare':'Код активации', 'Cont online activat':'Онлайн-аккаунт активирован', 'Nu am putut crea codul.':'Не удалось создать код.', 'se poate folosi o singură dată':'можно использовать один раз', 'Copiază codul':'Копировать код', 'Cod copiat.':'Код скопирован.', 'Gata':'Готово',
-  'Dă-i clientului codul. El deschide fitart.online → „Contul meu” → „Am un cod de activare”, scrie codul și își alege emailul și parola.':'Передайте код клиенту. Он открывает fitart.online → «Мой аккаунт» → «У меня есть код активации», вводит код и задаёт email и пароль.','Trimite link pentru parolă':'Отправить ссылку для пароля', 'Linkul pentru parolă a fost trimis pe ':'Ссылка для пароля отправлена на ', 'Nu am putut trimite linkul.':'Не удалось отправить ссылку.', 'Trimite linkul':'Отправить ссылку', 'niciun client cu acest email':'нет клиента с этим email', 'Cereri de parolă':'Запросы пароля', 'Clienți care au uitat parola. „Trimite linkul” le trimite pe email un link de unică folosință pentru parola nouă.':'Клиенты, которые забыли пароль. «Отправить ссылку» пришлёт им на email одноразовую ссылку для нового пароля.','Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.':'Список команды ещё загружается. Попробуйте через несколько секунд.', 'Se încarcă echipa…':'Загружаем команду…','activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
+  'Fără abonament activ':'Нет активного абонемента', 'Clientul are cont online: intră cu emailul ales la activare. Ca să intre cu alt email, dă-i un cod de activare nou.':'У клиента есть онлайн-аккаунт: он входит с email, выбранным при активации. Чтобы входить с другим email, дайте ему новый код активации.','Cod de activare':'Код активации', 'Cont online activat':'Онлайн-аккаунт активирован', 'Nu am putut crea codul.':'Не удалось создать код.', 'se poate folosi o singură dată':'можно использовать один раз', 'Copiază codul':'Копировать код', 'Cod copiat.':'Код скопирован.', 'Gata':'Готово',
+  'Dă-i clientului codul. El deschide fitart.online → „Contul meu” → „Am un cod de activare”, scrie codul și își alege emailul și parola.':'Передайте код клиенту. Он открывает fitart.online → «Мой аккаунт» → «У меня есть код активации», вводит код и задаёт email и пароль.','Trimite link pentru parolă':'Отправить ссылку для пароля', 'Linkul pentru parolă a fost trimis pe ':'Ссылка для пароля отправлена на ', 'Nu am putut trimite linkul.':'Не удалось отправить ссылку.', 'Trimite linkul':'Отправить ссылку', 'niciun client cu acest email':'нет клиента с этим email', 'Cereri de parolă':'Запросы пароля', 'Clienți care au uitat parola. Apasă „Cod de activare” și dă-i clientului codul nou (la telefon sau pe mesaj).':'Клиенты, которые забыли пароль. Нажмите «Код активации» и передайте клиенту новый код (по телефону или сообщением).','Lista echipei încă se încarcă. Mai încearcă peste câteva secunde.':'Список команды ещё загружается. Попробуйте через несколько секунд.', 'Se încarcă echipa…':'Загружаем команду…','activi':'активных', 'cu abonament expirat':'с истёкшим абонементом', 'fără dată':'без даты', 'Activi fără tipul abonamentului (îl alegi apoi în fișa clientului):':'Активные без типа абонемента (выберите его потом в карточке клиента):', 'Arată mai mulți':'Показать ещё', 'rămași':'осталось','abonament de ales':'абонемент не выбран', 'fără dată de expirare — se importă fără abonament':'без даты окончания — импортируется без абонемента',
   'Au date incomplete (se importă, completezi apoi în fișa clientului):':'С неполными данными (импортируются, дополните потом в карточке клиента):', 'cu date incomplete':'с неполными данными', 'Importat din evidența veche':'Импортирован из старого учёта', 'Fără acces':'Нет доступа', 'Valabil':'Действителен','Verifică intrarea':'Проверить вход', 'Nicio scanare azi.':'Сегодня сканирований нет.',
   'Adaugă membru':'Добавить сотрудника', 'Nume':'Имя', 'Rol':'Роль', 'Acțiuni':'Действия', 'Proprietar':'Владелец', 'tu':'вы', 'Modifică':'Изменить', 'Retrage accesul':'Отозвать доступ',
   'Modifică membrul echipei':'Изменить сотрудника', 'Colegul va intra în panou cu acest email și parola de mai jos.':'Коллега будет входить с этим email и паролем ниже.', 'Trebuie să rămână cel puțin un proprietar.':'Должен остаться хотя бы один владелец.',
@@ -1444,15 +1449,8 @@ async function init(){
     // The installed app opens on "Contul meu"; a remembered member code then goes straight to the account.
     else if(new URLSearchParams(location.search).has('app') || isStandaloneApp()) state.screen='client-gate';
   }catch(e){}
-  // Links from the Firebase e-mails (set a password / confirm the e-mail) open the site with ?mode=…&oobCode=…
-  let emailAction=null;
-  try{
-    const p=new URLSearchParams(location.search); const mode=p.get('mode'), code=p.get('oobCode');
-    if(code && (mode==='resetPassword' || mode==='verifyEmail')){
-      emailAction={mode, code}; state.screen='client-gate'; state.clientAuth={mode:'checking'};
-      history.replaceState(null, '', location.pathname+'?app=1');   // the one-time code does not stay in the address bar
-    }
-  }catch(e){}
+  // Old links from Firebase e-mails are no longer used: just open the sign-in, without the code in the address bar.
+  try{ const p=new URLSearchParams(location.search); if(p.has('oobCode') || p.has('pwset')){ state.screen='client-gate'; history.replaceState(null, '', location.pathname+'?app=1'); } }catch(e){}
   render();
   let user=null;
   try{
@@ -1466,33 +1464,7 @@ async function init(){
   state.dbOk = !!db;
   if(!db){ state.ready=true; scheduleRender(); return; }
   subscribeAll();
-  if(emailAction){ try{ await handleEmailAction(emailAction); }catch(e){ state.clientAuth={mode:'linkbad'}; scheduleRender(); } return; }
   if(user && !user.isAnonymous){ try{ await restoreSignedInUser(user); }catch(e){} }
-}
-async function handleEmailAction(act){
-  const auth=firebase.auth();
-  if(act.mode==='resetPassword'){
-    try{ const email=await auth.verifyPasswordResetCode(act.code); state.clientAuth={mode:'setpw', code:act.code, email}; }
-    catch(e){ state.clientAuth={mode:'linkbad'}; }
-    state.clientForm={}; state.formErr=''; scheduleRender(); return;
-  }
-  try{ await auth.applyActionCode(act.code); }catch(e){ state.clientAuth={mode:'linkbad'}; scheduleRender(); return; }
-  const u=auth.currentUser;
-  if(u && !u.isAnonymous){ try{ await u.reload(); await u.getIdToken(true); }catch(e){} state.clientAuth=null; await restoreSignedInUser(auth.currentUser); return; }
-  state.clientAuth=null; state.clientNotice=tr('spEmailConfirmed'); scheduleRender();
-}
-// The client chooses the password on our own page, then goes straight into "Contul meu".
-async function clientSetPassword(){
-  const a=state.clientAuth; if(!a || a.mode!=='setpw') return;
-  const f=state.clientForm||{}; const p1=f.newPassword||'', p2=f.newPassword2||'';
-  if(p1.length<8){ state.formErr=tr('caWeak'); scheduleRender(); return; }
-  if(p1!==p2){ state.formErr=tr('caMismatch'); scheduleRender(); return; }
-  state.formErr='';
-  try{ await firebase.auth().confirmPasswordReset(a.code, p1); }
-  catch(e){ if(e && (e.code==='auth/expired-action-code' || e.code==='auth/invalid-action-code')) state.clientAuth={mode:'linkbad'}; else state.formErr=clientAuthError(e); scheduleRender(); return; }
-  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); await firebase.auth().signInWithEmailAndPassword(a.email, p1); }
-  catch(e){ state.clientAuth=null; state.clientForm={}; state.clientNotice=tr('spSaved'); scheduleRender(); return; }
-  state.clientAuth=null; await afterClientAuth();
 }
 // What can be read is decided by the Firestore rules: staff see everything, a client only their own
 // record (after confirming their email), and anyone else only the public settings and plans.
@@ -1604,11 +1576,13 @@ async function migrateStaffList(){
 
 /* ---- Sessions ---- */
 async function restoreSignedInUser(user){
-  // On page load the sign-in is already settled, so one check is enough (no waiting for clients).
+  if(isClientAuthEmail(user.email)){ startClientSession(user); return; }
+  // On page load the sign-in is already settled, so one check is enough.
   const member=await staffMemberFor(user.email, 1);
   if(member){ unlockAdmin(member); return; }
-  if(!user.emailVerified){ try{ await user.reload(); await user.getIdToken(true); }catch(e){} user=firebase.auth().currentUser||user; }
-  startClientSession(user);
+  // An older account that is neither staff nor a client sign-in: back to anonymous browsing.
+  try{ await firebase.auth().signOut(); await firebase.auth().signInAnonymously(); }catch(e){}
+  scheduleRender();
 }
 function unlockAdmin(member){
   stopClientSession();
@@ -1619,23 +1593,15 @@ function unlockAdmin(member){
 }
 let clientUnsubs=[];
 function stopClientSession(){ clientUnsubs.forEach(u=>{ try{ u(); }catch(e){} }); clientUnsubs=[]; state.clientSession=null; if(!state.adminUnlocked) state.clients=[]; }
-// A client's records are found two ways: those linked to this sign-in by an activation code (authUid),
-// and, once the e-mail is confirmed, those whose e-mail matches. The Firestore rules allow exactly these.
+// A client sees the records linked to this sign-in by an activation code (authUid), and nothing else.
 function startClientSession(user, attempt){
   stopClientSession();
-  const email=(user.email||'').trim().toLowerCase();
-  if(!attempt){ state.clientAuth={mode:'loading', email}; scheduleRender(); }
-  const found={byUid:null, byEmail:user.emailVerified? null : []};   // null = still loading
+  if(!attempt){ state.clientAuth={mode:'loading'}; scheduleRender(); }
   let failed=false;
-  const toList=snap=>snap.docs.map(d=>Object.assign({id:d.id}, d.data()));
-  const merge=()=>{
-    if(found.byUid===null || found.byEmail===null) return;
-    const map=new Map(); found.byUid.concat(found.byEmail).forEach(c=>map.set(c.id, c));
-    state.clients=[...map.values()].sort((a,b)=>String(a.name).localeCompare(String(b.name),'ro'));
+  clientUnsubs.push(colClients().where('authUid','==',user.uid).onSnapshot(snap=>{
+    state.clients=snap.docs.map(d=>Object.assign({id:d.id}, d.data())).sort((a,b)=>String(a.name).localeCompare(String(b.name),'ro'));
     if(!state.clients.length){
-      state.clientSession=null;
-      if(user.emailVerified) state.clientAuth={mode:'nomatch', email};
-      else{ state.clientAuth={mode:'verify', email}; sendVerifyEmailOnce(email); }
+      state.clientSession=null; state.clientAuth={mode:'nomatch'};
       if(state.screen==='client') state.screen='client-gate';
     } else {
       if(!state.clients.some(c=>c.id===state.clientSession)) state.clientSession=state.clients[0].id;
@@ -1643,23 +1609,13 @@ function startClientSession(user, attempt){
       if(state.screen==='client-gate'){ state.screen='client'; state.clientTab='sub'; }
     }
     scheduleRender();
-  };
-  const onErr=e=>{
+  }, e=>{
     if(failed) return; failed=true;
-    // Just after sign-in or e-mail confirmation Firestore may still hold the previous token for a moment.
+    // Right after signing in, Firestore may still hold the previous (anonymous) token for a moment.
     const u=firebase.auth().currentUser;
-    if(e && e.code==='permission-denied' && (attempt||0)<4 && u && !u.isAnonymous){ setTimeout(()=>{ if(firebase.auth().currentUser===u) startClientSession(u, (attempt||0)+1); }, 700); return; }
-    state.clientAuth={mode:'nomatch', email}; scheduleRender();
-  };
-  clientUnsubs.push(colClients().where('authUid','==',user.uid).onSnapshot(s=>{ found.byUid=toList(s); merge(); }, onErr));
-  if(user.emailVerified) clientUnsubs.push(colClients().where('email','==',email).onSnapshot(s=>{ found.byEmail=toList(s); merge(); }, onErr));
-}
-// The confirmation e-mail goes out by itself, at most once every 10 minutes per address.
-function sendVerifyEmailOnce(email){
-  let last=0; try{ last=Number(localStorage.getItem('fp_verify_'+email)||0); }catch(e){}
-  if(Date.now()-last < 10*60000) return;
-  try{ localStorage.setItem('fp_verify_'+email, String(Date.now())); }catch(e){}
-  sendVerifyEmail();
+    if(e && e.code==='permission-denied' && (attempt||0)<5 && u && !u.isAnonymous){ setTimeout(()=>{ if(firebase.auth().currentUser===u) startClientSession(u, (attempt||0)+1); }, 700); return; }
+    state.clientAuth={mode:'nomatch'}; scheduleRender();
+  }));
 }
 function isClientSignedIn(){ if(!firebase.apps.length) return false; const u=firebase.auth().currentUser; return !!(u && !u.isAnonymous && state.clientSession); }
 
@@ -2049,49 +2005,27 @@ function adminSetupForm(){
 function renderClientGate(){
   const wrap=body=>'<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock((state.settings&&state.settings.gymName)||'Fitness Park')+body+'</div>'+copyrightHtml()+'</div>';
   const err='<div class="err-text">'+esc(state.formErr||'')+'</div>';
-  const link=(action, label, extra)=>'<button type="button" class="back-link" data-action="'+action+'"'+(extra||'')+' style="margin:10px auto 0;">'+esc(label)+'</button>';
-  const a=state.clientAuth; const u=firebase.apps.length? firebase.auth().currentUser : null;
-  if(a && a.mode==='checking') return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div><div class="gate-desc">'+tr('caLoading')+'</div>');
-  if(a && a.mode==='setpw'){ const f=state.clientForm||{};
-    return wrap('<div class="gate-title">'+tr('spTitle')+'</div>'
-      + '<div class="gate-desc">'+esc(tr('spDesc').replace('{email}', a.email||''))+'</div>'
-      + '<input type="text" autocomplete="username" value="'+esc(a.email||'')+'" style="display:none" aria-hidden="true" tabindex="-1">'
-      + '<label class="field">'+tr('caPassNew')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword" value="'+esc(f.newPassword||'')+'" data-enter="client-set-password"></label>'
-      + '<label class="field">'+tr('caPassword2')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword2" value="'+esc(f.newPassword2||'')+'" data-enter="client-set-password"></label>'
-      + err + '<button class="btn btn-primary btn-block" data-action="client-set-password">'+icon('check','icon-sm')+' '+tr('spSave')+'</button>'); }
-  if(a && a.mode==='activate-code'){ const f=state.clientForm||{};
-    return wrap('<div class="gate-title">'+tr('acTitle')+'</div>'
+  const link=(action, label)=>'<button type="button" class="back-link" data-action="'+action+'" style="margin:10px auto 0;">'+esc(label)+'</button>';
+  const a=state.clientAuth; const f=state.clientForm||(state.clientForm={});
+  if(a && a.mode==='loading') return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div><div class="gate-desc">'+tr('caLoading')+'</div>');
+  // Step 1 of the activation: the code from reception (typed without the dash, it is added by itself).
+  if(a && a.mode==='activate-code') return wrap('<div class="gate-title">'+tr('acTitle')+'</div>'
       + '<div class="gate-desc">'+tr('acDesc')+'</div>'
-      + '<label class="field">'+tr('acCode')+'<input type="text" class="mono" autocomplete="one-time-code" autocapitalize="characters" spellcheck="false" maxlength="12" style="text-transform:uppercase;letter-spacing:.08em;" data-bind="clientForm.code" value="'+esc(f.code||'')+'" placeholder="'+tr('acCodePh')+'" data-enter="client-activate-check"></label>'
+      + '<label class="field">'+tr('acCode')+'<input type="text" class="mono act-input" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="9" data-actcode="1" value="'+esc(formatActCode(f.code))+'" placeholder="'+tr('acCodePh')+'" data-enter="client-activate-check"></label>'
       + err + '<button class="btn btn-primary btn-block" data-action="client-activate-check">'+icon('check','icon-sm')+' '+tr('acContinue')+'</button>'
-      + link('client-other', tr('spBack'))); }
-  if(a && a.mode==='activate-setup'){ const f=state.clientForm||{};
-    return wrap('<div class="gate-title">'+esc(tr('acWelcome').replace('{name}', a.name||''))+'</div>'
+      + link('client-other', tr('spBack')));
+  // Step 2: the client chooses the Gmail and password for "Contul meu".
+  if(a && a.mode==='activate-setup') return wrap('<div class="gate-title">'+esc(tr('acWelcome').replace('{name}', a.name||''))+'</div>'
       + '<div class="gate-desc">'+tr('acSetupDesc')+'</div>'
       + '<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="client-activate-save"></label>'
       + '<label class="field">'+tr('caPassNew')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword" value="'+esc(f.newPassword||'')+'" data-enter="client-activate-save"></label>'
       + '<label class="field">'+tr('caPassword2')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword2" value="'+esc(f.newPassword2||'')+'" data-enter="client-activate-save"></label>'
-      + err + '<button class="btn btn-primary btn-block" data-action="client-activate-save">'+icon('check','icon-sm')+' '+tr('acSave')+'</button>'); }
-  if(a && a.mode==='linkbad' && a.activation) return wrap('<div class="gate-title">'+tr('acFailTitle')+'</div><div class="gate-desc">'+tr('acFailDesc')+'</div>'
+      + err + '<button class="btn btn-primary btn-block" data-action="client-activate-save">'+icon('check','icon-sm')+' '+tr('acSave')+'</button>'
+      + link('client-other', tr('spBack')));
+  // Signed in, but no subscription is linked to this account any more (e.g. it was re-activated with a new code).
+  if(a && a.mode==='nomatch') return wrap('<div class="gate-title">'+tr('caNoMatchTitle')+'</div>'
+      + '<div class="gate-desc">'+tr('caNoMatchDesc')+'</div>'
       + '<button class="btn btn-primary btn-block" data-action="client-other">'+icon('arrowLeft','icon-sm')+' '+tr('spBack')+'</button>');
-  if(a && a.mode==='linkbad') return wrap('<div class="gate-title">'+tr('spBadTitle')+'</div><div class="gate-desc">'+tr('spBadDesc')+'</div>'
-      + '<button class="btn btn-primary btn-block" data-action="client-other">'+icon('arrowLeft','icon-sm')+' '+tr('spBack')+'</button>');
-  if(a && u && !u.isAnonymous){
-    if(a.mode==='loading') return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div><div class="gate-desc">'+tr('caLoading')+'</div>');
-    if(a.mode==='verify') return wrap('<div class="gate-title">'+tr('caVerifyTitle')+'</div>'
-      + '<div class="gate-desc">'+esc(tr('caVerifyDesc').replace('{email}', a.email||''))+'</div>'
-      + '<div class="gate-desc small">'+tr('caVerifySpam')+'</div>' + err
-      + '<button class="btn btn-primary btn-block" data-action="client-check-verified">'+icon('check','icon-sm')+' '+tr('caVerified')+'</button>'
-      + '<button class="btn btn-ghost btn-block mt4" data-action="client-resend">'+icon('mail','icon-sm')+' '+tr('caResend')+'</button>'
-      + link('client-other', tr('caOther')));
-    if(a.mode==='nomatch') return wrap('<div class="gate-title">'+tr('caNoMatchTitle')+'</div>'
-      + '<div class="gate-desc">'+esc(tr('caNoMatchDesc').replace('{email}', a.email||''))+'</div>' + err
-      + '<button class="btn btn-primary btn-block" data-action="client-check-verified">'+icon('refresh','icon-sm')+' '+tr('caRetry')+'</button>'
-      + link('client-other', tr('caOther')));
-  }
-  // Accounts are never created here: the client sets the password from a single-use link e-mailed by reception.
-  if(!state.clientForm) state.clientForm={};
-  const f=state.clientForm;
   return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div>'
     + '<div class="gate-desc">'+tr('clientGateDesc')+'</div>'
     + '<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="client-signin"></label>'
@@ -2102,8 +2036,7 @@ function renderClientGate(){
     + '<button class="btn btn-ghost btn-block mt4" data-action="client-activate-start">'+icon('user','icon-sm')+' '+tr('acHave')+'</button>'
     + '<div class="gate-desc small center" style="margin:14px 0 0;">'+tr('caFirstTime')+'</div>'
     + '<div class="gate-admin-row"><button class="gate-admin-link" data-action="go-admin">'+esc(ht('footerAdmin'))+'</button></div>');
-}
-function renderBuyGate(){
+}function renderBuyGate(){
   const gymName=(state.settings&&state.settings.gymName)||'Fitness Park';
   if(state.buySubmitted){
     return '<div class="gate-wrap"><div class="gate-card">'+backLink()+brandBlock(gymName)
@@ -2343,7 +2276,7 @@ function renderRequests(){
   const passwordRows=pendingPasswords.map(r=>{
     const c=state.clients.find(x=>(x.email||'').toLowerCase()===(r.email||'').toLowerCase());
     return row('lock', (c? esc(c.name)+sep : '')+esc(r.email||'')+(c? '' : '<span class="rq-chip">'+icon('x','icon-sm')+' '+esc(ra('niciun client cu acest email'))+'</span>'), r.date,
-      (c? '<button class="btn btn-primary btn-sm" data-action="send-password-request" data-id="'+r.id+'">'+icon('send','icon-sm')+' '+esc(ra('Trimite linkul'))+'</button>' : '')
+      (c? '<button class="btn btn-primary btn-sm" data-action="password-request-code" data-id="'+r.id+'">'+icon('user','icon-sm')+' '+esc(ra('Cod de activare'))+'</button>' : '')
       + '<button class="btn btn-ghost btn-sm rq-reject" data-action="reject-password-request" data-id="'+r.id+'">'+icon('x','icon-sm')+' '+esc(ra('Respinge'))+'</button>'
       + (c? '<button class="btn btn-ghost btn-sm" data-action="open-client-detail" data-id="'+c.id+'">'+icon('user','icon-sm')+' '+esc(ra('Vezi fișa'))+'</button>' : ''));
   }).join('');
@@ -2363,7 +2296,7 @@ function renderRequests(){
   return '<div class="section-sub">'+ra('Toate cererile clienților, într-un singur loc')+'</div>'
    + section('buy', 'rq-buy', 'cart', ra('Cereri de cumpărare abonament'), ra('Clienți care doresc să achiziționeze un abonament.'), pendingBuys.length, buyRows)
    + (pendingProfiles.length? section('profile', 'rq-photo', 'user', ra('Date completate de clienți'), ra('Telefon, email, anul nașterii și poza, trimise din „Contul meu”.'), pendingProfiles.length, profileRows) : '')
-   + (pendingPasswords.length? section('password', 'rq-photo', 'lock', ra('Cereri de parolă'), ra('Clienți care au uitat parola. „Trimite linkul” le trimite pe email un link de unică folosință pentru parola nouă.'), pendingPasswords.length, passwordRows) : '')
+   + (pendingPasswords.length? section('password', 'rq-photo', 'lock', ra('Cereri de parolă'), ra('Clienți care au uitat parola. Apasă „Cod de activare” și dă-i clientului codul nou (la telefon sau pe mesaj).'), pendingPasswords.length, passwordRows) : '')
    + (pendingPhotos.length? section('photo', 'rq-photo', 'camera', ra('Poze de profil de la clienți'), ra('Clienți care și-au trimis poza din contul lor.'), pendingPhotos.length, photoRows) : '')
    + section('card', 'rq-card', 'card', ra('Cereri card pierdut'), ra('Clienți care au raportat pierderea cardului de acces.'), cardPending.length, cardRows)
    + section('ops', 'rq-ops', 'dumbbell', ra('Cereri antrenor personal / card tipărit'), ra('Solicitări pentru antrenor personal sau card tipărit.'), pendingOps.length, pendingOpsRows)
@@ -2407,7 +2340,8 @@ function clientRowHtml(c){
   const until=sub.unlimited? '∞' : sub.validTo? fmtDate(sub.validTo) : '—';
   return '<div class="crow" data-action="open-client-detail" data-id="'+c.id+'">'
    + clientAvatarHtml(c)
-   + '<div class="crow-main"><div class="crow-name">'+esc(c.name)+'</div><div class="crow-sub">'+esc(subTypeDisplayName(c)||ra('Fără abonament'))+'<span class="dot">•</span><span class="mono">'+esc(c.code)+'</span><span class="crow-mdate"><span class="dot">•</span>'+until+'</span></div></div>'
+   + '<div class="crow-main"><div class="crow-name">'+esc(c.name)+'</div><div class="crow-sub">'+esc(subTypeDisplayName(c)||ra('Fără abonament'))+'<span class="dot">•</span><span class="mono">'+esc(c.code)+'</span><span class="crow-mdate"><span class="dot">•</span>'+until+'</span></div>'
+   + (c.email? '<div class="crow-mail">'+icon('mail','icon-sm')+' '+esc(c.email)+(c.authUid? ' <span class="crow-ok" title="'+esc(ra('Cont online activat'))+'">'+icon('check','icon-sm')+'</span>' : '')+'</div>' : '')+'</div>'
    + '<div class="crow-date">'+until+'</div><div class="crow-div"></div>'
    + '<span class="pill pill-dot pill-'+st.tone+'">'+esc(st.label)+'</span>'
    + '<span class="crow-go">'+icon('chevronRight','icon-sm')+'</span></div>';
@@ -2525,7 +2459,7 @@ function modalClientDetail(){
      + '<div class="cd-tile"><div class="cd-tile-ic">'+icon('mail','icon-sm')+'</div><div style="min-width:0;"><div class="cd-label">'+esc(ra('Email'))+'</div><div class="cd-value">'+esc(c.email||'—')+'</div>'
        + '<div class="cd-links">'+(c.authUid? '<span class="cd-ok">'+icon('check','icon-sm')+' '+esc(ra('Cont online activat'))+'</span>' : '')
        + '<button class="cd-link" data-action="create-activation-code" data-id="'+esc(c.id)+'">'+icon('user','icon-sm')+' '+esc(ra('Cod de activare'))+'</button>'
-       + (isValidEmail(c.email)? '<button class="cd-link" data-action="send-password-link" data-id="'+esc(c.id)+'">'+icon('lock','icon-sm')+' '+esc(ra('Trimite link pentru parolă'))+'</button>' : '')+'</div></div></div>'
+       + '</div></div></div>'
      + tile('calendar', ra('Anul nașterii'), c.birthDate? (splitBirthDate(c.birthDate).birthYear+(age!=null? (' ('+age+' '+(state.lang==='ru'?'лет':'ani')+')') : '')) : '')
      + tile('history', ra('Client din'), c.createdAt? fmtDate(localDay(c.createdAt)) : '')
      + tile('note', ra('Observații'), c.notes, 'cd-tile-wide')
@@ -2566,6 +2500,7 @@ function modalEditClient(){
    + field(ra('Nume și prenume'),'text','form.name',f.name)
    + field(ra('Telefon'),'tel','form.phone',f.phone)
    + field('Email','email','form.email',f.email,'nume@gmail.com')
+   + (((state.clients.find(x=>x.id===f.id)||{}).authUid)? '<div class="small faint" style="margin-top:-6px;">'+esc(ra('Clientul are cont online: intră cu emailul ales la activare. Ca să intre cu alt email, dă-i un cod de activare nou.'))+'</div>' : '')
    + birthDateRowHtml('form', f.birthYear)
    + '<label class="field">'+ra('Observații')+'<textarea rows="2" data-bind="form.notes">'+esc(f.notes)+'</textarea></label>'
    + '<div class="err-text">'+esc(state.formErr||'')+'</div>'
@@ -3683,6 +3618,8 @@ function bindEvents(root){
       });
     }
   });
+  // Activation code field: capitals only, the dash after the 4th character is added by itself.
+  root.querySelectorAll('[data-actcode]').forEach(el=>{ el.addEventListener('input', ()=>{ const v=formatActCode(el.value); if(v!==el.value) el.value=v; state.clientForm=Object.assign({}, state.clientForm, {code:cleanActCode(v)}); }); });
   root.querySelectorAll('[data-enter]').forEach(el=>{
     el.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); const a=el.getAttribute('data-enter'); const btn=root.querySelector('[data-action="'+a+'"]'); if(btn) btn.click(); } });
   });
@@ -3709,21 +3646,17 @@ function onAction(el){
     case 'admin-login-submit': runOnce(adminLoginSubmit); return;
     case 'admin-setup-submit': runOnce(adminSetupSubmit); return;
     case 'client-signin': clientSignIn(); return;
-    case 'client-check-verified': clientCheckVerified(); return;
-    case 'client-resend': clientResendVerification(); return;
     case 'client-forgot': clientForgotPassword(); return;
     case 'client-switch': state.clientSession=el.getAttribute('data-id'); state.clientTab='sub'; break;
     case 'admin-lock': lockAdminPanel(); return;
     case 'client-logout': state.screen='landing'; clientSignOut(); break;
     case 'client-other': state.formErr=''; state.clientNotice=''; clientSignOut(); break;
-    case 'client-set-password': runOnce(clientSetPassword); return;
     case 'client-activate-start': state.formErr=''; state.clientNotice=''; state.clientForm={}; state.clientAuth={mode:'activate-code'}; break;
     case 'client-activate-check': runOnce(clientActivateCheck); return;
     case 'client-activate-save': runOnce(clientActivateSave); return;
     case 'create-activation-code': runOnce(()=>createActivationCode(id)); return;
     case 'copy-activation-code': { const code=(state.form&&state.form.code)||''; try{ navigator.clipboard.writeText(code).then(()=>showToast(ra('Cod copiat.')), ()=>showToast(code)); }catch(e){ showToast(code); } return; }
-    case 'send-password-link': runOnce(()=>sendClientPasswordLink(id)); return;
-    case 'send-password-request': runOnce(()=>sendPasswordRequestLink(id)); return;
+    case 'password-request-code': runOnce(()=>passwordRequestCode(id)); return;
     case 'reject-password-request': runOnce(async ()=>{ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }); return;
     case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
     case 'open-client-detail': openModal('clientDetail', {id}); return;
@@ -3834,49 +3767,55 @@ async function adminSetupSubmit(){
 }
 function lockAdminSession(){ unsubscribeStaff(); try{ firebase.auth().signOut().then(()=>firebase.auth().signInAnonymously()).catch(()=>{}); }catch(e){} }
 
-/* ---- Client accounts (email + password, email must be confirmed) ---- */
+/* ---- Client accounts ----
+   A client signs in with the Gmail and password they chose. Behind the scenes the sign-in account uses a private
+   address (…@clienti.fitart.online), so it can never clash with another Firebase account for that Gmail.
+   logins/{gmail} says which sign-in account belongs to the Gmail. The first sign-in and a forgotten password both
+   go through a one-time activation code from reception; there are no e-mail links. */
+const CLIENT_AUTH_DOMAIN='clienti.fitart.online';
+function isClientAuthEmail(email){ return String(email||'').toLowerCase().endsWith('@'+CLIENT_AUTH_DOMAIN); }
+function newClientAuthEmail(){ const a=new Uint8Array(12); crypto.getRandomValues(a); return 'c'+Array.from(a, b=>b.toString(16).padStart(2,'0')).join('')+'@'+CLIENT_AUTH_DOMAIN; }
+const colLogins=()=>db.collection('logins');
+// Activation codes: 8 characters from an alphabet without look-alikes (no O/0, I/1, S/5, B/8, Z/2, Q).
+const ACT_ALPHABET='ACDEFGHJKLMNPRTUVWXY34679';
+function cleanActCode(v){ return String(v||'').toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,8); }
+function formatActCode(v){ v=cleanActCode(v); return v.length>4? v.slice(0,4)+'-'+v.slice(4) : v; }
 function clientAuthError(e){
   const c=e&&e.code; const m=String(e&&e.message||'');
   // The v8 SDK reports newer server errors (e.g. with email-enumeration protection) as auth/internal-error.
   if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|EMAIL_NOT_FOUND/.test(m)) return tr('caWrong');
   if(/TOO_MANY_ATTEMPTS/.test(m)) return tr('caTooMany');
   if(c==='auth/wrong-password'||c==='auth/invalid-credential'||c==='auth/user-not-found'||c==='auth/invalid-login-credentials') return tr('caWrong');
-  if(c==='auth/email-already-in-use') return tr('caExists');
   if(c==='auth/weak-password'||c==='auth/password-does-not-meet-requirements') return tr('caWeak');
-  if(c==='auth/invalid-email') return tr('errEmailInvalid');
   if(c==='auth/too-many-requests') return tr('caTooMany');
-  if(c==='auth/network-request-failed') return tr('caNetwork');
+  if(c==='auth/network-request-failed' || c==='unavailable') return tr('caNetwork');
   return tr('caError');
 }
 async function clientSignIn(){
   const f=state.clientForm||{}; const email=(f.email||'').trim().toLowerCase(); const pass=f.password||'';
   if(!isValidEmail(email)){ state.formErr=tr('errEmailInvalid'); scheduleRender(); return; }
   if(!pass){ state.formErr=tr('caEnterPass'); scheduleRender(); return; }
-  state.formErr='';
-  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); await firebase.auth().signInWithEmailAndPassword(email, pass); }
+  state.formErr=''; state.clientNotice='';
+  let authEmail='';
+  try{ const s=await colLogins().doc(email).get(); if(s.exists) authEmail=s.data().authEmail||''; }
   catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
-  await afterClientAuth();
-}
-async function afterClientAuth(){
-  const user=firebase.auth().currentUser; if(!user) return;
-  state.clientForm={}; state.clientNotice='';
-  // A staff account is not a member account: send it to the staff login instead.
-  if(await staffMemberFor(user.email)){ await clientSignOut(); state.formErr=tr('caStaff'); scheduleRender(); return; }
-  startClientSession(user);
+  if(!authEmail){ state.formErr=tr('caWrong'); scheduleRender(); return; }
+  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); await firebase.auth().signInWithEmailAndPassword(authEmail, pass); }
+  catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
+  state.clientForm={};
+  startClientSession(firebase.auth().currentUser);
 }
 
-/* ---- First entry with an activation code from reception ---- */
-// The code (8 random characters, valid 24 h, usable once) proves who the client is; the client then chooses
-// the e-mail and password for "Contul meu". The account is linked to the client record by its sign-in id.
+/* ---- Activation code: first sign-in or a new password ---- */
 async function clientActivateCheck(){
-  const code=((state.clientForm||{}).code||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
-  if(code.length!==8){ state.formErr=tr('acBad'); scheduleRender(); return; }
+  const code=cleanActCode((state.clientForm||{}).code);
+  if(code.length!==8){ state.formErr=tr('acShort'); scheduleRender(); return; }
   state.formErr='';
   try{
     const s=await db.collection('activation').doc(code).get();
     if(!s.exists) throw new Error('missing');
     const d=s.data(); state.clientAuth={mode:'activate-setup', code, clientId:d.clientId, name:d.name||''}; state.clientForm={};
-  }catch(e){ state.formErr=tr('acBad'); }
+  }catch(e){ state.formErr=(e && e.code==='unavailable')? tr('caNetwork') : tr('acBad'); }
   scheduleRender();
 }
 async function clientActivateSave(){
@@ -3887,40 +3826,67 @@ async function clientActivateSave(){
   if(p1!==p2){ state.formErr=tr('caMismatch'); scheduleRender(); return; }
   state.formErr='';
   const auth=firebase.auth();
-  try{ await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL); await auth.createUserWithEmailAndPassword(email, p1); }
-  catch(e){
-    if(!(e && e.code==='auth/email-already-in-use')){ state.formErr=clientAuthError(e); scheduleRender(); return; }
-    // The address already has an account: the password typed must be that account's password.
-    try{ await auth.signInWithEmailAndPassword(email, p1); }catch(e2){ state.formErr=tr('acEmailTaken'); scheduleRender(); return; }
-  }
+  // A Gmail already in use belongs either to this same client (a new password) or to another member, e.g. family.
+  let login=null;
+  try{ const s=await colLogins().doc(email).get(); login=s.exists? s.data() : null; }
+  catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
+  const shared=!!(login && login.authEmail && !(login.clientIds||[]).includes(a.clientId));
+  let clientIds;
+  try{
+    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    if(shared){
+      // Join the account that already uses this Gmail, with its password.
+      try{ await auth.signInWithEmailAndPassword(login.authEmail, p1); }
+      catch(e){ state.formErr=(e && e.code==='auth/too-many-requests')? tr('caTooMany') : tr('acSharedPw'); scheduleRender(); return; }
+      clientIds=Array.from(new Set((login.clientIds||[]).concat(a.clientId))).slice(0,10);
+    } else {
+      await auth.createUserWithEmailAndPassword(newClientAuthEmail(), p1);
+      clientIds=[a.clientId];
+    }
+  }catch(e){ state.formErr=clientAuthError(e); scheduleRender(); return; }
   const user=auth.currentUser;
-  if(await staffMemberFor(user.email)){ await clientSignOut(); state.clientAuth=null; state.formErr=tr('caStaff'); scheduleRender(); return; }
-  // Link the record and use up the code in one step; retried while Firestore switches to the new sign-in.
-  let ok=false;
-  for(let i=0;i<6 && !ok;i++){
+  // Link the record, point the Gmail to this account and use up the code, all in one step. Retried while
+  // Firestore switches from the anonymous token to the new sign-in.
+  let ok=false, lastErr=null;
+  for(let i=0;i<8 && !ok;i++){
     try{
       const b=db.batch();
       b.update(colClients().doc(a.clientId), {email, authUid:user.uid, activationCode:a.code, activatedAt:new Date().toISOString()});
+      b.set(colLogins().doc(email), {authEmail:user.email, clientIds, code:a.code, updatedAt:firebase.firestore.FieldValue.serverTimestamp()});
       b.update(db.collection('activation').doc(a.code), {used:true, usedBy:user.uid, usedAt:firebase.firestore.FieldValue.serverTimestamp()});
       await b.commit(); ok=true;
-    }catch(e){ if(!e || e.code!=='permission-denied' || i===5){ break; } await new Promise(r=>setTimeout(r,600)); }
+    }catch(e){ lastErr=e; if(!e || e.code!=='permission-denied') break; await new Promise(r=>setTimeout(r,600)); }
   }
-  if(!ok){ await clientSignOut(); state.clientAuth={mode:'linkbad', activation:true}; scheduleRender(); return; }
+  if(!ok){
+    await clientSignOut();
+    state.clientAuth={mode:'activate-code'}; state.clientForm={};
+    state.formErr=(lastErr && lastErr.code==='permission-denied')? tr('acBad') : clientAuthError(lastErr);
+    scheduleRender(); return;
+  }
   state.clientAuth=null; state.clientForm={}; state.clientNotice='';
   startClientSession(user);
 }
 
 /* ---- Activation code (staff side) ---- */
+function randomActCode(){
+  let out=''; while(out.length<8){ const a=new Uint8Array(16); crypto.getRandomValues(a); for(const b of a){ if(b<250 && out.length<8) out+=ACT_ALPHABET[b%25]; } }
+  return out;
+}
 async function createActivationCode(clientId){
-  const c=state.clients.find(x=>x.id===clientId); if(!c) return;
-  const alphabet='ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; const a=new Uint8Array(8); crypto.getRandomValues(a);
-  const code=Array.from(a, b=>alphabet[b%32]).join('');
-  const expires=new Date(Date.now()+24*3600*1000);
+  const c=state.clients.find(x=>x.id===clientId); if(!c) return false;
+  const code=randomActCode(); const expires=new Date(Date.now()+24*3600*1000);
   try{
     await db.collection('activation').doc(code).set({clientId:c.id, name:c.name||'', used:false, createdAt:firebase.firestore.FieldValue.serverTimestamp(), expiresAt:firebase.firestore.Timestamp.fromDate(expires)});
     await logMod('Cod de activare creat', c.name);
-    openModal('activationCode', {code:code.slice(0,4)+'-'+code.slice(4), name:c.name, expires:expires.toISOString(), clientId:c.id});
-  }catch(e){ showToast(ra('Nu am putut crea codul.')+' ('+((e&&e.code)||'eroare')+')'); }
+    openModal('activationCode', {code:formatActCode(code), name:c.name, expires:expires.toISOString(), clientId:c.id});
+    return true;
+  }catch(e){ showToast(ra('Nu am putut crea codul.')+' ('+((e&&e.code)||'eroare')+')'); return false; }
+}
+// A "forgot password" request: reception makes a new code for the client with that Gmail.
+async function passwordRequestCode(reqId){
+  const r=(state.buyRequests||[]).find(x=>x.id===reqId); if(!r) return;
+  const c=state.clients.find(x=>(x.email||'').toLowerCase()===(r.email||'').toLowerCase()); if(!c) return;
+  if(await createActivationCode(c.id)){ try{ await colBuyReq().doc(reqId).update({status:'approved'}); }catch(e){} }
 }
 function modalActivationCode(){
   const f=state.form||{};
@@ -3931,70 +3897,17 @@ function modalActivationCode(){
     + '<div class="flex gap8"><button class="btn btn-ghost" style="flex:1;" data-action="copy-activation-code">'+icon('copy','icon-sm')+' '+esc(ra('Copiază codul'))+'</button>'
     + '<button class="btn btn-primary" style="flex:1;" data-action="open-client-detail" data-id="'+esc(f.clientId||'')+'">'+icon('check','icon-sm')+' '+esc(ra('Gata'))+'</button></div>');
 }
-async function clientCheckVerified(){
-  const user=firebase.auth().currentUser; if(!user) return;
-  try{ await user.reload(); }catch(e){}
-  if(firebase.auth().currentUser.emailVerified){
-    try{ await firebase.auth().currentUser.getIdToken(true); }catch(e){}
-    state.formErr=''; startClientSession(firebase.auth().currentUser);
-  } else { state.formErr=tr('caNotYet'); scheduleRender(); }
-}
-async function clientResendVerification(){
-  try{ await sendVerifyEmail(true); showToast(tr('caResent')); }catch(e){ showToast(clientAuthError(e)); }
-}
-// The confirmation link brings the client back to the site; the open page notices the confirmation by itself.
-async function sendVerifyEmail(strict){
-  const u=firebase.auth().currentUser; if(!u) return;
-  firebase.auth().languageCode=state.lang==='ru'? 'ru' : 'ro';
-  try{ await u.sendEmailVerification({url:location.origin+location.pathname+'?app=1'}); }
-  catch(e){ if(e&&e.code==='auth/too-many-requests'){ if(strict) throw e; return; } try{ await u.sendEmailVerification(); }catch(e2){ if(strict) throw e2; } }
-}
-setInterval(async ()=>{
-  if(document.hidden || !state.clientAuth || state.clientAuth.mode!=='verify' || !firebase.apps.length) return;
-  const u=firebase.auth().currentUser; if(!u || u.isAnonymous) return;
-  try{ await u.reload(); }catch(e){ return; }
-  if(firebase.auth().currentUser && firebase.auth().currentUser.emailVerified && state.clientAuth && state.clientAuth.mode==='verify'){ try{ await firebase.auth().currentUser.getIdToken(true); }catch(e){} state.formErr=''; startClientSession(firebase.auth().currentUser); }
-}, 4000);
-// "Am uitat parola" only files a request with reception; reception then sends the password link (see sendPasswordLink).
+// "Am uitat parola" only files a request with reception, which then gives the client a new activation code.
 async function clientForgotPassword(){
   const email=((state.clientForm||{}).email||'').trim().toLowerCase();
   if(!isValidEmail(email)){ state.formErr=tr('caForgotHint'); state.clientNotice=''; scheduleRender(); return; }
   let last=0; try{ last=Number(localStorage.getItem('fp_pwreq_'+email)||0); }catch(e){}
   if(Date.now()-last > 30*60000){
     try{ await colBuyReq().add({kind:'password', email, status:'pending', date:new Date().toISOString()}); }
-    catch(e){ state.formErr=tr('caError'); state.clientNotice=''; scheduleRender(); return; }
+    catch(e){ state.formErr=clientAuthError(e); state.clientNotice=''; scheduleRender(); return; }
     try{ localStorage.setItem('fp_pwreq_'+email, String(Date.now())); }catch(e){}
   }
   state.formErr=''; state.clientNotice=tr('caPwRequested'); scheduleRender();
-}
-
-/* ---- Client passwords (staff side) ---- */
-// Makes sure the client has a sign-in account (created with a random password nobody knows), then Firebase
-// e-mails the client a single-use link to choose the password. Nobody at the gym ever sees or sets it.
-async function sendPasswordLink(email){
-  email=String(email||'').trim().toLowerCase(); if(!isValidEmail(email)) throw new Error('invalid-email');
-  let app=null;
-  try{
-    app=firebase.initializeApp(firebase.app().options, 'pwLink'+Date.now());
-    await app.auth().setPersistence(firebase.auth.Auth.Persistence.NONE);
-    const a=new Uint8Array(24); crypto.getRandomValues(a);
-    await app.auth().createUserWithEmailAndPassword(email, btoa(String.fromCharCode.apply(null, a))+'aA1!');
-  }catch(e){ if(!(e && e.code==='auth/email-already-in-use')) throw e; }
-  finally{ if(app){ try{ await app.auth().signOut(); }catch(_){} try{ await app.delete(); }catch(_){} } }
-  firebase.auth().languageCode='ro';
-  try{ await firebase.auth().sendPasswordResetEmail(email, {url:'https://fitart.online/?app=1'}); }
-  catch(e){ if(e && /continue-uri|unauthorized-domain/.test(e.code||'')) await firebase.auth().sendPasswordResetEmail(email); else throw e; }
-}
-async function sendClientPasswordLink(clientId){
-  const c=state.clients.find(x=>x.id===clientId); if(!c || !isValidEmail(c.email)) return;
-  try{ await sendPasswordLink(c.email); await logMod('Link pentru parolă trimis', c.name); showToast(ra('Linkul pentru parolă a fost trimis pe ')+c.email); }
-  catch(e){ showToast(ra('Nu am putut trimite linkul.')+' ('+((e&&e.code)||'eroare')+')'); }
-}
-async function sendPasswordRequestLink(reqId){
-  const r=(state.buyRequests||[]).find(x=>x.id===reqId); if(!r) return;
-  const c=state.clients.find(x=>(x.email||'').toLowerCase()===(r.email||'').toLowerCase()); if(!c) return;
-  try{ await sendPasswordLink(r.email); await colBuyReq().doc(reqId).update({status:'approved'}); await logMod('Link pentru parolă trimis', c.name); showToast(ra('Linkul pentru parolă a fost trimis pe ')+r.email); }
-  catch(e){ showToast(ra('Nu am putut trimite linkul.')+' ('+((e&&e.code)||'eroare')+')'); }
 }
 async function clientSignOut(){
   stopClientSession(); state.clientAuth=null; state.clientForm={};
