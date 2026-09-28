@@ -1016,6 +1016,9 @@ const I18N = {
     caNoAccount:'Nu ai cont? Creează-l acum', caHaveAccount:'Ai deja cont? Intră', caRegTitle:'Creează-ți contul', caRegDesc:'Scrie emailul pe care l-ai dat la recepție și alege o parolă. Îți trimitem un email de confirmare.', caRegister:'Creează contul',
     caVerifyTitle:'Confirmă emailul', caVerifyDesc:'Ți-am trimis un email la {email}. Deschide-l și apasă linkul de confirmare. Contul se deschide singur imediat după.', caVerifySpam:'Nu-l găsești? Uită-te și în Spam sau Promoții.', caVerified:'Am confirmat — intră', caResend:'Retrimite emailul', caOther:'Folosește alt email',
     caNoMatchTitle:'Nu am găsit abonamentul', caNoMatchDesc:'Emailul {email} nu apare încă la niciun abonat. Roagă recepția să-l treacă în fișa ta, apoi apasă „Verifică din nou”.', caRetry:'Verifică din nou', caLoading:'Se încarcă contul…',
+    spTitle:'Setează-ți parola', spDesc:'Pentru contul {email}. Alege o parolă de minim 8 caractere — cu ea intri în „Contul meu”.', spSave:'Salvează parola și intră',
+    spBadTitle:'Linkul nu mai este valabil', spBadDesc:'Linkul a expirat sau a fost deja folosit. Scrie emailul pe ecranul de intrare și apasă „Am uitat parola” ca să primești unul nou.', spBack:'Înapoi la intrare',
+    spEmailConfirmed:'Emailul a fost confirmat. Intră cu emailul și parola ta.', spSaved:'Parola a fost salvată. Intră cu emailul și parola nouă.',
     caFirstTime:'Prima dată aici? Parola ți-o alegi din linkul pe care ți-l trimite recepția pe email.', caPwRequested:'Cererea a fost trimisă recepției. Vei primi pe email un link pentru parola nouă (verifică și dosarul Spam).',
     caWrong:'Email sau parolă greșită. Dacă nu ai încă parolă, apasă „Am uitat parola”.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
     caStaff:'Acesta este un cont de recepție. Intră din „Recepție & administrare”.', caNotYet:'Emailul nu e confirmat încă. Apasă linkul din email, apoi încearcă din nou.', caResent:'Emailul de confirmare a fost retrimis.', caForgotHint:'Scrie emailul mai sus, apoi apasă „Am uitat parola”.', caResetSent:'Dacă există un cont cu acest email, ți-am trimis un link pentru parolă nouă.',
@@ -1071,6 +1074,9 @@ const I18N = {
     caNoAccount:'Нет аккаунта? Создайте его', caHaveAccount:'Уже есть аккаунт? Войти', caRegTitle:'Создайте аккаунт', caRegDesc:'Укажите email, который вы дали на ресепшн, и придумайте пароль. Мы отправим письмо для подтверждения.', caRegister:'Создать аккаунт',
     caVerifyTitle:'Подтвердите email', caVerifyDesc:'Мы отправили письмо на {email}. Откройте его и нажмите ссылку подтверждения. Аккаунт откроется сам сразу после этого.', caVerifySpam:'Не нашли письмо? Проверьте папки «Спам» и «Промоакции».', caVerified:'Я подтвердил — войти', caResend:'Отправить письмо ещё раз', caOther:'Использовать другой email',
     caNoMatchTitle:'Абонемент не найден', caNoMatchDesc:'Email {email} пока не указан ни у одного клиента. Попросите ресепшн добавить его в вашу карточку, затем нажмите «Проверить снова».', caRetry:'Проверить снова', caLoading:'Загружаем аккаунт…',
+    spTitle:'Задайте пароль', spDesc:'Для аккаунта {email}. Придумайте пароль не короче 8 символов — с ним вы будете входить в «Мой аккаунт».', spSave:'Сохранить пароль и войти',
+    spBadTitle:'Ссылка больше не действительна', spBadDesc:'Ссылка устарела или уже была использована. Введите email на экране входа и нажмите «Забыли пароль?», чтобы получить новую.', spBack:'Назад ко входу',
+    spEmailConfirmed:'Email подтверждён. Войдите со своим email и паролем.', spSaved:'Пароль сохранён. Войдите с email и новым паролем.',
     caFirstTime:'Впервые здесь? Пароль вы зададите по ссылке, которую ресепшн отправит вам на email.', caPwRequested:'Запрос отправлен на ресепшн. Вы получите на email ссылку для нового пароля (проверьте и папку «Спам»).',
     caWrong:'Неверный email или пароль. Если у вас ещё нет пароля, нажмите «Забыли пароль?».', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
     caStaff:'Это аккаунт ресепшн. Войдите через «Ресепшн и администрирование».', caNotYet:'Email ещё не подтверждён. Нажмите ссылку в письме и попробуйте снова.', caResent:'Письмо для подтверждения отправлено ещё раз.', caForgotHint:'Введите email выше, затем нажмите «Забыли пароль?».', caResetSent:'Если аккаунт с этим email существует, мы отправили ссылку для нового пароля.',
@@ -1428,6 +1434,15 @@ async function init(){
     // The installed app opens on "Contul meu"; a remembered member code then goes straight to the account.
     else if(new URLSearchParams(location.search).has('app') || isStandaloneApp()) state.screen='client-gate';
   }catch(e){}
+  // Links from the Firebase e-mails (set a password / confirm the e-mail) open the site with ?mode=…&oobCode=…
+  let emailAction=null;
+  try{
+    const p=new URLSearchParams(location.search); const mode=p.get('mode'), code=p.get('oobCode');
+    if(code && (mode==='resetPassword' || mode==='verifyEmail')){
+      emailAction={mode, code}; state.screen='client-gate'; state.clientAuth={mode:'checking'};
+      history.replaceState(null, '', location.pathname+'?app=1');   // the one-time code does not stay in the address bar
+    }
+  }catch(e){}
   render();
   let user=null;
   try{
@@ -1441,7 +1456,33 @@ async function init(){
   state.dbOk = !!db;
   if(!db){ state.ready=true; scheduleRender(); return; }
   subscribeAll();
+  if(emailAction){ try{ await handleEmailAction(emailAction); }catch(e){ state.clientAuth={mode:'linkbad'}; scheduleRender(); } return; }
   if(user && !user.isAnonymous){ try{ await restoreSignedInUser(user); }catch(e){} }
+}
+async function handleEmailAction(act){
+  const auth=firebase.auth();
+  if(act.mode==='resetPassword'){
+    try{ const email=await auth.verifyPasswordResetCode(act.code); state.clientAuth={mode:'setpw', code:act.code, email}; }
+    catch(e){ state.clientAuth={mode:'linkbad'}; }
+    state.clientForm={}; state.formErr=''; scheduleRender(); return;
+  }
+  try{ await auth.applyActionCode(act.code); }catch(e){ state.clientAuth={mode:'linkbad'}; scheduleRender(); return; }
+  const u=auth.currentUser;
+  if(u && !u.isAnonymous){ try{ await u.reload(); await u.getIdToken(true); }catch(e){} state.clientAuth=null; await restoreSignedInUser(auth.currentUser); return; }
+  state.clientAuth=null; state.clientNotice=tr('spEmailConfirmed'); scheduleRender();
+}
+// The client chooses the password on our own page, then goes straight into "Contul meu".
+async function clientSetPassword(){
+  const a=state.clientAuth; if(!a || a.mode!=='setpw') return;
+  const f=state.clientForm||{}; const p1=f.newPassword||'', p2=f.newPassword2||'';
+  if(p1.length<8){ state.formErr=tr('caWeak'); scheduleRender(); return; }
+  if(p1!==p2){ state.formErr=tr('caMismatch'); scheduleRender(); return; }
+  state.formErr='';
+  try{ await firebase.auth().confirmPasswordReset(a.code, p1); }
+  catch(e){ if(e && (e.code==='auth/expired-action-code' || e.code==='auth/invalid-action-code')) state.clientAuth={mode:'linkbad'}; else state.formErr=clientAuthError(e); scheduleRender(); return; }
+  try{ await firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL); await firebase.auth().signInWithEmailAndPassword(a.email, p1); }
+  catch(e){ state.clientAuth=null; state.clientForm={}; state.clientNotice=tr('spSaved'); scheduleRender(); return; }
+  state.clientAuth=null; await afterClientAuth();
 }
 // What can be read is decided by the Firestore rules: staff see everything, a client only their own
 // record (after confirming their email), and anyone else only the public settings and plans.
@@ -1978,6 +2019,16 @@ function renderClientGate(){
   const err='<div class="err-text">'+esc(state.formErr||'')+'</div>';
   const link=(action, label, extra)=>'<button type="button" class="back-link" data-action="'+action+'"'+(extra||'')+' style="margin:10px auto 0;">'+esc(label)+'</button>';
   const a=state.clientAuth; const u=firebase.apps.length? firebase.auth().currentUser : null;
+  if(a && a.mode==='checking') return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div><div class="gate-desc">'+tr('caLoading')+'</div>');
+  if(a && a.mode==='setpw'){ const f=state.clientForm||{};
+    return wrap('<div class="gate-title">'+tr('spTitle')+'</div>'
+      + '<div class="gate-desc">'+esc(tr('spDesc').replace('{email}', a.email||''))+'</div>'
+      + '<input type="text" autocomplete="username" value="'+esc(a.email||'')+'" style="display:none" aria-hidden="true" tabindex="-1">'
+      + '<label class="field">'+tr('caPassNew')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword" value="'+esc(f.newPassword||'')+'" data-enter="client-set-password"></label>'
+      + '<label class="field">'+tr('caPassword2')+'<input type="password" autocomplete="new-password" data-bind="clientForm.newPassword2" value="'+esc(f.newPassword2||'')+'" data-enter="client-set-password"></label>'
+      + err + '<button class="btn btn-primary btn-block" data-action="client-set-password">'+icon('check','icon-sm')+' '+tr('spSave')+'</button>'); }
+  if(a && a.mode==='linkbad') return wrap('<div class="gate-title">'+tr('spBadTitle')+'</div><div class="gate-desc">'+tr('spBadDesc')+'</div>'
+      + '<button class="btn btn-primary btn-block" data-action="client-other">'+icon('arrowLeft','icon-sm')+' '+tr('spBack')+'</button>');
   if(a && u && !u.isAnonymous){
     if(a.mode==='loading') return wrap('<div class="gate-title">'+tr('clientGateTitle')+'</div><div class="gate-desc">'+tr('caLoading')+'</div>');
     if(a.mode==='verify') return wrap('<div class="gate-title">'+tr('caVerifyTitle')+'</div>'
@@ -3613,6 +3664,7 @@ function onAction(el){
     case 'admin-lock': lockAdminPanel(); return;
     case 'client-logout': state.screen='landing'; clientSignOut(); break;
     case 'client-other': state.formErr=''; state.clientNotice=''; clientSignOut(); break;
+    case 'client-set-password': runOnce(clientSetPassword); return;
     case 'send-password-link': runOnce(()=>sendClientPasswordLink(id)); return;
     case 'send-password-request': runOnce(()=>sendPasswordRequestLink(id)); return;
     case 'reject-password-request': runOnce(async ()=>{ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }); return;
