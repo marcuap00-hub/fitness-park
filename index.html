@@ -1038,7 +1038,7 @@ const I18N = {
     spBadTitle:'Linkul nu mai este valabil', spBadDesc:'Linkul a expirat sau a fost deja folosit. Scrie emailul pe ecranul de intrare și apasă „Am uitat parola” ca să primești unul nou.', spBack:'Înapoi la intrare',
     spEmailConfirmed:'Emailul a fost confirmat. Intră cu emailul și parola ta.', spSaved:'Parola a fost salvată. Intră cu emailul și parola nouă.',
     acHave:'Am un cod de activare', acTitle:'Activează contul', acDesc:'Scrie codul de activare primit la recepție.', acCode:'Cod de activare', acCodePh:'ex: K7PM-3QXD', acContinue:'Continuă',
-    acBad:'Codul nu este valid, a expirat sau a fost deja folosit. Cere la recepție un cod nou.', acWelcome:'Bun venit, {name}!', acSetupDesc:'Scrie emailul (Gmail) și creează o parolă nouă — nu ai încă una — pentru „Contul meu”.', acSetupDescMail:'Emailul tău e deja completat. Trebuie doar să creezi o parolă nouă (minim 8 caractere) și să apeși „Creează parola și intră”.', caRemember:'Ține-mă minte', caShowPw:'Arată parola',
+    acBad:'Codul nu este valid, a expirat sau a fost deja folosit. Cere la recepție un cod nou.', acWelcome:'Bun venit, {name}!', acWelcomeSet:'Bună, {name}! Setează parola', acSetupDesc:'Scrie emailul (Gmail) și creează o parolă nouă — nu ai încă una — pentru „Contul meu”.', caRemember:'Ține-mă minte', caShowPw:'Arată parola',
     acSave:'Creează parola și intră', acEmailTaken:'Acest email are deja un cont. Scrie parola acelui cont sau folosește alt email.', acFailTitle:'Activarea nu a reușit', acFailDesc:'Codul a expirat sau a fost deja folosit. Cere la recepție un cod nou.',
     caFirstTime:'Prima dată aici? Cere la recepție un cod de activare.', caPwRequested:'Cererea a fost trimisă recepției. Recepția îți va da un cod nou, cu care îți alegi altă parolă.',
     caWrong:'Email sau parolă greșită.', caWrongOld:'„Am uitat parola”.', caExists:'Există deja un cont cu acest email. Intră cu parola sau apasă „Am uitat parola”.', caWeak:'Parola trebuie să aibă minim 8 caractere.', caMismatch:'Parolele nu coincid.', caTooMany:'Prea multe încercări. Așteaptă câteva minute.', caNetwork:'Nu există conexiune la internet.', caError:'A apărut o eroare. Încearcă din nou.', caEnterPass:'Introdu parola.',
@@ -1100,7 +1100,7 @@ const I18N = {
     spBadTitle:'Ссылка больше не действительна', spBadDesc:'Ссылка устарела или уже была использована. Введите email на экране входа и нажмите «Забыли пароль?», чтобы получить новую.', spBack:'Назад ко входу',
     spEmailConfirmed:'Email подтверждён. Войдите со своим email и паролем.', spSaved:'Пароль сохранён. Войдите с email и новым паролем.',
     acHave:'У меня есть код активации', acTitle:'Активация аккаунта', acDesc:'Введите код активации, полученный на ресепшн.', acCode:'Код активации', acCodePh:'напр.: K7PM-3QXD', acContinue:'Продолжить',
-    acBad:'Код недействителен, истёк или уже использован. Попросите новый код на ресепшн.', acWelcome:'Добро пожаловать, {name}!', acSetupDesc:'Укажите email (Gmail) и придумайте новый пароль — у вас его ещё нет — для «Мой аккаунт».', acSetupDescMail:'Ваш email уже заполнен. Просто придумайте новый пароль (минимум 8 символов) и нажмите «Создать пароль и войти».', caRemember:'Запомнить меня', caShowPw:'Показать пароль',
+    acBad:'Код недействителен, истёк или уже использован. Попросите новый код на ресепшн.', acWelcome:'Добро пожаловать, {name}!', acWelcomeSet:'Привет, {name}! Задайте пароль', acSetupDesc:'Укажите email (Gmail) и придумайте новый пароль — у вас его ещё нет — для «Мой аккаунт».', caRemember:'Запомнить меня', caShowPw:'Показать пароль',
     acSave:'Создать пароль и войти', acEmailTaken:'Для этого email уже есть аккаунт. Введите пароль этого аккаунта или укажите другой email.', acFailTitle:'Активация не удалась', acFailDesc:'Код истёк или уже использован. Попросите новый код на ресепшн.',
     caFirstTime:'Впервые здесь? Попросите код активации на ресепшн.', caPwRequested:'Запрос отправлен на ресепшн. Вам дадут новый код, с которым вы зададите другой пароль.',
     caWrong:'Неверный email или пароль.', caWrongOld:'«Забыли пароль?».', caExists:'Аккаунт с этим email уже есть. Войдите с паролем или нажмите «Забыли пароль?».', caWeak:'Пароль должен быть не короче 8 символов.', caMismatch:'Пароли не совпадают.', caTooMany:'Слишком много попыток. Подождите несколько минут.', caNetwork:'Нет подключения к интернету.', caError:'Произошла ошибка. Попробуйте ещё раз.', caEnterPass:'Введите пароль.',
@@ -2054,8 +2054,8 @@ function renderClientGate(){
       + err + '<button class="btn btn-primary btn-block" data-action="client-activate-check">'+icon('check','icon-sm')+' '+tr('acContinue')+'</button>'
       + link('client-other', tr('spBack')));
   // Step 2: the Gmail (already filled in when the client came from the e-mail) and a password.
-  if(a && a.mode==='activate-setup') return wrap('<div class="gate-title">'+esc(tr('acWelcome').replace('{name}', a.name||''))+'</div>'
-      + '<div class="gate-desc">'+(a.prefilled? tr('acSetupDescMail') : tr('acSetupDesc'))+'</div>'
+  if(a && a.mode==='activate-setup') return wrap('<div class="gate-title">'+esc(tr('acWelcomeSet').replace('{name}', a.name||''))+'</div>'
+      + (a.prefilled? '' : '<div class="gate-desc">'+tr('acSetupDesc')+'</div>')
       + '<label class="field">'+tr('caEmail')+'<input type="text" autocomplete="username" inputmode="email" autocapitalize="off" spellcheck="false" data-bind="clientForm.email" value="'+esc(f.email||'')+'" placeholder="nume@gmail.com" data-enter="client-activate-save"></label>'
       + pwField(tr('caPassNew'), 'clientForm.newPassword', 'new-password', 'client-activate-save')
       + remember
