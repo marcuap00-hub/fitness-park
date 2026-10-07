@@ -845,6 +845,16 @@ tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .cp-access{display:flex;flex-direction:column;}
 .cp-qr{align-self:center;padding:12px;margin:4px 0 8px;border-radius:16px;background:#fff;border:1px solid var(--border);}
 .cp-qr-note{text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:14px;}
+.cp-qr-full{display:flex;flex-direction:column;}
+.cp-qr-open{display:none;}
+.cp-qr-sub{font-size:14px;color:var(--text-muted);margin:-4px 0 14px;}
+.cp-qr-btn{padding:15px 18px;font-size:15px;margin-bottom:12px;}
+@media(max-width:900px){.cp-qr-full{display:none;}.cp-qr-open{display:block;}}
+.cp-qr-overlay{align-items:center;padding:16px;background:rgba(10,11,20,.35);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);}
+.cp-qr-modal{max-width:360px;width:100%;border-radius:22px;}
+.cp-qr-modal-body{display:flex;flex-direction:column;margin-top:6px;}
+.cp-qr-modal-body .cp-qr-note{order:-1;margin:2px 0 12px;font-size:15px;}
+.cp-qr-modal-body .cp-code-row{padding-bottom:6px;}
 .cp-code-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;border-top:1px solid var(--border);}
 .cp-label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-faint);}
 .cp-code{font-family:var(--font-mono);font-weight:800;font-size:20px;letter-spacing:.06em;margin-top:2px;}
@@ -937,6 +947,7 @@ const ICONS = {
   lock:'<rect x="4.5" y="10.5" width="15" height="10" rx="2.4"/><path d="M8 10.5V7.2a4 4 0 0 1 8 0v3.3"/>',
   eye:'<path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
   eyeOff:'<path d="M3 3l18 18"/><path d="M10.6 5.6c.46-.07.92-.1 1.4-.1 6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.9 3.7M6.4 6.4A16.5 16.5 0 0 0 2.5 12s3.5 6.5 9.5 6.5c1.6 0 3-.4 4.3-1"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/>',
+  scan:'<path d="M4 8V6a2 2 0 0 1 2-2h2"/><path d="M16 4h2a2 2 0 0 1 2 2v2"/><path d="M20 16v2a2 2 0 0 1-2 2h-2"/><path d="M8 20H6a2 2 0 0 1-2-2v-2"/>',
   qrcode:'<rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><path d="M14 14h3.5v3.5"/><path d="M20.5 14v.01"/><path d="M14 20.5h.01"/><path d="M17.5 20.5h3"/><path d="M20.5 17.5v.01"/>',
   camera:'<path d="M4 8.5A1.5 1.5 0 0 1 5.5 7H8l1.2-2h5.6L16 7h2.5A1.5 1.5 0 0 1 20 8.5v9A1.5 1.5 0 0 1 18.5 19h-13A1.5 1.5 0 0 1 4 17.5Z"/><circle cx="12" cy="13" r="3.4"/>',
   search:'<circle cx="10.5" cy="10.5" r="6.5"/><path d="m20 20-4.4-4.4"/>',
@@ -1057,7 +1068,7 @@ const I18N = {
     photoPending:'Poza ta așteaptă confirmarea recepției.', photoError:'Nu am putut trimite poza. Încearcă din nou.', photoBadFile:'Alege o imagine (JPG sau PNG).', photoSendOther:'Trimite altă poză', errBirthDate:'Completează data nașterii.',
     tabSub:'Abonament și plăți', tabNews:'Informații sală', tabHistory:'Vizitele mele', logout:'Ieși din cont',
     cpHello:'Salut, {name}!', cpSub:'Tot ce ai nevoie pentru următorul antrenament.', cpDetails:'Detalii abonament', cpPlan:'Abonament', cpPeriod:'Perioadă',
-    cpAccessCard:'Cardul tău de acces', cpScan:'Scanează la recepție', cpCopy:'Copiază', cpCardOptions:'Opțiuni card', cpDownload:'Descarcă cardul pe telefon',
+    cpAccessCard:'Cardul tău de acces', cpScan:'Scanează la recepție', cpOpenHint:'Deschide codul pentru scanare la recepție.', cpShowCode:'Arată codul de acces', cpClose:'Închide', cpCopy:'Copiază', cpCardOptions:'Opțiuni card', cpDownload:'Descarcă cardul pe telefon',
     cpPrintedPending:'Cererea pentru card tipărit a fost trimisă.', cpTrainer:'Antrenor personal', cpTrainerDesc:'Te ajută să începi corect și în siguranță.',
     cpRequest:'Solicită', cpRequested:'Cerere trimisă', cpMap:'Vezi pe hartă', cpRights:'Toate drepturile rezervate.', cpSlogan:'Oameni mai puternici, în fiecare zi.',
     instSheetTitle:'Fitness Park pe telefon', instSheetDesc:'Contul și cardul tău, la o atingere distanță.', instSheetBtn:'Adaugă pe ecranul principal', instLater:'Mai târziu', instOk:'Am înțeles',
@@ -1122,7 +1133,7 @@ const I18N = {
     photoPending:'Ваше фото ждёт подтверждения ресепшн.', photoError:'Не удалось отправить фото. Попробуйте ещё раз.', photoBadFile:'Выберите изображение (JPG или PNG).', photoSendOther:'Отправить другое фото', errBirthDate:'Укажите дату рождения.',
     tabSub:'Абонемент и оплата', tabNews:'О зале', tabHistory:'Мои посещения', logout:'Выйти',
     cpHello:'Привет, {name}!', cpSub:'Всё, что нужно для следующей тренировки.', cpDetails:'Детали абонемента', cpPlan:'Абонемент', cpPeriod:'Период',
-    cpAccessCard:'Твоя карта доступа', cpScan:'Покажи на ресепшн', cpCopy:'Копировать', cpCardOptions:'Действия с картой', cpDownload:'Скачать карту на телефон',
+    cpAccessCard:'Твоя карта доступа', cpScan:'Покажи на ресепшн', cpOpenHint:'Откройте код для сканирования на ресепшн.', cpShowCode:'Показать код доступа', cpClose:'Закрыть', cpCopy:'Копировать', cpCardOptions:'Действия с картой', cpDownload:'Скачать карту на телефон',
     cpPrintedPending:'Запрос на печатную карту отправлен.', cpTrainer:'Персональный тренер', cpTrainerDesc:'Поможет начать правильно и безопасно.',
     cpRequest:'Запросить', cpRequested:'Запрос отправлен', cpMap:'На карте', cpRights:'Все права защищены.', cpSlogan:'Сильнее с каждым днём.',
     instSheetTitle:'Fitness Park в телефоне', instSheetDesc:'Кабинет и карта — в одно касание.', instSheetBtn:'Добавить на главный экран', instLater:'Позже', instOk:'Понятно',
@@ -1635,7 +1646,7 @@ function unlockAdmin(member){
   scheduleRender();
 }
 let clientUnsubs=[];
-function stopClientSession(){ clientUnsubs.forEach(u=>{ try{ u(); }catch(e){} }); clientUnsubs=[]; state.clientSession=null; if(!state.adminUnlocked) state.clients=[]; }
+function stopClientSession(){ clientUnsubs.forEach(u=>{ try{ u(); }catch(e){} }); clientUnsubs=[]; state.clientSession=null; state.clientQrOpen=false; if(!state.adminUnlocked) state.clients=[]; }
 // A client sees the records linked to this sign-in by an activation code (authUid), and nothing else.
 function startClientSession(user, attempt){
   stopClientSession();
@@ -3576,7 +3587,7 @@ function renderClientPortal(){
    + '</div>'
    + foot
    + '</div>'
-   + (shouldShowInstallSheet()? installSheetHtml() : '')
+   + (state.clientQrOpen? clientQrModalHtml(c) : (shouldShowInstallSheet()? installSheetHtml() : ''))
    + '</div>';
 }
 // A request is "pending" until staff resolve it. Clients can't write their own record, so the time
@@ -3587,14 +3598,26 @@ function clientRequestPending(c, kind){
   if(!asked || (Date.now()-new Date(asked).getTime())>14*86400000) return false;
   const done=c[kind+'ResolvedAt']||''; return !(done && done>=asked);
 }
+// QR + codul de membru cu „Copiază" — același bloc pe card (ecran lat) și în fereastra de pe telefon.
+function clientQrBlockHtml(c){
+  return '<div class="cp-qr"><div data-qr="'+esc(c.code)+'"></div></div><div class="cp-qr-note">'+tr('cpScan')+'</div>'
+   + '<div class="cp-code-row"><div><div class="cp-label">'+tr('memberCode')+'</div><div class="cp-code">'+esc(c.code)+'</div></div>'
+   + '<button class="btn btn-soft btn-sm" data-action="copy-code" data-id="'+c.id+'">'+icon('copy','icon-sm')+' '+tr('cpCopy')+'</button></div>';
+}
+function clientQrModalHtml(c){
+  return '<div class="overlay cp-qr-overlay"><div class="modal cp-qr-modal"><div class="modal-head"><div class="gate-title" style="font-size:19px;margin:0;">'+esc(tr('cpAccessCard'))+'</div>'
+   + '<button class="modal-close" data-action="client-qr-close" aria-label="'+esc(tr('cpClose'))+'">'+icon('x','icon-sm')+'</button></div>'
+   + '<div class="cp-qr-modal-body">'+clientQrBlockHtml(c)+'</div>'
+   + '<button class="btn btn-soft btn-block" data-action="client-qr-close">'+esc(tr('cpClose'))+'</button></div></div>';
+}
 function clientAccessCard(c){
   const open=!!state.cardOptsOpen;
   const printedPending=clientRequestPending(c,'printed');
   const cardNote=c.cardRequestPending? '<div class="cp-note warn">'+tr('cardReqPending')+'</div>' : c.cardRequestStatus==='approved'? '<div class="cp-note ok">'+tr('cardReqApproved')+'</div>' : c.cardRequestStatus==='rejected'? '<div class="cp-note bad">'+tr('cardReqRejected')+'</div>' : '';
+  // Pe ecran lat codul QR e afișat direct; pe telefon (o singură coloană) apare un buton care îl deschide într-o fereastră.
   return '<div class="cp-card cp-access"><div class="cp-card-h">'+tr('cpAccessCard')+'</div>'
-   + '<div class="cp-qr"><div data-qr="'+esc(c.code)+'"></div></div><div class="cp-qr-note">'+tr('cpScan')+'</div>'
-   + '<div class="cp-code-row"><div><div class="cp-label">'+tr('memberCode')+'</div><div class="cp-code">'+esc(c.code)+'</div></div>'
-     + '<button class="btn btn-soft btn-sm" data-action="copy-code" data-id="'+c.id+'">'+icon('copy','icon-sm')+' '+tr('cpCopy')+'</button></div>'
+   + '<div class="cp-qr-full">'+clientQrBlockHtml(c)+'</div>'
+   + '<div class="cp-qr-open"><div class="cp-qr-sub">'+tr('cpOpenHint')+'</div><button class="btn btn-primary btn-block cp-qr-btn" data-action="client-qr-open">'+icon('scan','icon-sm')+' '+tr('cpShowCode')+'</button></div>'
    + '<button class="cp-opts-toggle'+(open?' open':'')+'" data-action="toggle-card-opts" aria-expanded="'+open+'">'+tr('cpCardOptions')+' '+icon('chevronUp','icon-sm')+'</button>'
    + (open? '<div class="cp-opts">'
        + (isStandaloneApp()? '' : '<button data-action="install-app">'+icon('phone','icon-sm')+' '+tr('instSheetBtn')+'</button>')
@@ -3694,7 +3717,7 @@ function render(){
   if(state.confirmDialog) html += renderConfirmDialog();
   if(state.installHelp) html += renderInstallHelp();
   root.innerHTML=html;
-  document.documentElement.classList.toggle('scroll-lock', !!(state.modal || state.confirmDialog || state.installHelp || state.mobileNavOpen));
+  document.documentElement.classList.toggle('scroll-lock', !!(state.modal || state.confirmDialog || state.installHelp || state.mobileNavOpen || state.clientQrOpen));
   bindEvents(root);
   afterRenderHooks();
   if(selKey){ try{ const el=root.querySelector(selKey); if(el){ el.focus(); if(selStart!=null && el.setSelectionRange){ try{ el.setSelectionRange(selStart, selEnd); }catch(e){} } } }catch(e){} }
@@ -3776,6 +3799,8 @@ function onAction(el){
     case 'go-client': state.formErr=''; state.screen=isClientSignedIn()? 'client' : 'client-gate'; stopCamera(); window.scrollTo(0,0); break;
     case 'back-landing': state.screen='landing'; state.formErr=''; stopCamera(); window.scrollTo(0,0); break;
     case 'toggle-card-opts': state.cardOptsOpen=!state.cardOptsOpen; break;
+    case 'client-qr-open': state.clientQrOpen=true; break;
+    case 'client-qr-close': state.clientQrOpen=false; break;
     case 'submit-client-profile': runOnce(submitClientProfile); return;
     case 'approve-profile-request': runOnce(()=>approveProfileRequest(id)); return;
     case 'reject-profile-request': runOnce(async ()=>{ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }); return;
