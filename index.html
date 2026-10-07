@@ -1030,8 +1030,15 @@ function localISO(d){ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart
 function localDay(iso){ if(!iso) return ''; const d=new Date(iso); return isNaN(d)? '' : localISO(d); }
 function addDays(dateStr, days){ const d=new Date(dateStr+'T00:00:00'); const n=Math.max(-36500, Math.min(36500, Number(days||0))); d.setDate(d.getDate()+n); return localISO(d); }
 function todayStr(){ return localISO(new Date()); }
-// validTo is the last valid day (inclusive), so a 30-day plan starting on the 1st ends on the 30th.
-function subEndDate(from, t){ return addDays(from, Math.max(1, Number((t&&t.durationDays)||30))-1); }
+// Same date `months` later; a date missing in a shorter month (31st → February) lands on that month's last day.
+function addMonths(dateStr, months){ const [y,m,d]=dateStr.split('-').map(Number); const first=new Date(y, m-1+months, 1); first.setDate(Math.min(d, new Date(first.getFullYear(), first.getMonth()+1, 0).getDate())); return localISO(first); }
+// validTo is the last valid day (inclusive). A plan of whole months (30/90/180 days, 365 = a year) ends the day before the
+// same date in the last month: started on the 7th, it ends on the 6th. Other lengths (a 7-day plan) count plain days.
+function subEndDate(from, t){
+  const days=Math.max(1, Number((t&&t.durationDays)||30));
+  const months=(days>=30 && days%30===0)? days/30 : (days===365? 12 : 0);
+  return (months && /^\d{4}-\d{2}-\d{2}$/.test(from||''))? addDays(addMonths(from, months), -1) : addDays(from, days-1);
+}
 function setPath(obj, path, value){ const parts=path.split('.'); let o=obj; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]; if(o==null) return; } o[parts[parts.length-1]]=value; }
 function daysLeft(validTo){ if(!validTo) return null; const today=new Date(); today.setHours(0,0,0,0); const vt=new Date(validTo+'T00:00:00'); return Math.round((vt-today)/86400000); }
 function payMethodLabel(m){ if(state.lang==='ru') return {cash:'Наличные',card:'Карта',transfer:'Банковский перевод'}[m]||m; return {cash:'Numerar',card:'Card',transfer:'Transfer bancar'}[m]||m; }
