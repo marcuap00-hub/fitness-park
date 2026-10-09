@@ -1096,7 +1096,7 @@ const I18N = {
     caStaff:'Acesta este un cont de recepție. Intră din „Recepție & administrare”.', caNotYet:'Emailul nu e confirmat încă. Apasă linkul din email, apoi încearcă din nou.', caResent:'Emailul de confirmare a fost retrimis.', caForgotHint:'Scrie emailul mai sus, apoi apasă „Am uitat parola”.', caResetSent:'Dacă există un cont cu acest email, ți-am trimis un link pentru parolă nouă.',
     buySentTitle:'Rezervare înregistrată!', buySentDesc:'Rezervarea ta a fost înregistrată. Achită la recepție pentru a activa abonamentul.', backToStart:'Înapoi la start',
     buyMailSending:'Îți trimitem un email de confirmare.', buyMailSent:'Ți-am trimis un email de confirmare.', buyAfterActivation:'După activare primești pe email codul pentru „Contul meu”.', buyNoEmailHint:'Spune la recepție adresa ta de email, ca să-ți poți activa „Contul meu”.',
-    emailBuy:'Email', noEmailAsk:'Nu ai completat emailul. Fără el nu primești confirmarea rezervării și nici codul pentru „Contul meu”. Continui fără email?', noEmailSkip:'Omite', noEmailAdd:'Adaugă email',
+    emailBuy:'Email',
     buyTitle:'Cumpără un abonament', buyDesc:'Alege abonamentul și metoda de plată.',
     fullName:'Nume și prenume', fullNamePh:'Ex: Popescu Ion', phone:'Telefon', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Introdu adresa de email — pe ea primești confirmarea abonamentului.', errEmailInvalid:'Adresa de email nu este validă (ex: nume@gmail.com).',
     desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal (250 MDL / oră)', wantsPrinted:'Vreau și abonamentul în format tipărit',
@@ -1165,7 +1165,7 @@ const I18N = {
     caStaff:'Это аккаунт ресепшн. Войдите через «Ресепшн и администрирование».', caNotYet:'Email ещё не подтверждён. Нажмите ссылку в письме и попробуйте снова.', caResent:'Письмо для подтверждения отправлено ещё раз.', caForgotHint:'Введите email выше, затем нажмите «Забыли пароль?».', caResetSent:'Если аккаунт с этим email существует, мы отправили ссылку для нового пароля.',
     buySentTitle:'Бронь принята!', buySentDesc:'Ваша бронь принята. Оплатите на ресепшн, чтобы активировать абонемент.', backToStart:'Назад на главную',
     buyMailSending:'Отправляем вам письмо с подтверждением.', buyMailSent:'Мы отправили вам письмо с подтверждением.', buyAfterActivation:'После активации вы получите на email код для «Мой аккаунт».', buyNoEmailHint:'Назовите на ресепшн свой email, чтобы активировать «Мой аккаунт».',
-    emailBuy:'Email', noEmailAsk:'Вы не указали email. Без него вы не получите подтверждение брони и код для «Мой аккаунт». Продолжить без email?', noEmailSkip:'Пропустить', noEmailAdd:'Добавить email',
+    emailBuy:'Email',
     buyTitle:'Купить абонемент', buyDesc:'Выберите абонемент и способ оплаты.',
     fullName:'Имя и фамилия', fullNamePh:'Напр.: Иван Попеску', phone:'Телефон', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Введите email — на него придёт подтверждение абонемента.', errEmailInvalid:'Неверный адрес email (напр.: name@gmail.com).',
     desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера (250 MDL / час)', wantsPrinted:'Также хочу абонемент в печатном виде',
@@ -2231,24 +2231,19 @@ async function sendForgotCode(clientId){
   const ok=await notifyClientByEmail(c, 'forgot');
   if(ok) await logMod('Cod trimis pe email (parolă uitată)', c.name);
 }
-// The e-mail is not required. Left empty, a prompt offers to add it or to skip it (skipEmail=true after "Omite");
-// reception can collect it at the desk later.
-async function submitBuyRequest(skipEmail){
+// The e-mail is required: the reservation confirmation and the "Contul meu" activation code both go to it.
+async function submitBuyRequest(){
   const f=state.buyForm||{};
   if(!f.photoDataUri){ state.formErr=tr('errPhoto'); scheduleRender(); return; }
   if(!f.name||!f.name.trim()){ state.formErr=tr('errEnterName'); scheduleRender(); return; }
   if(!f.phone||!f.phone.trim()){ state.formErr=tr('errEnterPhone'); scheduleRender(); return; }
   if(!isValidMdPhone(f.phone)){ state.formErr=tr('errPhoneInvalid'); scheduleRender(); return; }
   const email=(f.email||'').trim().toLowerCase();
-  if(email && !isValidEmail(email)){ state.formErr=tr('errEmailInvalid'); scheduleRender(); return; }
+  if(!email){ state.formErr=tr('errEnterEmail'); scheduleRender(); return; }
+  if(!isValidEmail(email)){ state.formErr=tr('errEmailInvalid'); scheduleRender(); return; }
   if(!f.birthYear){ state.formErr=tr('errBirthDate'); scheduleRender(); return; }
   if(!f.typeId){ state.formErr=tr('errChoosePlan'); scheduleRender(); return; }
   if(f.payMethod==='card'){ state.formErr=tr('payCardSoon'); scheduleRender(); return; }
-  if(!email && skipEmail!==true){
-    askConfirm(tr('noEmailAsk'), ()=>setTimeout(()=>{ const i=document.querySelector('input[data-bind="buyForm.email"]'); if(i) i.focus(); }, 60),
-      {confirmLabel:tr('noEmailAdd'), cancelLabel:tr('noEmailSkip'), onNo:()=>runOnce(()=>submitBuyRequest(true))});
-    return;
-  }
   const t=typeById(f.typeId);
   const uid=(firebase.auth().currentUser||{}).uid||'';
   const doc={ name:f.name.trim(), phone:f.phone.trim(), email, birthDate:combineBirthDate(f.birthYear), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, photoDataUri:f.photoDataUri, status:'pending', date:new Date().toISOString(), payMethod:'cash' };
