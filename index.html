@@ -1096,7 +1096,7 @@ const I18N = {
     caStaff:'Acesta este un cont de recepție. Intră din „Recepție & administrare”.', caNotYet:'Emailul nu e confirmat încă. Apasă linkul din email, apoi încearcă din nou.', caResent:'Emailul de confirmare a fost retrimis.', caForgotHint:'Scrie emailul mai sus, apoi apasă „Am uitat parola”.', caResetSent:'Dacă există un cont cu acest email, ți-am trimis un link pentru parolă nouă.',
     buySentTitle:'Rezervare înregistrată!', buySentDesc:'Rezervarea ta a fost înregistrată. Achită la recepție pentru a activa abonamentul.', backToStart:'Înapoi la start',
     buyMailSending:'Îți trimitem un email de confirmare.', buyMailSent:'Ți-am trimis un email de confirmare.', buyAfterActivation:'După activare primești pe email codul pentru „Contul meu”.', buyNoEmailHint:'Spune la recepție adresa ta de email, ca să-ți poți activa „Contul meu”.',
-    emailBuy:'Email (opțional)', noEmailAsk:'Nu ai completat emailul. Fără el nu primești emailul de confirmare a rezervării. Continui fără email?', noEmailSkip:'Omite', noEmailAdd:'Adaugă email',
+    emailBuy:'Email', noEmailAsk:'Nu ai completat emailul. E necesar ca să primești confirmarea rezervării și să-ți poți activa „Contul meu”. Dacă acum nu ai acces la el, poți omite și îl spui la recepție.', noEmailSkip:'Omite', noEmailAdd:'Adaugă email',
     buyTitle:'Cumpără un abonament', buyDesc:'Alege abonamentul și metoda de plată.',
     fullName:'Nume și prenume', fullNamePh:'Ex: Popescu Ion', phone:'Telefon', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Introdu adresa de email — pe ea primești confirmarea abonamentului.', errEmailInvalid:'Adresa de email nu este validă (ex: nume@gmail.com).',
     desiredPlan:'Abonament dorit', wantsTrainer:'Vreau și un antrenor personal (250 MDL / oră)', wantsPrinted:'Vreau și abonamentul în format tipărit',
@@ -1165,7 +1165,7 @@ const I18N = {
     caStaff:'Это аккаунт ресепшн. Войдите через «Ресепшн и администрирование».', caNotYet:'Email ещё не подтверждён. Нажмите ссылку в письме и попробуйте снова.', caResent:'Письмо для подтверждения отправлено ещё раз.', caForgotHint:'Введите email выше, затем нажмите «Забыли пароль?».', caResetSent:'Если аккаунт с этим email существует, мы отправили ссылку для нового пароля.',
     buySentTitle:'Бронь принята!', buySentDesc:'Ваша бронь принята. Оплатите на ресепшн, чтобы активировать абонемент.', backToStart:'Назад на главную',
     buyMailSending:'Отправляем вам письмо с подтверждением.', buyMailSent:'Мы отправили вам письмо с подтверждением.', buyAfterActivation:'После активации вы получите на email код для «Мой аккаунт».', buyNoEmailHint:'Назовите на ресепшн свой email, чтобы активировать «Мой аккаунт».',
-    emailBuy:'Email (необязательно)', noEmailAsk:'Вы не указали email. Без него вы не получите письмо с подтверждением брони. Продолжить без email?', noEmailSkip:'Пропустить', noEmailAdd:'Добавить email',
+    emailBuy:'Email', noEmailAsk:'Вы не указали email. Он нужен, чтобы получить подтверждение брони и активировать «Мой аккаунт». Если сейчас нет доступа к нему, можно пропустить и назвать его на ресепшн.', noEmailSkip:'Пропустить', noEmailAdd:'Добавить email',
     buyTitle:'Купить абонемент', buyDesc:'Выберите абонемент и способ оплаты.',
     fullName:'Имя и фамилия', fullNamePh:'Напр.: Иван Попеску', phone:'Телефон', phonePh:'06X XXX XXX', emailOpt:'Email', errEnterEmail:'Введите email — на него придёт подтверждение абонемента.', errEmailInvalid:'Неверный адрес email (напр.: name@gmail.com).',
     desiredPlan:'Желаемый абонемент', wantsTrainer:'Также хочу личного тренера (250 MDL / час)', wantsPrinted:'Также хочу абонемент в печатном виде',
@@ -2231,7 +2231,8 @@ async function sendForgotCode(clientId){
   const ok=await notifyClientByEmail(c, 'forgot');
   if(ok) await logMod('Cod trimis pe email (parolă uitată)', c.name);
 }
-// The e-mail is optional: left empty, a prompt offers to add it or to skip it (skipEmail=true after "Omite").
+// The e-mail is required. Left empty, a prompt asks for it and only offers "Omite" for someone who has no access to it
+// right now (skipEmail=true then); reception collects it at the desk.
 async function submitBuyRequest(skipEmail){
   const f=state.buyForm||{};
   if(!f.photoDataUri){ state.formErr=tr('errPhoto'); scheduleRender(); return; }
@@ -2243,7 +2244,11 @@ async function submitBuyRequest(skipEmail){
   if(!f.birthYear){ state.formErr=tr('errBirthDate'); scheduleRender(); return; }
   if(!f.typeId){ state.formErr=tr('errChoosePlan'); scheduleRender(); return; }
   if(f.payMethod==='card'){ state.formErr=tr('payCardSoon'); scheduleRender(); return; }
-  if(!email && skipEmail!==true){ askConfirm(tr('noEmailAsk'), ()=>runOnce(()=>submitBuyRequest(true)), {confirmLabel:tr('noEmailSkip'), cancelLabel:tr('noEmailAdd')}); return; }
+  if(!email && skipEmail!==true){
+    askConfirm(tr('noEmailAsk'), ()=>setTimeout(()=>{ const i=document.querySelector('input[data-bind="buyForm.email"]'); if(i) i.focus(); }, 60),
+      {confirmLabel:tr('noEmailAdd'), cancelLabel:tr('noEmailSkip'), onNo:()=>runOnce(()=>submitBuyRequest(true))});
+    return;
+  }
   const t=typeById(f.typeId);
   const uid=(firebase.auth().currentUser||{}).uid||'';
   const doc={ name:f.name.trim(), phone:f.phone.trim(), email, birthDate:combineBirthDate(f.birthYear), typeId:f.typeId, typeName:t?t.name:'', price:t?t.price:0, currency:t?t.currency:'MDL', note:f.note||'', wantsTrainer:!!f.wantsTrainer, wantsPrinted:!!f.wantsPrinted, photoDataUri:f.photoDataUri, status:'pending', date:new Date().toISOString(), payMethod:'cash' };
@@ -3835,7 +3840,7 @@ function clientTabHistory(log){
 }
 
 /* ============ MODAL DISPATCH ============ */
-function askConfirm(message, onYes, opts){ opts=opts||{}; state.confirmDialog={message, onYes, danger:opts.danger, confirmLabel:opts.confirmLabel, cancelLabel:opts.cancelLabel}; scheduleRender(); }
+function askConfirm(message, onYes, opts){ opts=opts||{}; state.confirmDialog={message, onYes, onNo:opts.onNo, danger:opts.danger, confirmLabel:opts.confirmLabel, cancelLabel:opts.cancelLabel}; scheduleRender(); }
 function renderConfirmDialog(){
   const cd=state.confirmDialog; if(!cd) return '';
   return '<div class="overlay" data-confirm-overlay="1"><div class="modal" style="max-width:380px;">'
@@ -4058,7 +4063,7 @@ function onAction(el){
     case 'resolve-request': resolveRequest(id); return;
     case 'send-expiry-reminders': sendExpiryReminders(); return;
     case 'confirm-yes': { const cd=state.confirmDialog; state.confirmDialog=null; if(cd&&cd.onYes) cd.onYes(); scheduleRender(); return; }
-    case 'confirm-no': state.confirmDialog=null; break;
+    case 'confirm-no': { const cd=state.confirmDialog; state.confirmDialog=null; if(cd&&cd.onNo) cd.onNo(); break; }
   }
   scheduleRender();
 }
