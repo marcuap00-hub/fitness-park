@@ -644,6 +644,7 @@ tr td:first-child,tr th:first-child{padding-left:0;}
 tr td:last-child,tr th:last-child{padding-right:0;text-align:right;}
 .search-row{display:flex;gap:10px;}
 .plan-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+.plan-grid+.plan-grid{margin-top:14px;}
 .plan-card{border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--border);background:var(--surface);}
 .plan-card.gold{background:linear-gradient(155deg,var(--gold-card),var(--gold-card-2));border-color:transparent;color:#EDE2C4;}
 .plan-card.exclusiv{background:linear-gradient(155deg,#211F2E,#302C46);border-color:transparent;color:#E7E4F3;}
@@ -3074,9 +3075,12 @@ function renderHistory(){
 const TIER_RANK={fitness:0, gold:1, exclusiv:2};
 function renderPlans(){
   const visibleTypes=state.types.filter(t=>t.tier!=='exclusiv' || state.adminRole==='owner');
-  const cards=visibleTypes.slice().sort((a,b)=>{ const r=(TIER_RANK[a.tier]||0)-(TIER_RANK[b.tier]||0); return r!==0? r : (a.price||0)-(b.price||0); }).map(planCardHtml).join('') || '<div class="empty-state">'+ra('Niciun tip de abonament încă.')+'</div>';
+  const sorted=visibleTypes.slice().sort((a,b)=>{ const r=(TIER_RANK[a.tier]||0)-(TIER_RANK[b.tier]||0); return r!==0? r : (a.price||0)-(b.price||0); });
+  // Fitness, Gold and Exclusiv each get their own rows, so the Gold plans stay together and Exclusiv stands apart.
+  const groups=[0,1,2].map(g=>sorted.filter(t=>(TIER_RANK[t.tier]||0)===g)).filter(a=>a.length);
+  const cards=groups.map(a=>'<div class="plan-grid">'+a.map(planCardHtml).join('')+'</div>').join('') || '<div class="plan-grid"><div class="empty-state">'+ra('Niciun tip de abonament încă.')+'</div></div>';
   return '<div class="section-head"><div class="section-sub">'+ra('Gestionează oferta și regulile fiecărui tip')+'</div>'+(state.adminRole==='owner'?('<button class="btn btn-ghost" data-action="open-new-type">'+icon('plus','icon-sm')+' '+ra('Tip nou')+'</button>'):'')+'</div>'
-   + '<div class="plan-grid">'+cards+'</div>';
+   + cards;
 }
 const PLAN_PASTELS=['#FFB4B4','#AFD8FF','#B8F2D2','#FFE39B','#D9C2FF','#FFCBA4'];
 const EXCLUSIV_ACCENT='#C7C2E8';
