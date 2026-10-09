@@ -1049,9 +1049,10 @@ function todayStr(){ return localISO(new Date()); }
 function addMonths(dateStr, months){ const [y,m,d]=dateStr.split('-').map(Number); const first=new Date(y, m-1+months, 1); first.setDate(Math.min(d, new Date(first.getFullYear(), first.getMonth()+1, 0).getDate())); return localISO(first); }
 // validTo is the last valid day (inclusive). A plan of whole months (30/90/180 days, 365 = a year) ends the day before the
 // same date in the last month: started on the 7th, it ends on the 6th. Other lengths (a 7-day plan) count plain days.
+function planMonths(days){ days=Number(days)||0; return (days>=30 && days%30===0)? days/30 : (days===365? 12 : 0); }
 function subEndDate(from, t){
   const days=Math.max(1, Number((t&&t.durationDays)||30));
-  const months=(days>=30 && days%30===0)? days/30 : (days===365? 12 : 0);
+  const months=planMonths(days);
   return (months && /^\d{4}-\d{2}-\d{2}$/.test(from||''))? addDays(addMonths(from, months), -1) : addDays(from, days-1);
 }
 function setPath(obj, path, value){ const parts=path.split('.'); let o=obj; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]; if(o==null) return; } o[parts[parts.length-1]]=value; }
@@ -3117,10 +3118,9 @@ function typePickerHtml(types, selectedId){
 }
 function durLabelText(t){
   if(t.unlimited) return state.lang==='ru' ? '∞ Бессрочно' : '∞ Nelimitat';
-  if(state.lang==='ru'){
-    return (t.durationDays%30===0 && t.durationDays>=30) ? (t.durationDays/30)+' '+ruMonths(t.durationDays/30) : t.durationDays+' '+ruDays(t.durationDays);
-  }
-  return (t.durationDays%30===0 && t.durationDays>=30) ? (t.durationDays/30)+' luni' : t.durationDays+' zile';
+  const months=planMonths(t.durationDays), days=Number(t.durationDays)||0;
+  if(state.lang==='ru') return months? months+' '+ruMonths(months) : days+' '+ruDays(days);
+  return months? (months===1? '1 lună' : months+' luni') : (days===1? '1 zi' : days+' zile');
 }
 function entryLimitText(t){
   if(state.lang==='ru') return t.entryLimit? (t.entryLimit+' '+ruEntries(t.entryLimit)) : 'неограниченные посещения';
