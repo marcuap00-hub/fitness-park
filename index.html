@@ -2488,7 +2488,10 @@ function renderClients(){
   const limit=state.clientLimit||100; const shown=list.slice(0,limit);
   const n=list.length; const qShown='„'+esc(state.clientQuery.trim())+'”';
   const found=q? '<div class="small faint" style="margin:0 0 10px;">'+(state.lang==='ru'? ('Найдено: '+n+' · '+qShown) : (n+' '+(n===1? 'rezultat' : 'rezultate')+' pentru '+qShown))+'</div>' : '';
-  const rows=list.length? found+'<div class="crow-list">'+shown.map(clientRowHtml).join('')+'</div>'+(list.length>limit? '<button class="btn btn-ghost btn-block" style="margin-top:12px;" data-action="clients-more">'+ra('Arată mai mulți')+' ('+(list.length-limit)+' '+ra('rămași')+')</button>' : '') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div></div>';
+  const rows=list.length? found+'<div class="crow-list">'+shown.map(clientRowHtml).join('')+'</div>'+(list.length>limit? '<button class="btn btn-ghost btn-block" style="margin-top:12px;" data-action="clients-more">'+ra('Arată mai mulți')+' ('+(list.length-limit)+' '+ra('rămași')+')</button>' : '') : '<div class="empty-state">'+icon('users','icon-lg')+'<div>'+ra('Niciun client găsit.')+'</div>'
+      // Not in the database: one tap opens "Client nou" with what was typed already filled in.
+      + (q? (()=>{ const pre=clientPrefillFromQuery(state.clientQuery); const shown=pre.name||pre.email||pre.phone; return '<button class="btn btn-primary" style="margin-top:14px;" data-action="open-new-client" data-from-search="1">'+icon('plus','icon-sm')+' '+esc(ra('Creează client'))+(shown? ' „'+esc(shown)+'”' : '')+'</button>'; })() : '')
+      + '</div>';
   return '<div class="pg-card">'
    + '<div class="pg-head"><div class="pg-ic">'+icon('users')+'</div>'
      + '<div style="min-width:0;"><div class="pg-title">'+state.clients.length+' '+ra('clienți înregistrați')+'</div><div class="pg-sub">'+ra('Gestionează rapid clienții și abonamentele acestora.')+'</div></div>'
@@ -2525,12 +2528,22 @@ function subFormError(f, t){
   if(f.paidFull===false){ const a=Number(f.amountPaid||0); if(!(a>=0) || a>Number(f.price||0)) return ra('Suma încasată trebuie să fie între 0 și prețul abonamentului.'); }
   return '';
 }
-function openNewClient(presetTypeId){
+// What was typed in the clients search becomes the first field of a new client: an e-mail, a phone number or a name
+// (names get a capital letter per word). Anything mixing letters and digits (a member code) fills nothing.
+function clientPrefillFromQuery(raw){
+  const q=String(raw||'').replace(/\s+/g,' ').trim(); const out={name:'', phone:'', email:''}; if(!q) return out;
+  if(q.includes('@')) out.email=q.toLowerCase();
+  else if(phoneQueryDigits(q)) out.phone=q.replace(/\D/g,'').slice(0,15);
+  else if(!/\d/.test(q)) out.name=q.toLowerCase().replace(/(^|[\s'-])(\S)/g,(m,p,c)=>p+c.toLocaleUpperCase('ro'));
+  return out;
+}
+function openNewClient(presetTypeId, prefill){
+  prefill=prefill||{};
   let t=presetTypeId? typeById(presetTypeId) : null;
   if(t && t.tier==='exclusiv' && state.adminRole!=='owner'){ showToast(ra('Abonamentele Exclusiv necesită aprobarea unui proprietar.')); t=null; }
   if(!t) t=state.types.find(x=>x.active!==false && (state.adminRole==='owner' || x.tier!=='exclusiv'));
   const from=todayStr();
-  openModal('newClient', { name:'', phone:'', typeId:t?t.id:'', price:t?t.price:0, currency:t?t.currency:((state.settings&&state.settings.currency)||'MDL'),
+  openModal('newClient', { name:prefill.name||'', phone:prefill.phone||'', email:prefill.email||'', typeId:t?t.id:'', price:t?t.price:0, currency:t?t.currency:((state.settings&&state.settings.currency)||'MDL'),
     validFrom:from, validTo:subEndDate(from,t), paidFull:true, amountPaid:0, method:'', birthDate:'', notes:'' });
 }
 function applyTypeDefaultsNew(){ const t=typeById(state.form.typeId); if(!t) return; state.form.price=t.price; state.form.currency=t.currency; state.form.validTo=subEndDate(state.form.validFrom||todayStr(), t); }
@@ -3969,7 +3982,7 @@ function onAction(el){
     case 'toggle-pw': state.showPw=!state.showPw; break;
     case 'delete-payment': deletePayment(id); return;
     case 'reject-password-request': runOnce(async ()=>{ try{ await colBuyReq().doc(id).update({status:'rejected'}); showToast(ra('Cerere respinsă.')); }catch(e){ showToast(ra('Eroare.')); } }); return;
-    case 'open-new-client': openNewClient(el.getAttribute('data-type')||null); return;
+    case 'open-new-client': openNewClient(el.getAttribute('data-type')||null, el.hasAttribute('data-from-search')? clientPrefillFromQuery(state.clientQuery) : null); return;
     case 'open-client-detail': openModal('clientDetail', {id}); return;
     case 'open-renew': openRenew(id); return; case 'open-edit-sub': openEditSub(id); return;
     case 'open-edit-client': openEditClient(id); return;
